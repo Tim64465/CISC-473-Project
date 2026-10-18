@@ -1,0 +1,6 @@
+torch>=2.0
+numpy
+pandas
+matplotlib
+scikit-learn
+reformer_pytorch==1.4.4
