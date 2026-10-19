@@ -1,0 +1,21 @@
+{
+  "rows": 94920,
+  "num_train": 66444,
+  "test_start": 75936,
+  "train_period": [
+    "2015-03-05 00:00:00",
+    "2022-10-02 11:00:00"
+  ],
+  "test_period": [
+    "2023-11-02 00:00:00",
+    "2025-12-31 23:00:00"
+  ],
+  "pc1_share_real": 0.5842224338276236,
+  "pc1_share_residual_real": 0.5459767717795354,
+  "mean_offdiag_corr_real": 0.5005954814206258,
+  "mean_offdiag_corr_residual_real": 0.46082323266169606,
+  "pc1_share_shift": 0.43130277618993484,
+  "pc1_share_residual_shift": 0.30823131814777077,
+  "mean_offdiag_corr_shift": 0.3408638550788652,
+  "mean_offdiag_corr_residual_shift": 0.21307244883154253
+}

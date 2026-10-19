@@ -1,0 +1,25 @@
+run_id,plan,mode,model,dataset,L,H,seed,patch_len,stride,test_batch_size,test_drop_last,n_test_windows,n_scored,epochs_run,early_stopped,mse,mae,seconds,device,repo_commit,timestamp_utc
+iTransformer_ONZ_real_L96_H96_s2021,onzonal,train,iTransformer,ONZ_real,96,96,2021,,,1,False,18889,18889,10,True,0.285721,0.387783,1619,Tesla T4,c2426e68ca,2026-10-19 01:16:40
+PatchTST_ONZ_real_L96_H96_s2021,onzonal,train,PatchTST,ONZ_real,96,96,2021,16,8,128,True,18889,18816,10,False,0.292702,0.393715,300,Tesla T4,204c21efe0,2026-10-19 01:21:40
+PatchTST_ONZ_real_L96_H96_s2021_bs1,onzonal,rescore_bs1,PatchTST,ONZ_real,96,96,2021,16,8,1,False,18889,18889,,False,0.292459,0.393546,305,Tesla T4,204c21efe0,2026-10-19 01:26:45
+DLinear_ONZ_real_L96_H96_s2021,onzonal,train,DLinear,ONZ_real,96,96,2021,,,8,False,18889,18889,7,True,0.307521,0.408755,422,Tesla T4,0c113668a3,2026-10-19 01:33:47
+iTransformer_ONZ_shift_L96_H96_s2021,onzonal,train,iTransformer,ONZ_shift,96,96,2021,,,1,False,18889,18889,10,False,0.287779,0.386859,1621,Tesla T4,c2426e68ca,2026-10-19 02:00:48
+PatchTST_ONZ_shift_L96_H96_s2021,onzonal,train,PatchTST,ONZ_shift,96,96,2021,16,8,128,True,18889,18816,10,False,0.290234,0.390669,300,Tesla T4,204c21efe0,2026-10-19 02:05:48
+PatchTST_ONZ_shift_L96_H96_s2021_bs1,onzonal,rescore_bs1,PatchTST,ONZ_shift,96,96,2021,16,8,1,False,18889,18889,,False,0.289841,0.390456,302,Tesla T4,204c21efe0,2026-10-19 02:10:51
+DLinear_ONZ_shift_L96_H96_s2021,onzonal,train,DLinear,ONZ_shift,96,96,2021,,,8,False,18889,18889,8,True,0.307191,0.406943,472,Tesla T4,0c113668a3,2026-10-19 02:18:43
+iTransformer_ONZ_real_L96_H96_s2022,onzonal,train,iTransformer,ONZ_real,96,96,2022,,,1,False,18889,18889,10,False,0.284387,0.387244,1479,Tesla T4,c2426e68ca,2026-10-19 04:40:51
+PatchTST_ONZ_real_L96_H96_s2022,onzonal,train,PatchTST,ONZ_real,96,96,2022,16,8,128,True,18889,18816,10,False,0.293272,0.394195,314,Tesla T4,204c21efe0,2026-10-19 04:46:05
+PatchTST_ONZ_real_L96_H96_s2022_bs1,onzonal,rescore_bs1,PatchTST,ONZ_real,96,96,2022,16,8,1,False,18889,18889,,False,0.293036,0.394024,278,Tesla T4,204c21efe0,2026-10-19 04:50:43
+DLinear_ONZ_real_L96_H96_s2022,onzonal,train,DLinear,ONZ_real,96,96,2022,,,8,False,18889,18889,7,True,0.307214,0.408352,396,Tesla T4,0c113668a3,2026-10-19 04:57:19
+iTransformer_ONZ_shift_L96_H96_s2022,onzonal,train,iTransformer,ONZ_shift,96,96,2022,,,1,False,18889,18889,10,True,0.287057,0.386775,1532,Tesla T4,c2426e68ca,2026-10-19 05:22:51
+PatchTST_ONZ_shift_L96_H96_s2022,onzonal,train,PatchTST,ONZ_shift,96,96,2022,16,8,128,True,18889,18816,10,False,0.290696,0.391092,315,Tesla T4,204c21efe0,2026-10-19 05:28:06
+PatchTST_ONZ_shift_L96_H96_s2022_bs1,onzonal,rescore_bs1,PatchTST,ONZ_shift,96,96,2022,16,8,1,False,18889,18889,,False,0.290301,0.390877,278,Tesla T4,204c21efe0,2026-10-19 05:32:44
+DLinear_ONZ_shift_L96_H96_s2022,onzonal,train,DLinear,ONZ_shift,96,96,2022,,,8,False,18889,18889,7,True,0.306530,0.406405,393,Tesla T4,0c113668a3,2026-10-19 05:39:16
+iTransformer_ONZ_real_L96_H96_s2023,onzonal,train,iTransformer,ONZ_real,96,96,2023,,,1,False,18889,18889,10,False,0.285920,0.388249,1503,Tesla T4,c2426e68ca,2026-10-19 06:04:19
+PatchTST_ONZ_real_L96_H96_s2023,onzonal,train,PatchTST,ONZ_real,96,96,2023,16,8,128,True,18889,18816,10,False,0.292224,0.393467,315,Tesla T4,204c21efe0,2026-10-19 06:09:34
+PatchTST_ONZ_real_L96_H96_s2023_bs1,onzonal,rescore_bs1,PatchTST,ONZ_real,96,96,2023,16,8,1,False,18889,18889,,False,0.291981,0.393291,287,Tesla T4,204c21efe0,2026-10-19 06:14:21
+DLinear_ONZ_real_L96_H96_s2023,onzonal,train,DLinear,ONZ_real,96,96,2023,,,8,False,18889,18889,9,True,0.308140,0.409085,502,Tesla T4,0c113668a3,2026-10-19 06:22:43
+iTransformer_ONZ_shift_L96_H96_s2023,onzonal,train,iTransformer,ONZ_shift,96,96,2023,,,1,False,18889,18889,10,True,0.287397,0.386662,1506,Tesla T4,c2426e68ca,2026-10-19 06:47:49
+PatchTST_ONZ_shift_L96_H96_s2023,onzonal,train,PatchTST,ONZ_shift,96,96,2023,16,8,128,True,18889,18816,10,False,0.290261,0.390686,315,Tesla T4,204c21efe0,2026-10-19 06:53:04
+PatchTST_ONZ_shift_L96_H96_s2023_bs1,onzonal,rescore_bs1,PatchTST,ONZ_shift,96,96,2023,16,8,1,False,18889,18889,,False,0.289864,0.390471,287,Tesla T4,204c21efe0,2026-10-19 06:57:51
+DLinear_ONZ_shift_L96_H96_s2023,onzonal,train,DLinear,ONZ_shift,96,96,2023,,,8,False,18889,18889,8,True,0.307268,0.407029,453,Tesla T4,0c113668a3,2026-10-19 07:05:24

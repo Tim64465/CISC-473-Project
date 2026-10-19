@@ -1,0 +1,29 @@
+{
+  "days": 4018,
+  "days_without_exactly_hours_1_to_24": [
+    {
+      "Date": "2025-05-01",
+      "count": "23",
+      "min": "2",
+      "max": "24"
+    }
+  ],
+  "duplicate_timestamps": 0,
+  "missing_hours": [
+    "2025-05-01 00:00:00"
+  ],
+  "n_missing_hours": 1,
+  "nan_cells_before_fill": 10,
+  "non_positive_cells": 407,
+  "zone_total_minus_ontario_MW": {
+    "mean": 52.04141821613381,
+    "p1": -230.0,
+    "p99": 362.0
+  },
+  "diff_column_matches_zone_total_minus_ontario": false,
+  "first_timestamp": "2015-01-01 00:00:00",
+  "last_timestamp": "2025-12-31 23:00:00",
+  "rows": 96432,
+  "n_anomaly_flags": 1150,
+  "rows_after_trim": 94920
+}
