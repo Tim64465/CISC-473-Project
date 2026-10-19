@@ -63,6 +63,13 @@ def parse_year(f: Path) -> pd.DataFrame:
     assert len(idx) == 1, f"{f.name}: header line not found"
     df = pd.read_csv(f, skiprows=idx[0])
     assert list(df.columns) == HEADER, f"{f.name}: unexpected columns {list(df.columns)}"
+    # IESO writes 2015-2016 dates as YYYY-MM-DD and later years as YYYY/MM/DD.
+    # Normalise the separator, then parse with one strict format (fails loudly on anything else).
+    s = df["Date"].astype(str).str.strip().str.replace("/", "-", regex=False)
+    try:
+        df["Date"] = pd.to_datetime(s, format="%Y-%m-%d")
+    except ValueError as e:
+        raise ValueError(f"{f.name}: unexpected date format, e.g. {s.iloc[0]!r}: {e}") from None
     return df
 
 
@@ -75,7 +82,7 @@ def build(raw: Path):
                              | (hours_per_day["max"] != 24)]
     checks["days"] = int(len(hours_per_day))
     checks["days_without_exactly_hours_1_to_24"] = bad_days.reset_index().astype(str).to_dict("records")
-    df["date"] = pd.to_datetime(df["Date"]) + pd.to_timedelta(df["Hour"] - 1, unit="h")
+    df["date"] = df["Date"] + pd.to_timedelta(df["Hour"] - 1, unit="h")
     checks["duplicate_timestamps"] = int(df["date"].duplicated().sum())
     df = df.drop_duplicates("date").set_index("date").sort_index()
     full = pd.date_range(df.index[0], df.index[-1], freq="h")

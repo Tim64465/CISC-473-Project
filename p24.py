@@ -293,6 +293,12 @@ def plan_specs(plan, seeds):
 def run_plan(plan, seeds, smoke=False, only=None):
     csv_path = RESULTS / ("smoke_runs.csv" if smoke else "runs.csv")
     done = load_done(csv_path)
+    if plan == "onzonal":  # stop early, clearly, if onzonal.py did not build the data
+        need = [REPO_DIR[r] / DATA_SUBDIR[r] / f"{n}.csv"
+                for r in ("PatchTST", "LTSF-Linear", "iTransformer") for n in ("ONZ_real", "ONZ_shift")]
+        missing = [str(p) for p in need if not p.exists()]
+        if missing:
+            sys.exit("ON-Zonal data not found (did onzonal.py fail above?). Missing:\n  " + "\n  ".join(missing))
     specs = plan_specs(plan, seeds)
     if only:
         specs = [x for x in specs if x["model"] in only]
