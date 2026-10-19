@@ -204,6 +204,8 @@ def run_one(spec, csv_path, done, smoke=False):
     P, S, mode = spec.get("P", 16), spec.get("S"), spec.get("mode", "train")
     S = S if S is not None else P // 2
     tag = f"_P{P}S{S}" if model == "PatchTST" and (P != 16 or S != 8) else ""
+    if spec.get("no_timestamps"):
+        tag += "_nots"  # iTransformer without calendar tokens (RQ2 timestamp check)
     run_id = f"{model}_{ds}_L{L}_H{H}_s{seed}{tag}" + ("_bs1" if mode == "rescore_bs1" else "")
     if run_id in done:
         print(f"skip {run_id} (already logged)")
@@ -216,6 +218,11 @@ def run_one(spec, csv_path, done, smoke=False):
         args = _set(args, "--is_training", 0)
         args = _set(args, "--batch_size", 1)
     env = dict(os.environ, SEED=str(seed), PYTHONUNBUFFERED="1")
+    env.pop("P24_NO_TIMESTAMPS", None)
+    if spec.get("no_timestamps"):
+        assert model == "iTransformer", "the timestamp switch exists only for iTransformer"
+        env["P24_NO_TIMESTAMPS"] = "1"
+        args = _set(args, "--des", f"Exp_s{seed}_nots")  # separate checkpoint folder
     LOGS.mkdir(parents=True, exist_ok=True)
     log_path = LOGS / f"{run_id}{'_SMOKE' if smoke else ''}.log"
     print(f"\n=== {run_id} ===", flush=True)
@@ -285,6 +292,12 @@ def plan_specs(plan, seeds):
                     if model == "PatchTST":
                         s.append(dict(plan=plan, model=model, dataset=ds, L=96, H=96, seed=seed,
                                       epochs=10, patience=3, mode="rescore_bs1"))
+    elif plan == "onzonal_nots":
+        # RQ2 timestamp check: iTransformer without its calendar tokens, same protocol as "onzonal".
+        for seed in seeds:
+            for ds in ("ONZ_real", "ONZ_shift"):
+                s.append(dict(plan=plan, model="iTransformer", dataset=ds, L=96, H=96, seed=seed,
+                              epochs=10, patience=3, no_timestamps=True))
     else:
         raise ValueError(plan)
     return s
@@ -293,7 +306,7 @@ def plan_specs(plan, seeds):
 def run_plan(plan, seeds, smoke=False, only=None):
     csv_path = RESULTS / ("smoke_runs.csv" if smoke else "runs.csv")
     done = load_done(csv_path)
-    if plan == "onzonal":  # stop early, clearly, if onzonal.py did not build the data
+    if plan in ("onzonal", "onzonal_nots"):  # stop early, clearly, if onzonal.py did not build the data
         need = [REPO_DIR[r] / DATA_SUBDIR[r] / f"{n}.csv"
                 for r in ("PatchTST", "LTSF-Linear", "iTransformer") for n in ("ONZ_real", "ONZ_shift")]
         missing = [str(p) for p in need if not p.exists()]
@@ -321,7 +334,7 @@ if __name__ == "__main__":
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("setup")
     r = sub.add_parser("run")
-    r.add_argument("--plan", required=True, choices=["A", "ETTm1", "ablation", "onzonal"])
+    r.add_argument("--plan", required=True, choices=["A", "ETTm1", "ablation", "onzonal", "onzonal_nots"])
     r.add_argument("--seeds", nargs="+", type=int, default=[2021, 2022, 2023])
     r.add_argument("--only", nargs="*", help="restrict to these models")
     r.add_argument("--smoke", action="store_true", help="1 epoch, logged to smoke_runs.csv only")

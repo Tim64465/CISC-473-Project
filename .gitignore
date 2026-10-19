@@ -1,0 +1,8 @@
+work/
+__pycache__/
+*.pyc
+checkpoints/
+# IESO data must not be redistributed (no sublicensing)
+*ONZ_*.csv
+ieso_raw/
+PUB_DemandZonal_*.csv

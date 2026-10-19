@@ -15,6 +15,11 @@ unchanged. The patches only do two things:
    2023). With SEED unset, the original seed is used, so default behaviour
    is identical to the official code. PatchTST already has --random_seed.
 
+3. Optional switch, OFF by default: if the environment variable P24_NO_TIMESTAMPS=1,
+   iTransformer does not receive its calendar tokens (x_mark), exactly as its own code
+   already does for the PEMS and Solar datasets. Used only by the 'onzonal_nots' plan
+   (RQ2 timestamp check); with the variable unset the official behaviour is unchanged.
+
 The script asserts that each expected patch was applied, so a changed
 upstream file fails loudly instead of silently.
 
@@ -70,6 +75,21 @@ def patch_seed(repo: Path, fname: str, old: str, default: int) -> None:
     f.write_text(s)
 
 
+ITRANS_OLD = "if 'PEMS' in self.args.data or 'Solar' in self.args.data:"
+ITRANS_NEW = ("if 'PEMS' in self.args.data or 'Solar' in self.args.data"
+              " or os.environ.get('P24_NO_TIMESTAMPS') == '1':")
+
+
+def patch_itransformer_timestamps(repo: Path) -> None:
+    f = repo / "experiments" / "exp_long_term_forecasting.py"
+    s = f.read_text()
+    if ITRANS_NEW in s:
+        return  # already patched
+    assert s.count(ITRANS_OLD) == 3, f"{f}: expected 3 timestamp branches"
+    assert re.search(r"^import os\s*$", s, flags=re.M), f"{f}: expected 'import os'"
+    f.write_text(s.replace(ITRANS_OLD, ITRANS_NEW))
+
+
 def main() -> None:
     for name, repo in REPOS.items():
         assert repo.is_dir(), f"missing repo {repo}"
@@ -78,6 +98,9 @@ def main() -> None:
         if name in SEED_PATCHES:
             patch_seed(repo, *SEED_PATCHES[name])
             print(f"{name}: seed now read from $SEED (default {SEED_PATCHES[name][2]})")
+        if name == "iTransformer":
+            patch_itransformer_timestamps(repo)
+            print("iTransformer: calendar tokens can be switched off with P24_NO_TIMESTAMPS=1 (default: on)")
     # Check nothing incompatible is left in the code paths we run.
     bad = []
     for name, repo in REPOS.items():

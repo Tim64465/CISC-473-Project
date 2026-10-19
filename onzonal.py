@@ -63,7 +63,7 @@ def parse_year(f: Path) -> pd.DataFrame:
     assert len(idx) == 1, f"{f.name}: header line not found"
     df = pd.read_csv(f, skiprows=idx[0])
     assert list(df.columns) == HEADER, f"{f.name}: unexpected columns {list(df.columns)}"
-    # IESO writes 2015-2016 dates as YYYY-MM-DD and later years as YYYY/MM/DD.
+    # IESO's yearly files mix date formats: YYYY-MM-DD (e.g. 2015, 2023-2025) and YYYY/MM/DD (e.g. 2017).
     # Normalise the separator, then parse with one strict format (fails loudly on anything else).
     s = df["Date"].astype(str).str.strip().str.replace("/", "-", regex=False)
     try:
