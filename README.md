@@ -19,7 +19,9 @@ report's Tables 1–4 and 10, and prints every number quoted in the text), `plot
 results` (`figures/fig_ablation.pdf`, Figure 1) and `budget.py results`.
 
 `results/` holds every logged run: `runs_A.csv` (ETTh1 reproduction and F1, Job A),
-`runs_B.csv` (ON-Zonal RQ2, Job B), `runs_C.csv` (PatchTST ablation, Job C), plus the
+`runs_B.csv` (ON-Zonal RQ2, Job B), `runs_C.csv` (PatchTST ablation, Job C), `runs_V.csv`
+(validation gate V1-V3, passed on a Kaggle T4 on 2026-11-11; its environment is
+`env_V.txt`, and `requirements.txt` pins those versions), plus the
 ON-Zonal build outputs (`onzonal_checks.json`, `onzonal_stats.json`,
 `onzonal_seasonal_naive.csv`, `fig_onzonal_corr.png` = Figure 2). Console logs for Jobs B
 and C are in `logs/`. All runs used NVIDIA Tesla T4 GPUs on Kaggle and Colab. Jobs A and C
@@ -58,6 +60,8 @@ python p24.py f3select results                        # F3: lowest validation lo
 ```
 
 Options of `run`: `--seeds`, `--only <models>`, `--horizons <H...>`, `--smoke`, `--list`.
+`P24_STOP_AFTER_H=<hours>` starts no new run after that many hours (the notebook sets 9, below
+Kaggle's 12-hour session limit); running the plan again continues where it stopped.
 Every plan runs seed 2021 of every config before any other seed. Re-running a plan skips
 the run_ids already in its results file. A results file written by the older kit (22
 columns) is never appended to: use a new `P24_RESULTS` folder (a new JOB letter).

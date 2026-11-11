@@ -69,3 +69,17 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
 ## Not done / open
 - I4 (PatchTST+Cal injection point / time anchor) and I5 (DLinear with the 2022 loader) need code that is not in P1.
 - `WEATHER_SHA256` and the published Weather targets: \TODO (recorded after the first verified download / from the papers).
+
+## Patch 2 (2026-11-11, after plan V passed on Kaggle)
+- `results/runs_V.csv`, `results/env_V.txt`, `logs/logs_V/`: the V gate run (V1a, V1b, V2, V3 PASS on a Tesla T4).
+  With it, `report_tables.py results` still writes byte-identical `tables/*.tex` (the V1 row merges with
+  its copies in `runs_A.csv`/`runs_C.csv`; the variants stay out).
+- `p24.py:737`: `P24_STOP_AFTER_H` (off unless set): no new run starts after that many hours, so a Kaggle
+  session ends cleanly before the 12-hour limit; running the plan again resumes. No computation changes.
+- Notebook (`notebooks/make_notebook.py`): `STOP_AFTER_H = 9` (line 59); resume from the committed
+  `results/runs_<JOB>.csv` when a Kaggle session starts empty (line 98); pinned `einops==0.8.2`,
+  `holidays==0.107` (line 82, the versions plan V ran with); JOB table re-allocated so that the jobs that
+  must reproduce logged rows (G, K, N, Q) run on Kaggle; JOB S marked optional.
+- `requirements.txt`: pinned to `results/env_V.txt`.
+- Test: `tests/output/test_stop_resume.txt` (CPU: session 1 stops after the first run, session 2 skips it and
+  finishes; V2/V3 bitwise identical again).

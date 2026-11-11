@@ -17,6 +17,8 @@ Every run is appended to results/runs.csv as soon as it finishes, so a
 disconnect loses at most one run. Re-running a plan skips runs already logged.
 Each run's full console output is kept in logs/<run_id>.log.
 Smoke tests (--smoke) train 1 epoch and log to results/smoke_runs.csv only.
+P24_STOP_AFTER_H=<hours>: start no new run after that many hours (for platforms that end
+sessions at a fixed time); run the plan again to continue.
 
 Scoring (column `scoring`, rows logged from branch final-runs on; blank in older rows):
   official      the model's own test loader, unchanged
@@ -732,7 +734,15 @@ def run_plan(plan, seeds, smoke=False, only=None, horizons=None):
         weather_data()
     print(f"Plan {plan} ({PLANS[plan][0]}): {len(specs)} runs, "
           f"{sum(1 for x in specs if x.get('mode', 'train') == 'train')} trainings, seeds {seeds}")
-    for spec in specs:
+    # P24_STOP_AFTER_H: start no new run after this many hours, so a session that the platform
+    # ends at a fixed limit (Kaggle: 12 h) stops cleanly and keeps its output. Unset = no limit.
+    stop_h, t_plan = float(os.environ.get("P24_STOP_AFTER_H") or 0), time.time()
+    for i, spec in enumerate(specs):
+        if stop_h and time.time() - t_plan > stop_h * 3600 and run_id_of(spec) not in done:
+            left = sum(1 for x in specs[i:] if run_id_of(x) not in done)
+            print(f"\nSTOP: this session has used its {stop_h:g} h (P24_STOP_AFTER_H); {left} run(s) not started. "
+                  "Run this JOB again to continue: finished runs are skipped.", flush=True)
+            return
         try:
             run_one(spec, csv_path, done, smoke)
         except Exception as e:  # one bad run must never stop the plan
