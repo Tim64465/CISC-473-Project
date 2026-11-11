@@ -1,0 +1,7 @@
+old kit  OK 2.3.3 (34560, 5) 49db3fa43c8109c9d5e13bc6fa925e5366eec14ae75eabe1df8c03cdd837ccf1
+old kit  ERR 3.0.5 ValueError Invalid frequency: t. Failed to parse with error message: ValueError("Invalid fr
+new kit  OK 2.3.3 (34560, 5) 49db3fa43c8109c9d5e13bc6fa925e5366eec14ae75eabe1df8c03cdd837ccf1
+new kit  OK 3.0.5 (34560, 5) 49db3fa43c8109c9d5e13bc6fa925e5366eec14ae75eabe1df8c03cdd837ccf1
+[PASS] pandas 2: old and new kit give byte-identical data_stamp
+[PASS] pandas 3: new kit works and equals the pandas-2 data_stamp (old kit: ERR)
+OVERALL: PASS

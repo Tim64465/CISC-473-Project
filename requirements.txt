@@ -5,3 +5,5 @@ matplotlib
 scikit-learn
 reformer_pytorch==1.4.4
 scipy
+einops
+holidays

@@ -1,0 +1,8 @@
+[PASS] 1. committed results -> tables/*.tex byte-identical  -- ['ablation_ETTh1.tex', 'f1_ETTh1.tex', 'gap_ETTh1.tex', 'onzonal_rq2.tex', 'repro_ETTh1.tex']
+[PASS] 2. dual-scored re-run of runs_A.csv:2 with the same official score -> merged, tables unchanged  -- 114 distinct runs from 4 file(s); 6 run_id(s) logged more than once, all copies agreeing
+[PASS] 3. re-run with a different official score -> build stops  -- AssertionError: PatchTST_ETTh1_L336_H96_s2021: duplicate runs disagree on mse_off: [0.3816, 0.3816, 0.381601]
+[PASS] 4. variant rows (nots, ci, cal, lr) do not enter the baseline tables
+[PASS] 5a. extra seeds in one cell only -> every table uses the seeds common to all its cells (unchanged)  -- onzonal_rq2: using seeds [2021, 2022, 2023] (in every cell); not used: {('iTransformer', 'ONZ_real'): [2024, 2025]}
+[PASS] 5b. seeds 2024-25 in every RQ2 cell -> only onzonal_rq2.tex changes (5 seeds, PatchTST all-window from the dual rows)  -- changed: ['onzonal_rq2.tex']
+
+OVERALL: PASS (6/6 checks)

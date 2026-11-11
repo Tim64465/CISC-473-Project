@@ -1,0 +1,18 @@
+[PASS] plan A: 60 runs, same run_ids in the same order, identical command lines
+[PASS] plan A: environment identical except P24_ALL_WINDOWS=1 on PatchTST training runs  -- added switches: [(('P24_ALL_WINDOWS', '1'),)]
+[PASS] plan ablation: 36 runs, same run_ids in the same order, identical command lines
+[PASS] plan ablation: environment identical except P24_ALL_WINDOWS=1 on PatchTST training runs  -- added switches: [(('P24_ALL_WINDOWS', '1'),)]
+[PASS] plan onzonal: 24 runs, same run_ids in the same order, identical command lines
+[PASS] plan onzonal: environment identical except P24_ALL_WINDOWS=1 on PatchTST training runs  -- added switches: [(('P24_ALL_WINDOWS', '1'),)]
+[PASS] plan onzonal_nots: 6 runs, same run_ids in the same order, identical command lines
+[PASS] plan onzonal_nots: environment identical except P24_ALL_WINDOWS=1 on PatchTST training runs  -- added switches: []
+[PASS] plan ETTm1: 48 runs, same run_ids in the same order, identical command lines
+[PASS] plan ETTm1: environment identical except P24_ALL_WINDOWS=1 on PatchTST training runs  -- added switches: [(('P24_ALL_WINDOWS', '1'),)]
+[PASS] plan ETTm1: the 12 re-score runs are gone (dual scoring logs both scores in the training run)
+[PASS] plan ablation_redo: 24 run_ids are logged runs (expected 24); they must reproduce them  -- PatchTST_ETTh1_L336_H96_s2021_P8S4 = runs_C.csv:2, PatchTST_ETTh1_L336_H96_s2021_P32S16 = runs_C.csv:4, PatchTST_ETTh1_L336_H96_s2021_P64S32 = runs_C.csv:5 ...
+[PASS] plan onzonal_export: 3 run_ids are logged runs (expected 3); they must reproduce them  -- iTransformer_ONZ_real_L96_H96_s2021 = runs_B.csv:2, PatchTST_ONZ_real_L96_H96_s2021 = runs_B.csv:3, DLinear_ONZ_real_L96_H96_s2021 = runs_B.csv:5
+[PASS] plan V: 1 run_ids are logged runs (expected 1); they must reproduce them  -- PatchTST_ETTh1_L336_H96_s2021 = runs_A.csv:2
+[PASS] plan sameL: 6 run_ids are logged runs (the 6 PatchTST L=96 runs of runs_C.csv)
+[PASS] plan f3: 4 default-LR runs re-run logged iTransformer rows (validation loss was not logged)
+
+OVERALL: PASS (16/16 checks)

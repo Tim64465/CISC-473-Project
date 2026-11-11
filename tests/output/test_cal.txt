@@ -1,0 +1,55 @@
+## (a) flags off -> the namespace and the code path are unchanged
+[PASS] no cal_* attribute in args without flags (argparse.SUPPRESS)
+[PASS] model.p24_cal is None without flags
+[PASS] no new parameter or buffer without flags
+
+## RNG: building the calendar embeddings draws no random number
+[PASS] ETTh1 hour+dow: baseline parameters identical, global RNG state identical after build  -- new tensors: ['p24_cal.dow.weight', 'p24_cal.hour.weight']
+[PASS] ETTh1 hour+dow: new embeddings are exactly zero
+[PASS] (c) ETTh1 d_model=16 hour+dow: added parameters = 496 (= d_model x (24 + 7)); baseline 81731
+[PASS] ONZ_real hour+dow+holiday: baseline parameters identical, global RNG state identical after build  -- new tensors: ['p24_cal.dow.weight', 'p24_cal.holiday.weight', 'p24_cal.hour.weight']
+[PASS] ONZ_real hour+dow+holiday: new embeddings are exactly zero
+[PASS] (c) ONZ_real d_model=128 hour+dow+holiday: added parameters = 4224 (= d_model x (24 + 7 + 2)); baseline 548707
+
+## (c) added parameters for every planned PatchTST+Cal config
+    ETTh1    L=336 H=96 cal=hour+dow           baseline   81731  +Cal   82227  added   496
+    ONZ_real L=96 H=96 cal=hour+dow+holiday   baseline  548707  +Cal  552931  added  4224
+    ONZ_real L=96 H=96 cal=dow+holiday        baseline  548707  +Cal  549859  added  1152
+    ONZ_real L=96 H=96 cal=hour+holiday       baseline  548707  +Cal  552035  added  3328
+    ONZ_real L=96 H=96 cal=hour+dow           baseline  548707  +Cal  552675  added  3968
+
+## (b) flags on, embeddings at zero -> outputs identical to the baseline
+[PASS] ETTh1 hour+dow eval mode: forward output bitwise identical
+[PASS] ETTh1 hour+dow train mode: forward output bitwise identical
+[PASS] ETTh1: 5 training steps, embeddings frozen at 0 -> all baseline parameters bitwise identical
+[PASS] ETTh1: trainable embeddings get non-zero gradients  -- {'p24_cal.hour.weight': 0.2389603853225708, 'p24_cal.dow.weight': 0.11133719235658646}
+[PASS] ONZ_real hour+dow+holiday eval mode: forward output bitwise identical
+[PASS] ONZ_real hour+dow+holiday train mode: forward output bitwise identical
+[PASS] ONZ_real: 5 training steps, embeddings frozen at 0 -> all baseline parameters bitwise identical
+[PASS] ONZ_real: trainable embeddings get non-zero gradients  -- {'p24_cal.hour.weight': 0.5854378342628479, 'p24_cal.dow.weight': 0.31125685572624207, 'p24_cal.holiday.weight': 0.0886562168598175}
+
+## hour and day of week recovered from the timeF features
+[PASS] hourly, 2 years: hour = round((x0 + 0.5) * 23), dow = round((x1 + 0.5) * 6) exact for all 17544 timestamps
+[PASS] 15-min (ETTm1-style; PatchTST runs ETTm1 with --freq h): hour = round((x0 + 0.5) * 23), dow = round((x1 + 0.5) * 6) exact for all 1344 timestamps
+
+## each patch is indexed by its first time step
+[PASS] L=96 P=16 S=8: 12 patches, first steps [0, 8, 16]...88 match unfold
+[PASS] L=336 P=16 S=8: 42 patches, first steps [0, 8, 16]...328 match unfold
+[PASS] L=720 P=16 S=8: 90 patches, first steps [0, 8, 16]...712 match unfold
+[PASS] L=96 P=64 S=32: 3 patches, first steps [0, 32, 64]...64 match unfold
+[PASS] L=336 P=8 S=4: 84 patches, first steps [0, 4, 8]...332 match unfold
+[PASS] L=720 P=64 S=32: 22 patches, first steps [0, 32, 64]...672 match unfold
+
+## holiday flag appended to data_stamp by Dataset_Custom (only with --cal_holiday)
+train 6109
+    flags (none): data_stamp shape (6300, 4)
+[PASS] no holiday column without --cal_holiday
+train 6109
+    flags ('holiday',): data_stamp shape (6300, 5)
+[PASS] holiday column == holidays.Canada(subdiv='ON') for all 6300 training rows (120 holiday hours = 5 days)
+train 6109
+    flags ('hour', 'dow', 'holiday'): data_stamp shape (6300, 5)
+[PASS] holiday column == holidays.Canada(subdiv='ON') for all 6300 training rows (120 holiday hours = 5 days)
+    Ontario holidays in 2024 (holidays 0.108): 2024-01-01 New Year's Day; 2024-02-19 Family Day; 2024-03-29 Good Friday; 2024-05-20 Victoria Day; 2024-07-01 Canada Day; 2024-09-02 Labour Day; 2024-10-14 Thanksgiving Day; 2024-12-25 Christmas Day; 2024-12-26 Boxing Day
+
+OVERALL: PASS (28/28 checks)

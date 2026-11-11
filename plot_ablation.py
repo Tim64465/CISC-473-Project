@@ -38,7 +38,7 @@ def main():
             mean = np.array([v.mean() for v in vals])
             sd = np.array([v.std(ddof=1) for v in vals])
             for i, v in enumerate(vals):
-                ax.scatter(np.full(len(v), pos[i]) + np.array([-0.06, 0, 0.06]), v, s=9, color=col,
+                ax.scatter(np.full(len(v), pos[i]) + np.linspace(-0.06, 0.06, len(v)), v, s=9, color=col,
                            alpha=0.28, linewidths=0, zorder=2)
             ax.errorbar(pos, mean, yerr=sd, color=col, marker=mk, ms=5.5, lw=2, capsize=2.5,
                         elinewidth=1, zorder=3, label=f"$H={H}$")

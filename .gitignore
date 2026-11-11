@@ -6,3 +6,7 @@ checkpoints/
 *ONZ_*.csv
 ieso_raw/
 PUB_DemandZonal_*.csv
+# Exported predictions: large, and ON-Zonal true.npy is (z-scored) IESO data, which must not be redistributed
+preds/
+results_*/
+/results/smoke_runs.csv

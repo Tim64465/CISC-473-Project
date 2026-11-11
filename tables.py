@@ -36,6 +36,18 @@ def load_runs(dirs):
                              for c in cols})
     df = pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
     df = df[df["mse"].notna()].drop_duplicates("run_id", keep="first")
+    # Rows logged on branch final-runs: keep the unmodified models only, and give the quick
+    # tables the meaning they had before (mode train = official loader; rescore_bs1 = every
+    # window). A dual-scored PatchTST row therefore appears once as each.
+    sys.path.insert(0, str(KIT))
+    from report_tables import normalise
+    df = normalise(df)
+    df = df[df["variant"] == ""]
+    dual = df[df["scoring"] == "all+official"].copy()
+    df.loc[df["scoring"] == "all+official", ["mse", "mae", "n_scored"]] = \
+        df.loc[df["scoring"] == "all+official", ["mse_official", "mae_official", "n_scored_official"]].values
+    dual["mode"], dual["run_id"] = "rescore_bs1", dual["run_id"] + "_all"
+    df = pd.concat([df, dual], ignore_index=True)
     for c in ("L", "H", "seed"):
         df[c] = df[c].astype(int)
     df["patch_len"] = pd.to_numeric(df["patch_len"], errors="coerce")
@@ -290,7 +302,7 @@ def summary(df):
     if df.empty:
         print("No runs logged yet.")
         return
-    g = df.groupby(["dataset", "model", "mode", "L", "H"])["mse"].agg(["count", "mean", "std"])
+    g = df.groupby(["dataset", "model", "mode", "L", "H", "patch_len"], dropna=False)["mse"].agg(["count", "mean", "std"])
     print(g.round(4).to_string())
 
 

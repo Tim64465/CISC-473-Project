@@ -1,0 +1,16 @@
+
+### PatchTST ETTh1 L=336 H=96, 1 epoch(s): python run_longExp.py --random_seed 2021 --is_training 1 --root_path ./dataset/ --data_path ETTh1.csv --model_id ETTh1_336_96_P16S8 --model PatchTST --data ETTh1 --features M --seq_len 336 --pred_len 96 --enc_in 7 --e_layers 3 --patch_len 16 --stride 8 --des Exp_s2021 --itr 1 --batch_size 128 --learning_rate 0.0001 --n_heads 4 --d_model 16 --d_ff 128 --dropout 0.3 --fc_dropout 0.3 --head_dropout 0 --train_epochs 1
+  flags off: console log identical (minus wall-clock lines): True; pred.npy identical: True (2688, 96, 7); mse:0.8136252760887146, mae:0.6091136336326599, rse:0.8553181290626526
+  P24_ALL_WINDOWS=1: training + per-epoch Test Loss lines identical to the official run: True
+    official loader: 2688 windows scored, mse 0.8136252760887146 mae 0.6091136336326599
+    dual: n_test 2785, official subset k = floor(2785/128)*128 = 2688: mse_official 0.8136252760887146 mae_official 0.6091136336326599 -> identical: True
+    dual pred.npy (2785, 96, 7); first 2688 predictions byte-identical to the official pred.npy: True; every-window mse 0.8148794770240784 (diff vs official +1.254e-03); true.npy saved (2785, 96, 7)
+
+### iTransformer ETTh1 L=96 H=96, 1 epoch(s): python run.py --is_training 1 --root_path ./dataset/ETT-small/ --data_path ETTh1.csv --model_id ETTh1_96_96 --model iTransformer --data ETTh1 --features M --seq_len 96 --pred_len 96 --e_layers 2 --enc_in 7 --dec_in 7 --c_out 7 --des Exp_s2021 --d_model 256 --d_ff 256 --itr 1 --train_epochs 1
+  flags off: console log identical (minus wall-clock lines): True; pred.npy identical: True (2785, 96, 7); mse:0.39964210987091064, mae:0.4120761752128601
+
+### DLinear ETTh1 L=336 H=96, 1 epoch(s): python run_longExp.py --is_training 1 --root_path ./dataset/ --data_path ETTh1.csv --model_id ETTh1_336_96 --model DLinear --data ETTh1 --features M --seq_len 336 --pred_len 96 --enc_in 7 --des Exp_s2021 --itr 1 --batch_size 32 --learning_rate 0.005 --train_epochs 1
+  flags off: console log identical (minus wall-clock lines): True; pred.npy identical: True (2785, 96, 7); mse:0.42191430926322937, mae:0.43318092823028564
+  P24_EXPORT=1: log and pred identical, true.npy saved (2785, 96, 7): True
+
+OVERALL: PASS

@@ -1,0 +1,26 @@
+
+## ONZ_real L=96 H=96: B=4, N=10 variates, 4 calendar tokens, d_model=128
+[PASS] same parameters (none added), same values, same RNG state after build  -- 224224 parameters
+[PASS] output shape (4, 96, 10) == [B, H, N] (same as the original (4, 96, 10))
+[PASS] attention input (40, 5, 128) == [B*N, 1 + calendar tokens, d_model]
+[PASS] CI output == original model run on each variate separately (no cross-variate information)  -- max |diff| 0.0e+00
+[PASS] perturbing variate 0 leaves variates 1..N-1 unchanged with CI (it does change them without CI)  -- max change of other variates: CI 0.0e+00, original 7.2e-07
+[PASS] CI also runs without calendar tokens (x_mark None)
+
+## ONZ_real L=96 H=720: B=4, N=10 variates, 4 calendar tokens, d_model=128
+[PASS] same parameters (none added), same values, same RNG state after build  -- 304720 parameters
+[PASS] output shape (4, 720, 10) == [B, H, N] (same as the original (4, 720, 10))
+[PASS] attention input (40, 5, 128) == [B*N, 1 + calendar tokens, d_model]
+[PASS] CI output == original model run on each variate separately (no cross-variate information)  -- max |diff| 0.0e+00
+[PASS] perturbing variate 0 leaves variates 1..N-1 unchanged with CI (it does change them without CI)  -- max change of other variates: CI 0.0e+00, original 8.3e-07
+[PASS] CI also runs without calendar tokens (x_mark None)
+
+## ETTh1 L=96 H=96: B=4, N=7 variates, 4 calendar tokens, d_model=256
+[PASS] same parameters (none added), same values, same RNG state after build  -- 841568 parameters
+[PASS] output shape (4, 96, 7) == [B, H, N] (same as the original (4, 96, 7))
+[PASS] attention input (28, 5, 256) == [B*N, 1 + calendar tokens, d_model]
+[PASS] CI output == original model run on each variate separately (no cross-variate information)  -- max |diff| 8.9e-07
+[PASS] perturbing variate 0 leaves variates 1..N-1 unchanged with CI (it does change them without CI)  -- max change of other variates: CI 0.0e+00, original 8.3e-07
+[PASS] CI also runs without calendar tokens (x_mark None)
+
+OVERALL: PASS (18/18 checks)
