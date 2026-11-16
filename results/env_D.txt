@@ -855,7 +855,7 @@ toml==0.10.2
 tomlkit==0.14.0
 toolz==0.12.1
 torch==2.11.0+cu130
-torch-einops-utils==0.2.6
+torch-einops-utils==0.2.7
 torchao==0.10.0
 torchaudio==2.11.0+cu130
 torchcodec==0.11.0+cu130
@@ -943,4 +943,4 @@ zipp==4.1.2
 zstandard==0.25.0
 Tesla T4, 580.178.04
 Tesla T4, 580.178.04
-kit commit 2a50dc18a0357203ce434ced0d826dc277d3f781
+kit commit 92615f3a7f81f539500d0c2083dadb54e4b24e38
