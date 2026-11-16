@@ -68,16 +68,22 @@ dual = dict(v1, plan="V", mse=bs1["mse"], mae=bs1["mae"], n_scored=bs1["n_scored
 rc, out, tex = build([dual])
 check("2. dual-scored re-run of runs_A.csv:2 with the same official score -> merged, tables unchanged",
       rc == 0 and tex == committed, out.splitlines()[0])
-bad = dict(dual, mse_official=f"{float(v1['mse']) + 1e-6:.6f}")  # FIXTURE: a non-reproducing re-run
+near = dict(dual, mse_official=f"{float(v1['mse']) + 1e-6:.6f}")  # FIXTURE: last logged decimal differs by one unit
+rc, out, tex = build([near])
+check("3a. re-run differing by one unit of the 6th decimal -> accepted and listed, first-logged value used, "
+      "tables unchanged", rc == 0 and tex == committed and "differ in the 6th decimal only" in out,
+      next((l.strip() for l in out.splitlines() if "logged as" in l), ""))
+bad = dict(dual, mse_official=f"{float(v1['mse']) + 1e-5:.6f}")  # FIXTURE: a non-reproducing re-run
 rc, out, tex = build([bad])
-check("3. re-run with a different official score -> build stops", rc != 0 and "disagree on mse_off" in out,
+check("3b. re-run with a different official score (1e-5) -> build stops", rc != 0 and "disagree on mse_off" in out,
       out.strip().splitlines()[-1])
 
 variants = []
 for rid, var in (("iTransformer_ONZ_real_L96_H96_s2021", "nots"), ("iTransformer_ONZ_shift_L96_H96_s2021", "ci"),
                  ("PatchTST_ETTh1_L336_H96_s2022", "cal-hour-dow"), ("iTransformer_ETTh1_L96_H96_s2023", "lr0.0003")):
     r = logged(rid)  # FIXTURE: same config with a variant tag and an obviously different score
-    variants.append(dict(r, run_id=rid + "_" + var, variant=var, mse="9.999999", mae="9.999999",
+    # "_FIXTURE": real runs with these variant tags are now logged (e.g. runs_E.csv), so avoid their run_ids
+    variants.append(dict(r, run_id=rid + "_" + var + "_FIXTURE", variant=var, mse="9.999999", mae="9.999999",
                          scoring="all+official" if r["model"] == "PatchTST" else "official",
                          mse_official="9.999999" if r["model"] == "PatchTST" else "",
                          mae_official="9.999999" if r["model"] == "PatchTST" else "",

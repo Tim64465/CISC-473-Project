@@ -83,3 +83,14 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
 - `requirements.txt`: pinned to `results/env_V.txt`.
 - Test: `tests/output/test_stop_resume.txt` (CPU: session 1 stops after the first run, session 2 skips it and
   finishes; V2/V3 bitwise identical again).
+
+## Patch 3 (2026-11-16, after job K)
+- Finding: job K (Kaggle T4, torch 2.11.0) re-ran three Job B configs. PatchTST and DLinear are identical
+  to `runs_B.csv` in every digit. iTransformer: MSE identical in every printed digit
+  (0.28572067618370056); MAE 0.387782484 against 0.387782544 in October (6e-8), which rounds to 0.387782
+  against 0.387783. Its training losses differ in the 7th decimal from epoch 1 on (`logs/logs_B` vs `logs/logs_K`).
+- `report_tables.py:37`: `DUP_TOL = 1.5e-6`. Copies of one run_id that differ by at most one unit of the
+  6th logged decimal are accepted and listed; the first-logged value is used, so existing tables do not
+  change. Larger differences still stop the build.
+- `tests/test_report_tables.py`: test 3a (one-unit difference accepted, tables unchanged), 3b (1e-5 stops);
+  the variant fixture no longer reuses run_ids that are now real runs (`runs_E.csv`).

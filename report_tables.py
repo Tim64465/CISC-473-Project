@@ -34,6 +34,7 @@ HERE = Path(__file__).resolve().parent
 OUT = Path(os.environ.get("P24_TABLES", HERE / "tables"))
 H_ALL = (96, 192, 336, 720)
 MIN_SEEDS = 2  # a sample std needs two values
+DUP_TOL = 1.5e-6  # two logged copies of one run may differ by one unit of the 6th (last logged) decimal
 SCORE_COLS = ("mse_off", "mae_off", "mse_all", "mae_all")
 
 
@@ -45,20 +46,30 @@ def load(results):
     df = df[df["mse"].notna()]
     df = normalise(df)
     # The same run_id can appear in several jobs (Jobs A and C share six PatchTST runs; plans V,
-    # sameL, ablation_redo and onzonal_export re-train logged configs). Training is deterministic
-    # on T4, so every copy must give the same official and every-window scores; then keep one
-    # copy that carries both scores.
+    # sameL, ablation_redo and onzonal_export re-train logged configs). Every copy must give the
+    # same official and every-window scores; then keep one copy that carries both scores.
+    # PatchTST and DLinear re-runs are bit-identical. An iTransformer re-run in a later software
+    # environment (job K) matched its MSE in every printed digit and its MAE to 6e-8, which
+    # changed the 6th logged decimal. Copies within DUP_TOL are therefore accepted and listed;
+    # the value logged first (files in name order) is the one used. Anything larger stops the build.
     dup = df[df.duplicated("run_id", keep=False)]
+    near = []
     for rid, g in dup.groupby("run_id"):
         for c in SCORE_COLS:
             v = g[c].dropna()
-            assert v.nunique() <= 1, f"{rid}: duplicate runs disagree on {c}: {list(v)}"
+            if v.nunique() > 1:
+                spread = float(v.max() - v.min())
+                assert spread <= DUP_TOL, f"{rid}: duplicate runs disagree on {c}: {list(v)}"
+                near.append(f"  {rid}: {c} logged as {', '.join(f'{x:.6f}' for x in v)} (using {v.iloc[0]:.6f})")
     n_dup = dup["run_id"].nunique()
     for c in SCORE_COLS:
         df[c] = df.groupby("run_id")[c].transform("first")  # first non-missing value of each run_id
     df["_prio"] = (df["scoring"] != "all+official").astype(int)
     df = df.sort_values("_prio", kind="stable").drop_duplicates("run_id").sort_index().drop(columns="_prio")
     print(f"{len(df)} distinct runs from {len(files)} file(s); {n_dup} run_id(s) logged more than once, all copies agreeing")
+    if near:
+        print(f"{len(near)} score(s) of re-run configs differ in the 6th decimal only (accepted, tolerance {DUP_TOL:g}):")
+        print("\n".join(near))
     return df
 
 

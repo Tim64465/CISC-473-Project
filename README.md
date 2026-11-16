@@ -120,7 +120,11 @@ every row logged before it):
 `report_tables.py` derives two scores for every row (`mse_off`: official loader;
 `mse_all`: every window), never mixes them in one table, and states which one each table
 uses. Rows with the same `run_id` from different jobs (deliberate re-runs) must agree on both
-scores, or the build stops.
+scores, or the build stops. Agreement is exact for PatchTST and DLinear (bit-identical re-runs).
+The iTransformer re-run of job K, in a later software environment than Job B, matched its MSE
+in every printed digit and its MAE to 6e-8, which changed the 6th logged decimal; copies within
+one unit of the 6th decimal (`DUP_TOL = 1.5e-6`) are accepted, listed in the build output, and
+the first-logged value is used.
 
 **Why the official subset of a dual-scored run is exactly the official loader's result.**
 PatchTST's test loader (`data_provider/data_factory.py:17-20`) is
