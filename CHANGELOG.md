@@ -106,3 +106,11 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
 - `tests/output/test_report_tables.txt`: refreshed (PASS 7/7 with the 14 results files of jobs A, B, C, D, E,
   F, G, H, J, K, L, M, V and Vcolab: 252 distinct runs; test 2 reads 15 files because it adds its fixture file).
 - `README.md`: notes the 5-seed RQ2 table and what `runs_Vcolab.csv` is.
+
+## Patch 5 (2026-11-18, after job N)
+- `tables/ablation_ETTh1_all.tex`: new, written by `python report_tables.py results` once `runs_N.csv` gives
+  every-window scores for every ablation cell (the PatchTST patch-length and look-back ablation, scored on every
+  test window). No existing table changes. Without it, tests 1, 2, 3a, 4, 5a and 5b failed once N was committed.
+- `tests/output/test_report_tables.txt`: refreshed (PASS 7/7 with the results files of jobs A, B, C, D, E, F, G,
+  H, J, K, L, M, N, P, Q, V and Vcolab).
+- `README.md`: names the new table.

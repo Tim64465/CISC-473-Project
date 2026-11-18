@@ -18,6 +18,7 @@ pip install -r requirements.txt
 report's Tables 1–4 and 10, and prints every number quoted in the text), `plot_ablation.py
 results` (`figures/fig_ablation.pdf`, Figure 1) and `budget.py results`. Since job F,
 `tables/onzonal_rq2.tex` uses seeds 2021–25; the midterm's version used seeds 2021–23 (git history).
+Since job N, `tables/ablation_ETTh1_all.tex` is the PatchTST ablation scored on every test window.
 
 `results/` holds every logged run: `runs_A.csv` (ETTh1 reproduction and F1, Job A),
 `runs_B.csv` (ON-Zonal RQ2, Job B), `runs_C.csv` (PatchTST ablation, Job C), `runs_V.csv`

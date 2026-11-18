@@ -1,5 +1,5 @@
-[PASS] 1. committed results -> tables/*.tex byte-identical  -- ['ablation_ETTh1.tex', 'f1_ETTh1.tex', 'gap_ETTh1.tex', 'onzonal_rq2.tex', 'repro_ETTh1.tex']
-[PASS] 2. dual-scored re-run of runs_A.csv:2 with the same official score -> merged, tables unchanged  -- 252 distinct runs from 15 file(s); 17 run_id(s) logged more than once, all copies agreeing
+[PASS] 1. committed results -> tables/*.tex byte-identical  -- ['ablation_ETTh1.tex', 'ablation_ETTh1_all.tex', 'f1_ETTh1.tex', 'gap_ETTh1.tex', 'onzonal_rq2.tex', 'repro_ETTh1.tex']
+[PASS] 2. dual-scored re-run of runs_A.csv:2 with the same official score -> merged, tables unchanged  -- 286 distinct runs from 18 file(s); 45 run_id(s) logged more than once, all copies agreeing
 [PASS] 3a. re-run differing by one unit of the 6th decimal -> accepted and listed, first-logged value used, tables unchanged  -- PatchTST_ETTh1_L336_H96_s2021: mse_off logged as 0.381600, 0.381600, 0.381601, 0.381600, 0.381600 (using 0.381600)
 [PASS] 3b. re-run with a different official score (1e-5) -> build stops  -- AssertionError: PatchTST_ETTh1_L336_H96_s2021: duplicate runs disagree on mse_off: [0.3816, 0.3816, 0.38161, 0.3816, 0.3816]
 [PASS] 4. variant rows (nots, ci, cal, lr) do not enter the baseline tables
