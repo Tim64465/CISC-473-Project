@@ -16,7 +16,8 @@ pip install -r requirements.txt
 
 `./reproduce.sh tables` runs `report_tables.py results` (writes `tables/*.tex`, the midterm
 report's Tables 1–4 and 10, and prints every number quoted in the text), `plot_ablation.py
-results` (`figures/fig_ablation.pdf`, Figure 1) and `budget.py results`.
+results` (`figures/fig_ablation.pdf`, Figure 1) and `budget.py results`. Since job F,
+`tables/onzonal_rq2.tex` uses seeds 2021–25; the midterm's version used seeds 2021–23 (git history).
 
 `results/` holds every logged run: `runs_A.csv` (ETTh1 reproduction and F1, Job A),
 `runs_B.csv` (ON-Zonal RQ2, Job B), `runs_C.csv` (PatchTST ablation, Job C), `runs_V.csv`
@@ -27,6 +28,8 @@ ON-Zonal build outputs (`onzonal_checks.json`, `onzonal_stats.json`,
 and C are in `logs/`. All runs used NVIDIA Tesla T4 GPUs on Kaggle and Colab. Jobs A and C
 share six PatchTST runs; `report_tables.py` checks that they agree exactly (they do).
 New jobs add `results/runs_<JOB>.csv` and `logs/logs_<JOB>/` (see the notebook's JOB table).
+`runs_Vcolab.csv`, `env_Vcolab.txt` and `logs/logs_Vcolab/` are plan V re-run on Colab (torch 2.14.1), a
+cross-platform check rather than a job of its own; its rows repeat logged run_ids within `DUP_TOL`.
 
 ## What is here
 

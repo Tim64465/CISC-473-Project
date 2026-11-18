@@ -7,8 +7,9 @@
    logged one merges silently: all tables unchanged.
 3. The same re-run with a different official score stops the build (determinism check).
 4. Rows of variants (nots, ci, cal, lr) never enter the baseline tables.
-5. More seeds (2024-25) in some cells: each table uses the seeds present in all its cells;
-   with 5 seeds in every RQ2 cell the RQ2 table changes and the caption counts are computed.
+5. More seeds (FIXTURE seeds 2026-27; 2024-25 are real runs since job F) in some cells: each
+   table uses the seeds present in all its cells; with the extra seeds in every RQ2 cell the
+   RQ2 table changes and the caption counts are computed.
 Rows marked FIXTURE below are invented test inputs, not results.
 """
 import csv
@@ -95,7 +96,7 @@ more = []
 for m in ("iTransformer", "PatchTST", "DLinear"):
     for ds in ("ONZ_real", "ONZ_shift"):
         base = logged(f"{m}_{ds}_L96_H96_s2021")
-        for k, seed in enumerate((2024, 2025)):
+        for k, seed in enumerate((2026, 2027)):  # FIXTURE seeds: 2024-25 are logged by job F (runs_F.csv)
             v = float(base["mse"]) + 0.001 * (k + 1)  # FIXTURE values
             r = dict(base, run_id=f"{m}_{ds}_L96_H96_s{seed}", seed=seed, plan="onzonal_seeds", mse=f"{v:.6f}",
                      scoring="all+official" if m == "PatchTST" else "official", variant="")
@@ -103,12 +104,12 @@ for m in ("iTransformer", "PatchTST", "DLinear"):
                 r.update(n_scored=base["n_test_windows"], mse_official=f"{v + 0.0002:.6f}", mae_official=base["mae"],
                          n_scored_official=base["n_scored"], test_drop_last="False")
             more.append(r)
-rc, out, tex = build(more[:2])  # seeds 2024-25 for one cell only
+rc, out, tex = build(more[:2])  # seeds 2026-27 for one cell only
 check("5a. extra seeds in one cell only -> every table uses the seeds common to all its cells (unchanged)",
       rc == 0 and tex == committed, next((l for l in out.splitlines() if "not used" in l), ""))
 rc, out, tex = build(more)
 changed = sorted(k for k in tex if tex[k] != committed.get(k))
-check("5b. seeds 2024-25 in every RQ2 cell -> only onzonal_rq2.tex changes (5 seeds, PatchTST all-window from "
+check("5b. seeds 2026-27 in every RQ2 cell -> only onzonal_rq2.tex changes (7 seeds, PatchTST all-window from "
       "the dual rows)", rc == 0 and changed == ["onzonal_rq2.tex"], f"changed: {changed}")
 print("\nOVERALL:", "PASS" if all(OK) else "FAIL", f"({sum(OK)}/{len(OK)} checks)")
 sys.exit(0 if all(OK) else 1)

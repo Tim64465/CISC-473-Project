@@ -94,3 +94,15 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
   change. Larger differences still stop the build.
 - `tests/test_report_tables.py`: test 3a (one-unit difference accepted, tables unchanged), 3b (1e-5 stops);
   the variant fixture no longer reuses run_ids that are now real runs (`runs_E.csv`).
+
+## Patch 4 (2026-11-17, after jobs F and L)
+- `tables/onzonal_rq2.tex`: rebuilt by `python report_tables.py results` now that `runs_F.csv` adds seeds
+  2024–25 to every RQ2 cell (5 seeds). No other table changes; with jobs H and J added the tables are the same.
+  The 3-seed midterm version stays in git history.
+- `tests/test_report_tables.py`: test 5 used invented rows for seeds 2024–25, which are real runs since job F;
+  its FIXTURE seeds are now 2026–27 (5a: one cell, tables unchanged; 5b: every RQ2 cell, 7 seeds, only
+  `onzonal_rq2.tex` changes). Before this patch, tests 1, 2, 3a, 4, 5a and 5b failed on the committed
+  results because the committed RQ2 table was the 3-seed one.
+- `tests/output/test_report_tables.txt`: refreshed (PASS 7/7 with the 14 results files of jobs A, B, C, D, E,
+  F, G, H, J, K, L, M, V and Vcolab: 252 distinct runs; test 2 reads 15 files because it adds its fixture file).
+- `README.md`: notes the 5-seed RQ2 table and what `runs_Vcolab.csv` is.
