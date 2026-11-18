@@ -1,0 +1,62 @@
+CMD: python run.py --is_training 1 --root_path ./dataset/ETT-small/ --data_path ETTh1.csv --model_id ETTh1_96_336 --model iTransformer --data ETTh1 --features M --seq_len 96 --pred_len 336 --e_layers 2 --enc_in 7 --dec_in 7 --c_out 7 --des Exp_s2021_lr3e-05 --d_model 512 --d_ff 512 --itr 1 --learning_rate 3e-05
+SEED=2021
+Args in experiment:
+Namespace(is_training=1, model_id='ETTh1_96_336', model='iTransformer', data='ETTh1', root_path='./dataset/ETT-small/', data_path='ETTh1.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=96, label_len=48, pred_len=336, enc_in=7, dec_in=7, c_out=7, d_model=512, n_heads=8, e_layers=2, d_layers=1, d_ff=512, moving_avg=25, factor=1, distil=True, dropout=0.1, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=10, batch_size=32, patience=3, learning_rate=3e-05, des='Exp_s2021_lr3e-05', loss='MSE', lradj='type1', use_amp=False, use_gpu=True, gpu=0, use_multi_gpu=False, devices='0,1,2,3', exp_name='MTSF', channel_independence=False, inverse=False, class_strategy='projection', target_root_path='./data/electricity/', target_data_path='electricity.csv', efficient_training=False, use_norm=True, partial_start_index=0)
+Use GPU: cuda:0
+>>>>>>>start training : ETTh1_96_336_iTransformer_ETTh1_M_ft96_sl48_ll336_pl512_dm8_nh2_el1_dl512_df1_fctimeF_ebTrue_dtExp_s2021_lr3e-05_projection_0>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 8209
+val 2545
+test 2545
+	iters: 100, epoch: 1 | loss: 0.5632796
+	speed: 0.0322s/iter; left time: 79.2010s
+	iters: 200, epoch: 1 | loss: 0.4990252
+	speed: 0.0119s/iter; left time: 28.0728s
+Epoch: 1 cost time: 3.9617233276367188
+Epoch: 1, Steps: 256 | Train Loss: 0.5770464 Vali Loss: 1.3118441 Test Loss: 0.5066863
+Validation loss decreased (inf --> 1.311844).  Saving model ...
+Updating learning rate to 3e-05
+	iters: 100, epoch: 2 | loss: 0.4801767
+	speed: 0.1741s/iter; left time: 383.9873s
+	iters: 200, epoch: 2 | loss: 0.5056526
+	speed: 0.0125s/iter; left time: 26.3222s
+Epoch: 2 cost time: 3.5841732025146484
+Epoch: 2, Steps: 256 | Train Loss: 0.5070822 Vali Loss: 1.2877356 Test Loss: 0.4956216
+Validation loss decreased (1.311844 --> 1.287736).  Saving model ...
+Updating learning rate to 1.5e-05
+	iters: 100, epoch: 3 | loss: 0.4840978
+	speed: 0.1723s/iter; left time: 335.8249s
+	iters: 200, epoch: 3 | loss: 0.5072913
+	speed: 0.0126s/iter; left time: 23.2520s
+Epoch: 3 cost time: 3.639106512069702
+Epoch: 3, Steps: 256 | Train Loss: 0.4942981 Vali Loss: 1.2751080 Test Loss: 0.4899291
+Validation loss decreased (1.287736 --> 1.275108).  Saving model ...
+Updating learning rate to 7.5e-06
+	iters: 100, epoch: 4 | loss: 0.4837180
+	speed: 0.1726s/iter; left time: 292.2795s
+	iters: 200, epoch: 4 | loss: 0.4537378
+	speed: 0.0125s/iter; left time: 19.9626s
+Epoch: 4 cost time: 3.56624436378479
+Epoch: 4, Steps: 256 | Train Loss: 0.4882117 Vali Loss: 1.2756155 Test Loss: 0.4881386
+EarlyStopping counter: 1 out of 3
+Updating learning rate to 3.75e-06
+	iters: 100, epoch: 5 | loss: 0.5586765
+	speed: 0.1751s/iter; left time: 251.5929s
+	iters: 200, epoch: 5 | loss: 0.4357065
+	speed: 0.0129s/iter; left time: 17.2321s
+Epoch: 5 cost time: 3.6079232692718506
+Epoch: 5, Steps: 256 | Train Loss: 0.4851303 Vali Loss: 1.2777219 Test Loss: 0.4895113
+EarlyStopping counter: 2 out of 3
+Updating learning rate to 1.875e-06
+	iters: 100, epoch: 6 | loss: 0.4803250
+	speed: 0.1733s/iter; left time: 204.6620s
+	iters: 200, epoch: 6 | loss: 0.4989879
+	speed: 0.0126s/iter; left time: 13.6548s
+Epoch: 6 cost time: 3.599219799041748
+Epoch: 6, Steps: 256 | Train Loss: 0.4837471 Vali Loss: 1.2752739 Test Loss: 0.4886160
+EarlyStopping counter: 3 out of 3
+Early stopping
+>>>>>>>testing : ETTh1_96_336_iTransformer_ETTh1_M_ft96_sl48_ll336_pl512_dm8_nh2_el1_dl512_df1_fctimeF_ebTrue_dtExp_s2021_lr3e-05_projection_0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+test 2545
+test shape: (2545, 1, 336, 7) (2545, 1, 336, 7)
+test shape: (2545, 336, 7) (2545, 336, 7)
+mse:0.4899290204048157, mae:0.4604620337486267
