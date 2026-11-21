@@ -16,9 +16,14 @@ tables() {
 versions() {  # the figures' bytes depend on matplotlib (and numpy): say if this environment differs from the pins
   python - <<'PY'
 import importlib.metadata as md
+def version(p):
+    try:
+        return md.version(p)
+    except md.PackageNotFoundError:
+        return "not installed"
 pins = dict(l.split("==") for l in open("requirements-tables.txt").read().split() if "==" in l)
-diff = {p: (md.version(p), v) for p, v in pins.items() if md.version(p) != v}
-print("table-build versions:", ", ".join(f"{p} {md.version(p)}" for p in pins))
+diff = {p: (version(p), v) for p, v in pins.items() if version(p) != v}
+print("table-build versions:", ", ".join(f"{p} {version(p)}" for p in pins))
 if diff:
     print("WARNING: not the pinned versions (" + "; ".join(f"{p} {a} != {b}" for p, (a, b) in diff.items())
           + "): tables are unaffected, figure PDFs may differ in bytes. pip install -r requirements-tables.txt")

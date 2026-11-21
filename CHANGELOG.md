@@ -161,3 +161,22 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
   helper fixtures, F3 selection file and the old P=64 value, env_D_session1.txt vs git history, every table compiles and
   fits at its stated size), `tests/test_figures.py` (byte-identical rebuilds, no creation date, committed PDFs with the
   pinned versions, plotted values = report_numbers.txt, vector PDFs). Outputs in `tests/output/`.
+
+## Patch 7 (2026-11-21, task P3: job K prediction analysis)
+- `analyze_preds.py` (new): reads `preds_K.zip` in memory (iTransformer, PatchTST, DLinear; ON-Zonal real, L=96, H=96,
+  seed 2021), rebuilds ON-Zonal with `onzonal.py`, and writes `preds_analysis.zip` with aggregates and figures only:
+  `overall`, `zone_errors`, `error_by_step`, `holiday_vs_rest`, `peak_vs_rest`, `worst_windows`, `examples`,
+  `holiday_dates` (CSV), `checks.json`, `MANIFEST.txt` (versions, sha256), `fig_forecast_examples`, `fig_error_by_step`,
+  `fig_zone_errors` (PDF + PNG; the example figure's data lines are rasterized). It stops unless every model's exported
+  targets equal the rebuilt z-scored data at the window positions (window i targets test rows i..i+95), the three target
+  arrays agree, the arrays reproduce `results/runs_K.csv` (MSE and MAE within 5e-6), the rebuilt split equals
+  `results/onzonal_stats.json`, and (with `--rebuilt`) the rebuilt seasonal-naive scores equal the committed ones.
+  MW errors use the demand as the loaders read it (0.1 MW CSV) and the training mean and population std per zone;
+  holidays are `holidays.Canada(subdiv="ON")` as in PatchTST+Cal; a peak is a zone's top 1% of test-split demand;
+  worst windows are non-overlapping (origins at least 96 hours apart). The seasonal naive is included for reference.
+- `tests/test_analyze_preds.py` (new): synthetic 10-zone data and three synthetic models with known errors; checks the
+  outputs (files, columns, raster lines), the closed-form errors, MW and MAPE, holiday and peak counts from a separate
+  loop, distinct worst windows, the three stop conditions, and byte-identical reruns. PASS 5/5.
+- `requirements-tables.txt`: `holidays==0.107` (for the analysis and its test); `reproduce.sh` and `tests/test_figures.py`
+  tolerate a missing package in the version report and compare only the figure-relevant versions.
+- README: "Prediction analysis (job K)" with the Colab cells.

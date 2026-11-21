@@ -52,6 +52,7 @@ cross-platform check rather than a job of its own; its rows repeat logged run_id
 | `final_tables.py` | The final report's tables (`main_ETTh1`, `main_ONZ`, `repro_ETTm1`, `rq1_decomposition`, `f3_selection`, `rq2_final`, `ablation_cal_ONZ`, `grid_PxL_H336`, `env_per_job`, `timing_main`) and `results/report_numbers.txt`. Each table file starts with a suggested caption naming its scoring, seeds and tests. |
 | `plot_final.py`, `p24_plotstyle.py` | The final report's figures (`fig_pxl_heatmap`, `fig_rq2_forest`, `fig_cal_ablation`, `fig_mse_vs_latency`) and the shared figure style; PDFs carry no creation date, so rebuilds are byte-identical. |
 | `requirements-tables.txt` | Versions for the table and figure build (Python 3.11–3.14, CPU). |
+| `analyze_preds.py` | Job K's prediction analysis (Colab only: it needs `preds_K.zip` and the IESO download); writes `preds_analysis.zip` (aggregates and figures). |
 | `timing.py` | Forward-pass latency (batch 1 and 32) and parameter count per model config → `results/timing.csv`. |
 | `budget.py` | GPU-hours used per job and config; projection for the remaining plan runs from logged seed-2021 times only. |
 | `tables.py` | Quick per-job tables used inside the notebook. |
@@ -239,6 +240,42 @@ same shapes whatever the weights hold (Autoformer's top-k lag selection always k
 number of lags). Data loading and host-to-device copies are excluded. Compare only rows with
 the same `device`.
 
+## Prediction analysis (job K, `analyze_preds.py`)
+
+Job K re-ran the seed-2021 ON-Zonal configurations of iTransformer, PatchTST and DLinear (L=96,
+H=96) and exported their test predictions (`preds_K.zip`). That file holds IESO-derived values,
+so it is never committed and never leaves Colab. `analyze_preds.py` reads it in memory, rebuilds
+ON-Zonal with `onzonal.py` for the timestamps and each zone's training mean and std, checks that
+the exported targets equal the rebuilt data at every window position and that the arrays
+reproduce `results/runs_K.csv`, and writes `preds_analysis.zip`: errors per zone (z-scored, MW,
+MAPE), by forecast step, on Ontario statutory holidays vs other hours and windows, at each zone's
+top-1% demand hours vs the rest, the 10 worst non-overlapping windows by date (errors only), and
+three figures (forecast examples with rasterized data lines, error by step, error by zone). One
+seed per model, so these numbers are descriptive. Colab, CPU runtime:
+
+```python
+# 1. code
+!rm -rf /content/P24 && git clone -q -b final-runs https://github.com/Tim64465/CISC-473-Project.git /content/P24
+%cd /content/P24
+!pip -q install holidays==0.107
+# 2. ON-Zonal from IESO (the committed results/ stay untouched)
+!P24_RESULTS=/content/onz_rebuild python onzonal.py
+# 3. preds_K.zip: upload it here, or first drop it into /content with the Files panel
+import os, shutil
+from google.colab import files
+if not os.path.exists("/content/preds_K.zip"):
+    up = files.upload()
+    assert "preds_K.zip" in up, f"uploaded {list(up)}"
+    shutil.move("preds_K.zip", "/content/preds_K.zip")
+# 4. analysis (stops with an AssertionError if any check fails)
+!python analyze_preds.py --preds /content/preds_K.zip --rebuilt /content/onz_rebuild --out /content/preds_analysis.zip
+# 5. download
+files.download("/content/preds_analysis.zip")
+```
+
+`tests/test_analyze_preds.py` runs the same script on synthetic data with known errors (CPU, no
+IESO data).
+
 ## Data and licences
 
 ETT: from github.com/zhouhaoyi/ETDataset (checksums in `p24.py`).
@@ -271,6 +308,7 @@ python tests/test_report_tables.py                       # C6 + rule 4 (byte-ide
 python tests/test_final_tables.py                        # final tables: rebuild, second computation, F3 file, LaTeX width
 python tests/verify_report_numbers.py                    # every report number and table number, computed independently
 python tests/test_figures.py                             # figures: reproducible bytes, plotted values, vector PDFs
+python tests/test_analyze_preds.py                       # prediction analysis on synthetic data with known errors
 git show 82a177c:p24.py > /tmp/p24_old.py && python tests/test_plans_unchanged.py /tmp/p24_old.py
 bash tests/smoke_all.sh                                  # 1-epoch smoke of every plan (synthetic ON-Zonal/Weather)
 ```

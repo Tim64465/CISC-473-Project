@@ -44,7 +44,9 @@ dated = [f for f in FIGS if b"/CreationDate" in a[f]]
 check("1. two builds byte-identical, no creation date in any PDF", len(same) == len(FIGS) and not dated,
       f"identical: {len(same)}/{len(FIGS)}; dated: {dated}")
 
-pins = dict(l.split("==") for l in (KIT / "requirements-tables.txt").read_text().split() if "==" in l)
+FIG_PKGS = ("numpy", "pandas", "scipy", "matplotlib")  # the versions the figure bytes depend on
+pins = {p: v for p, v in (l.split("==") for l in (KIT / "requirements-tables.txt").read_text().split() if "==" in l)
+        if p in FIG_PKGS}
 have = {p: md.version(p) for p in pins}
 if have == pins:
     diff = [f for f in FIGS if a[f] != (KIT / "figures" / f"{f}.pdf").read_bytes()]
