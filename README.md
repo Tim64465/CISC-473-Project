@@ -49,10 +49,10 @@ cross-platform check rather than a job of its own; its rows repeat logged run_id
 | `p24_calendar.py` | PatchTST+Cal's calendar embeddings; `patch_repos.py` copies it into PatchTST as `layers/P24_calendar.py`. |
 | `onzonal.py` | Downloads IESO Hourly Zonal Demand 2015–2025, validates it, builds `ONZ_real.csv` and the shifted control `ONZ_shift.csv`, and computes the similarity statistics and the seasonal-naive baseline. |
 | `report_tables.py`, `plot_ablation.py` | Build the midterm report's tables and Figure 1 from `results/`; `report_tables.py` then calls `final_tables.py`. |
-| `final_tables.py` | The final report's tables (`main_ETTh1`, `main_ONZ`, `repro_ETTm1`, `rq1_decomposition`, `f3_selection`, `rq2_final`, `ablation_cal_ONZ`, `grid_PxL_H336`, `env_per_job`, `timing_main`) and `results/report_numbers.txt`. Each table file starts with a suggested caption naming its scoring, seeds and tests. |
+| `final_tables.py` | The final report's tables (`main_ETTh1`, `main_ONZ`, `repro_ETTm1`, `rq1_decomposition`, `f3_selection`, `rq2_final`, `ablation_cal_ONZ`, `grid_PxL_H336`, `env_per_job`, `timing_main`, and job K's `predsK_failure`, `predsK_zones`, `predsK_worst` from `results/preds_analysis/`) and `results/report_numbers.txt`. Each table file starts with a suggested caption naming its scoring, seeds and tests. |
 | `plot_final.py`, `p24_plotstyle.py` | The final report's figures (`fig_pxl_heatmap`, `fig_rq2_forest`, `fig_cal_ablation`, `fig_mse_vs_latency`) and the shared figure style; PDFs carry no creation date, so rebuilds are byte-identical. |
 | `requirements-tables.txt` | Versions for the table and figure build (Python 3.11–3.14, CPU). |
-| `analyze_preds.py` | Job K's prediction analysis (Colab only: it needs `preds_K.zip` and the IESO download); writes `preds_analysis.zip` (aggregates and figures). |
+| `analyze_preds.py` | Job K's prediction analysis (Colab only: it needs `preds_K.zip` and the IESO download); writes `preds_analysis.zip` (aggregates and figures). Its output is in `results/preds_analysis/`. |
 | `timing.py` | Forward-pass latency (batch 1 and 32) and parameter count per model config → `results/timing.csv`. |
 | `budget.py` | GPU-hours used per job and config; projection for the remaining plan runs from logged seed-2021 times only. |
 | `tables.py` | Quick per-job tables used inside the notebook. |
@@ -276,6 +276,12 @@ files.download("/content/preds_analysis.zip")
 `tests/test_analyze_preds.py` runs the same script on synthetic data with known errors (CPU, no
 IESO data).
 
+The run of 21 Nov 2026 (Colab, every check passed) is committed as downloaded in
+`results/preds_analysis/` (`MANIFEST.txt` lists the versions used and the sha256 of every file);
+its three figures are copied to `figures/`. `final_tables.py` builds `tables/predsK_failure.tex`,
+`predsK_zones.tex`, `predsK_worst.tex` and the `predsK.*` lines of `results/report_numbers.txt`
+from these CSVs, so `./reproduce.sh tables` needs no predictions.
+
 ## Data and licences
 
 ETT: from github.com/zhouhaoyi/ETDataset (checksums in `p24.py`).
@@ -295,7 +301,10 @@ ON-Zonal is built from IESO's Hourly Zonal Demand reports
 (https://reports-public.ieso.ca/public/DemandZonal/). Copyright © Independent Electricity
 System Operator; subject to the Terms of Use at www.ieso.ca. The data files are not
 redistributed in this repository; `onzonal.py` downloads them. `results/` contains only
-aggregate statistics computed from them.
+aggregate statistics computed from them, and `results/preds_analysis/` and `figures/` contain
+figures; `fig_forecast_examples` draws three windows of Toronto demand, with the data lines
+rasterized. Predictions (`preds_*.zip`) and `onzonal_anomalies.csv` are never committed
+(`tests/test_final_tables.py` checks).
 
 ## Tests (CPU)
 

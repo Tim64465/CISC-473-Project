@@ -15,10 +15,15 @@
 7. results/env_D_session1.txt is job D's first-session env.txt from git history (commit 6269e2c).
 8. Each new table compiles with pdflatex and fits 6.5 in at the size its header states (skipped if
    pdflatex is not installed).
+9. Job K (results/preds_analysis/, from analyze_preds.py on Colab): every file matches MANIFEST.txt
+   (sha256) and nothing else is there; figures/fig_forecast_examples, fig_error_by_step and
+   fig_zone_errors are byte-identical copies; checks.json records the passed checks (targets equal the
+   rebuilt data, the arrays reproduce runs_K.csv, the rebuild equals the committed split and seasonal
+   naive, holidays 0.107); the CSVs hold only aggregate columns; the example figure's data lines are
+   raster; and no prediction or IESO file (preds_*.zip, preds/, *.npy, *.npz, onzonal_anomalies.csv) is tracked.
 Rows and files marked FIXTURE are invented test inputs, not results.
 """
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -33,7 +38,7 @@ sys.path.insert(0, str(KIT))
 import final_tables as FT  # noqa: E402
 
 NEW = ("main_ETTh1", "main_ONZ", "repro_ETTm1", "rq1_decomposition", "f3_selection", "rq2_final", "ablation_cal_ONZ",
-       "grid_PxL_H336", "env_per_job", "timing_main")
+       "grid_PxL_H336", "env_per_job", "timing_main", "predsK_failure", "predsK_zones", "predsK_worst")
 OK = []
 
 
@@ -136,6 +141,41 @@ if shutil.which("pdflatex"):
     check("8. every new table compiles and fits the text width at its stated size", not bad, ", ".join(bad))
 else:
     print("[SKIP] 8. pdflatex not installed")
+
+# 9 -----------------------------------------------------------------------------------------
+import csv  # noqa: E402
+import hashlib  # noqa: E402
+
+PA = KIT / "results" / "preds_analysis"
+man = (PA / "MANIFEST.txt").read_text().splitlines()
+listed = {l.split("  ", 1)[1]: l.split("  ", 1)[0] for l in man[3:] if l.strip()}
+present = {p.name for p in PA.iterdir()} - {"MANIFEST.txt"}
+hashes_ok = set(listed) == present and all(hashlib.sha256((PA / n).read_bytes()).hexdigest() == h for n, h in listed.items())
+copies_ok = all((KIT / "figures" / f"{f}.pdf").read_bytes() == (PA / f"{f}.pdf").read_bytes()
+                for f in ("fig_forecast_examples", "fig_error_by_step", "fig_zone_errors"))
+ck = json.loads((PA / "checks.json").read_text())
+models = ("iTransformer", "PatchTST", "DLinear")
+checks_ok = (all(ck[f"{m}.max_abs_true_minus_rebuilt_z"] < 1e-4 and abs(ck[f"{m}.mse_from_arrays"] - ck[f"{m}.mse_logged"]) < 5e-6
+                 and abs(ck[f"{m}.mae_from_arrays"] - ck[f"{m}.mae_logged"]) < 5e-6 for m in models)
+             and ck["matches_committed_onzonal_stats"] and ck["rebuilt_seasonal_naive_equals_committed"]
+             and ck["holidays_version"] == "0.107" and ck["max_abs_true_between_models_z"] == 0)
+allowed = {"model", "zone", "h", "group", "unit", "n", "n_cells", "mse_z", "mae_z", "mae_MW", "mape_pct", "n_cells_without_mape",
+           "ranking", "rank", "forecast_origin", "first_target", "last_target", "window_mse_z", "worst_zone", "touches_holiday",
+           "contains_peak_hour", "panel", "rule", "window", "date", "name"} | {f"mse_z_{m}" for m in models} | {
+    f"mse_z_{m}_{s}" for m in models for s in ("Toronto", "all_zones")}
+cols_ok = True
+for f in PA.glob("*.csv"):
+    with open(f) as fh:
+        rows = list(csv.reader(fh))
+    cols_ok &= set(rows[0]) <= allowed and len(rows) <= 400
+pdf = (PA / "fig_forecast_examples.pdf").read_bytes()
+raster_ok = b"/Subtype /Image" in pdf or b"/Subtype/Image" in pdf
+g = subprocess.run(["git", "-C", str(KIT), "ls-files"], capture_output=True, text=True)
+forbidden = r"(^|/)preds_[^/]*\.zip$|(^|/)preds/|\.npy$|\.npz$|onzonal_anomalies"  # predictions, arrays, IESO anomaly log
+tracked = [f for f in g.stdout.splitlines() if re.search(forbidden, f)] if g.returncode == 0 else []
+check("9. job K aggregates: MANIFEST, figure copies, recorded checks, aggregate columns only, raster example lines, "
+      "no prediction or IESO file tracked", hashes_ok and copies_ok and checks_ok and cols_ok and raster_ok and not tracked,
+      f"manifest {hashes_ok}, copies {copies_ok}, checks {checks_ok}, columns {cols_ok}, raster {raster_ok}, tracked {tracked}")
 
 print("\nOVERALL:", "PASS" if all(OK) else "FAIL", f"({sum(OK)}/{len(OK)} checks)")
 sys.exit(0 if all(OK) else 1)

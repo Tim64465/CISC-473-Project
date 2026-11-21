@@ -180,3 +180,22 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
 - `requirements-tables.txt`: `holidays==0.107` (for the analysis and its test); `reproduce.sh` and `tests/test_figures.py`
   tolerate a missing package in the version report and compare only the figure-relevant versions.
 - README: "Prediction analysis (job K)" with the Colab cells.
+
+## Patch 8 (2026-11-21, task P3: job K aggregates)
+- `results/preds_analysis/` (new): the `preds_analysis.zip` that `analyze_preds.py` wrote on Colab on 21 Nov, committed
+  as downloaded (16 files; `MANIFEST.txt` sha256 all match). Colab: Python 3.13.18, numpy 2.4.6, pandas 2.2.3,
+  matplotlib 3.10.0, holidays 0.107. Its checks: exported targets equal the rebuilt data (max difference 2.3e-7 z-units,
+  float32), the arrays reproduce `runs_K.csv` (MSE and MAE within 1e-6), the rebuild equals the committed split and
+  seasonal-naive scores. Verified here before committing: every table recombines to the overall rows (zones, steps,
+  holiday and peak groups), holiday counts and dates recomputed from the calendar, worst windows non-overlapping and
+  consistent with their dates, aggregate columns only, data lines of the example figure rasterized. The `holidays`
+  package named 1 Sep 2024 and 2025 "Labor Day" on Colab (the report should write Labour Day); the dates are right.
+- `figures/fig_forecast_examples.pdf`, `fig_error_by_step.pdf`, `fig_zone_errors.pdf`: byte-identical copies.
+- `final_tables.py`: tables `predsK_failure` (failure categories: all windows, steps 1/24/96, holiday target hours and
+  windows, peak zone-hours and zone-windows; MSE and MAPE per model and seasonal naive), `predsK_zones`, `predsK_worst`,
+  and 273 `predsK.*` lines in `results/report_numbers.txt` (719 lines in all), each marked "seed 2021 (n=1); one run per
+  model, descriptive".
+- `tests/verify_report_numbers.py`: recomputes every `predsK.*` line and every number of the three new tables from the
+  CSVs with the csv module (719 lines, 986 table numbers: PASS). `tests/test_final_tables.py` check 9: MANIFEST hashes,
+  figure copies, the recorded checks, aggregate columns only, raster example lines, and no `preds_*.zip`, `preds/`,
+  `.npy`, `.npz` or `onzonal_anomalies.csv` tracked.

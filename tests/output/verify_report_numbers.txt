@@ -1,3 +1,3 @@
-tables: 762 numbers in 10 new tables compared one by one with the recomputation
-report_numbers.txt: 446 lines; recomputed independently: 446
+tables: 986 numbers in 13 new tables compared one by one with the recomputation
+report_numbers.txt: 719 lines; recomputed independently: 719
 OVERALL: PASS

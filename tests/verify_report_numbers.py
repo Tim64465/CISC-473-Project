@@ -462,6 +462,86 @@ for ds, ps in pts.items():
         front = {l for l, x, y in q if not any(x2 <= x and y2 <= y and (x2 < x or y2 < y) for l2, x2, y2 in q if l2 != l)}
         SETS[f"fig_mse_vs_latency.{ds}.pareto_b{b}"] = (front, S(sd_p))
 
+# ------------------------------------------------------------------ job K aggregates (results/preds_analysis/)
+# Read with the csv module; every predsK line is rebuilt here from the CSV values (value field compared).
+PKD = RES / "preds_analysis"
+PKM = ["iTransformer", "PatchTST", "DLinear", "Seasonal naive"]
+PKS = "seed 2021 (n=1); one run per model, descriptive"
+PKV = {}
+
+
+def pkcsv(name):
+    with open(PKD / f"{name}.csv") as fh:
+        return list(csv.DictReader(fh))
+
+
+def pf(metric, v):
+    v = float(v)
+    return f"{v:.1f}" if metric == "mae_MW" else (f"{v:.2f}" if metric == "mape_pct" else f"{v:.4f}")
+
+
+PK_OV = {r["model"]: r for r in pkcsv("overall")}
+PK_Z = pkcsv("zone_errors")
+PK_ST = pkcsv("error_by_step")
+PK_HV = {(r["model"], r["group"]): r for r in pkcsv("holiday_vs_rest")}
+PK_PK = {(r["model"], r["group"]): r for r in pkcsv("peak_vs_rest") if r["zone"] == "all zones"}
+PK_WW = pkcsv("worst_windows")
+PK_EX = pkcsv("examples")
+PK_HD = pkcsv("holiday_dates")
+CK = json.loads((PKD / "checks.json").read_text())
+PKV["predsK.checks.max_abs_target_minus_rebuilt_z"] = f"{max(CK[m + '.max_abs_true_minus_rebuilt_z'] for m in PKM[:3]):.1e}"
+for m in PKM[:3]:
+    PKV[f"predsK.checks.{m}.mse_reproduced"] = f"{CK[m + '.mse_from_arrays']:.6f} (logged {CK[m + '.mse_logged']:.6f})"
+PKV["predsK.checks.rebuild"] = (f"rows {CK['rows']}, test {CK['test_period'][0]} to {CK['test_period'][1]}, {CK['n_windows']} windows; "
+                                "split and seasonal naive equal the committed files")
+for m in PKM:
+    for k in ("mse_z", "mae_z", "mae_MW", "mape_pct"):
+        PKV[f"predsK.overall.{m}.{k}"] = pf(k, PK_OV[m][k])
+    zr = [r for r in PK_Z if r["model"] == m]
+    for r in zr:
+        for k in ("mse_z", "mae_MW", "mape_pct"):
+            PKV[f"predsK.zone.{m}.{r['zone']}.{k}"] = pf(k, r[k])
+    hi = max(zr, key=lambda r: float(r["mape_pct"]))
+    lo = min(zr, key=lambda r: float(r["mape_pct"]))
+    hm = max(zr, key=lambda r: float(r["mse_z"]))
+    PKV[f"predsK.zone.{m}.highest_mape"] = f"{hi['zone']} ({float(hi['mape_pct']):.2f}%)"
+    PKV[f"predsK.zone.{m}.lowest_mape"] = f"{lo['zone']} ({float(lo['mape_pct']):.2f}%)"
+    PKV[f"predsK.zone.{m}.highest_mse"] = f"{hm['zone']} ({float(hm['mse_z']):.4f})"
+    for h in (1, 24, 48, 96):
+        r = next(r for r in PK_ST if r["model"] == m and int(r["h"]) == h)
+        for k in ("mse_z", "mape_pct"):
+            PKV[f"predsK.step.{m}.h{h}.{k}"] = pf(k, r[k])
+stp = {(r["model"], int(r["h"])): float(r["mse_z"]) for r in PK_ST}
+low = {h: min(PKM[:3], key=lambda m: stp[(m, h)]) for h in range(1, 97)}
+PKV["predsK.step.lowest_mse_model.h1"] = low[1]
+PKV["predsK.step.iTransformer_lowest_from_h"] = next((str(h) for h in range(1, 97) if all(low[k] == "iTransformer" for k in range(h, 97))), "never")
+for name, tb, pairs in (("holiday", PK_HV, (("holiday target hours", "other target hours", "hours"), ("windows touching a holiday", "other windows", "windows"))),
+                        ("peak", PK_PK, (("peak target hours", "other target hours", "hours"), ("windows containing a peak hour", "other windows", "windows")))):
+    for g1, g2, kind in pairs:
+        PKV[f"predsK.{name}.{kind}.n"] = f"{tb[('iTransformer', g1)]['n']} vs {tb[('iTransformer', g2)]['n']}"
+        for m in PKM:
+            for k in ("mse_z", "mae_MW", "mape_pct"):
+                PKV[f"predsK.{name}.{kind}.{m}.{k}"] = f"{pf(k, tb[(m, g1)][k])} vs {pf(k, tb[(m, g2)][k])}"
+            PKV[f"predsK.{name}.{kind}.{m}.mse_ratio"] = f"{float(tb[(m, g1)]['mse_z']) / float(tb[(m, g2)]['mse_z']):.2f}"
+w3 = sorted([r for r in PK_WW if r["ranking"] == "three-model mean"], key=lambda r: int(r["rank"]))
+yn = {"True": "yes", "False": "no"}
+for r in w3:
+    PKV[f"predsK.worst.three_model_mean.rank{r['rank']}"] = (
+        f"origin {r['forecast_origin'][:16]}; MSE {float(r['window_mse_z']):.4f} (iTransformer {float(r['mse_z_iTransformer']):.4f}, "
+        f"PatchTST {float(r['mse_z_PatchTST']):.4f}, DLinear {float(r['mse_z_DLinear']):.4f}); worst zone {r['worst_zone']}; "
+        f"holiday {yn[r['touches_holiday']]}; peak {yn[r['contains_peak_hour']]}")
+summer = sum(1 for r in w3 if 6 <= int(r["forecast_origin"][5:7]) <= 9)
+PKV["predsK.worst.three_model_mean.summary"] = (f"{summer} of {len(w3)} start in June-September; "
+                                                f"{sum(r['contains_peak_hour'] == 'True' for r in w3)} contain a peak hour; "
+                                                f"{sum(r['touches_holiday'] == 'True' for r in w3)} touch a holiday")
+for m in PKM[:3]:
+    r = next(r for r in PK_WW if r["ranking"] == m and r["rank"] == "1")
+    PKV[f"predsK.worst.{m}.rank1"] = f"origin {r['forecast_origin'][:16]}; MSE {float(r['window_mse_z']):.4f}; worst zone {r['worst_zone']}"
+for r in PK_EX:
+    PKV[f"predsK.example.{r['panel']}"] = f"origin {r['forecast_origin'][:16]}; Toronto MSE " + ", ".join(
+        f"{m} {float(r[f'mse_z_{m}_Toronto']):.3f}" for m in PKM[:3])
+PKV["predsK.holiday_dates"] = f"{len(PK_HD)} dates, {PK_HD[0]['date']} to {PK_HD[-1]['date']}"
+
 # ------------------------------------------------------------------ compare
 lines = [l for l in (RES / "report_numbers.txt").read_text().splitlines() if l and not l.startswith("#")]
 bad, seen = [], set()
@@ -479,6 +559,9 @@ for line in lines:
         got = set(value.split(", "))
         if got != SETS[key][0] or seeds != SETS[key][1]:
             bad.append(f"{key}: file {sorted(got)} {seeds} != recomputed {sorted(SETS[key][0])} {SETS[key][1]}")
+    elif key in PKV:
+        if (value, ci, seeds) != (PKV[key], "--", PKS):
+            bad.append(f"{key}: file {value!r} ({seeds}) != recomputed {PKV[key]!r} ({PKS})")
     elif key in EXP:
         e = EXP[key]
         p = re.search(r"p(?:=|<)[0-9.na]+$", what)
@@ -621,6 +704,24 @@ for pat, Hs in (("PatchTST_ETTh1_L336_H{H}", HS), ("PatchTST_ETTh1_L336_H{H}_cal
     for H in Hs:
         q += [u(float(TM[pat.format(H=H)][b]["median_ms"]), 2) for b in (1, 32)]
 
+# job K tables: MSE (4 decimals) and MAPE (2 decimals) per model, in reading order; worst windows: four MSEs per row
+PKROWS = [("all", PK_OV)] + [(f"h{h}", {m: next(r for r in PK_ST if r["model"] == m and int(r["h"]) == h) for m in PKM}) for h in (1, 24, 96)]
+PKROWS += [(g, {m: PK_HV[(m, g)] for m in PKM}) for g in ("holiday target hours", "other target hours", "windows touching a holiday", "other windows")]
+PKROWS += [(g, {m: PK_PK[(m, g)] for m in PKM}) for g in ("peak target hours", "other target hours", "windows containing a peak hour", "other windows")]
+SEQ["predsK_failure"] = [x for _, rm in PKROWS for m in PKM for x in (u(float(rm[m]["mse_z"]), 4), u(float(rm[m]["mape_pct"]), 2))]
+zones_ = list(dict.fromkeys(r["zone"] for r in PK_Z))
+SEQ["predsK_zones"] = [x for z in zones_ for m in PKM for r in [next(r for r in PK_Z if r["model"] == m and r["zone"] == z)]
+                       for x in (u(float(r["mse_z"]), 4), u(float(r["mape_pct"]), 2))]
+SEQ["predsK_zones"] += [x for m in PKM for x in (u(float(PK_OV[m]["mse_z"]), 4), u(float(PK_OV[m]["mape_pct"]), 2))]
+SEQ["predsK_worst"] = [u(float(r[k]), 4) for r in w3 for k in ("window_mse_z", "mse_z_iTransformer", "mse_z_PatchTST", "mse_z_DLinear")]
+ncol = [l.split("&")[1].strip().replace("{,}", "") for l in (KIT / "tables" / "predsK_failure.tex").read_text().split("\\midrule", 1)[1]
+        .split("\\bottomrule")[0].splitlines() if "&" in l]
+n_win_ = int(PK_OV["iTransformer"]["n_cells"]) // 960
+want_n = [str(n_win_)] * 4 + [PK_HV[("iTransformer", g)]["n"] for g in ("holiday target hours", "other target hours", "windows touching a holiday", "other windows")]
+want_n += [PK_PK[("iTransformer", g)]["n"] for g in ("peak target hours", "other target hours", "windows containing a peak hour", "other windows")]
+if ncol != want_n:
+    bad.append(f"tables/predsK_failure.tex: counts {ncol} != {want_n}")
+
 NUM = re.compile(r"(\$-\$|\+)?(?<![\d.])(\d+\.\d+(?:\.\d+)?)(?![\d.])")  # decimals and versions (x.y.z)
 n_tok = 0
 for name, want in SEQ.items():
@@ -633,10 +734,10 @@ for name, want in SEQ.items():
         bad.append(f"tables/{name}.tex: number {k + 1} of {len(got)} is {got[k] if k < len(got) else '(none)'!r}, "
                    f"recomputed {want[k] if k < len(want) else '(none)'!r} (expected {len(want)} numbers)")
 print(f"tables: {n_tok} numbers in {len(SEQ)} new tables compared one by one with the recomputation")
-missing = sorted((set(EXP) | set(FULL) | set(SETS)) - seen)
+missing = sorted((set(EXP) | set(FULL) | set(SETS) | set(PKV)) - seen)
 for k in missing:
     bad.append(f"{k}: recomputed here but missing from report_numbers.txt")
-print(f"report_numbers.txt: {len(lines)} lines; recomputed independently: {len(seen & (set(EXP) | set(FULL) | set(SETS)))}")
+print(f"report_numbers.txt: {len(lines)} lines; recomputed independently: {len(seen & (set(EXP) | set(FULL) | set(SETS) | set(PKV)))}")
 for b in bad:
     print("MISMATCH", b)
 print("OVERALL:", "PASS" if not bad else f"FAIL ({len(bad)} problems)")

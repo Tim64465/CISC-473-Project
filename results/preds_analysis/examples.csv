@@ -1,0 +1,4 @@
+panel,rule,window,zone,forecast_origin,first_target,mse_z_iTransformer_Toronto,mse_z_PatchTST_Toronto,mse_z_DLinear_Toronto,mse_z_iTransformer_all_zones,mse_z_PatchTST_all_zones,mse_z_DLinear_all_zones
+typical,median three-model mean MSE over all windows,13322,Toronto,2025-05-10 01:00:00,2025-05-10 02:00:00,0.059842,0.092788,0.155571,0.208980,0.234671,0.275359
+holiday,largest three-model mean MSE among windows whose first target hour is 00:00 on a statutory holiday,5808,Toronto,2024-06-30 23:00:00,2024-07-01 00:00:00,1.626637,1.438495,1.642869,0.948610,0.950975,1.019974
+peak,Toronto's highest test-split demand hour at forecast step 48,14368,Toronto,2025-06-22 15:00:00,2025-06-22 16:00:00,1.301149,1.391995,1.691632,0.713389,0.710328,0.912359

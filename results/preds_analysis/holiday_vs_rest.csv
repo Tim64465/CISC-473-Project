@@ -1,0 +1,17 @@
+model,group,unit,n,n_cells,mse_z,mae_z,mae_MW,mape_pct,n_cells_without_mape
+iTransformer,holiday target hours,target hours,46080,460800,0.383375,0.468836,142.173096,9.164817,0
+iTransformer,other target hours,target hours,1767264,17672640,0.283174,0.385669,97.900280,7.256982,0
+iTransformer,windows touching a holiday,windows,2095,2011200,0.310354,0.415514,116.006039,7.855510,0
+iTransformer,other windows,windows,16794,16122240,0.282647,0.384323,96.907031,7.236847,0
+PatchTST,holiday target hours,target hours,46080,460800,0.374352,0.462977,142.194966,9.067273,0
+PatchTST,other target hours,target hours,1767264,17672640,0.290324,0.391735,100.776479,7.335920,0
+PatchTST,windows touching a holiday,windows,2095,2011200,0.307733,0.415132,116.862262,7.859500,0
+PatchTST,other windows,windows,16794,16122240,0.290554,0.390852,99.953635,7.320090,0
+DLinear,holiday target hours,target hours,46080,460800,0.336257,0.440368,134.424475,8.661151,0
+DLinear,other target hours,target hours,1767264,17672640,0.306772,0.407931,107.798435,7.538773,0
+DLinear,windows touching a holiday,windows,2095,2011200,0.307606,0.416907,119.306127,7.850499,0
+DLinear,other windows,windows,16794,16122240,0.307510,0.407738,107.123901,7.531966,0
+Seasonal naive,holiday target hours,target hours,46080,460800,0.812774,0.699231,225.917500,13.478015,0
+Seasonal naive,other target hours,target hours,1767264,17672640,0.525765,0.525061,135.009673,9.829262,0
+Seasonal naive,windows touching a holiday,windows,2095,2011200,0.591182,0.581083,168.685313,11.040201,0
+Seasonal naive,other windows,windows,16794,16122240,0.525807,0.523050,133.407034,9.782488,0

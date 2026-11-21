@@ -1,0 +1,25 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% The 10 worst test windows on ON-Zonal by the mean MSE of the three models (z-scored, all zones; job K, seed 2021),
+% chosen so that no two windows overlap (forecast origins at least 96 hours apart). Origin: the last input hour;
+% worst zone: the zone with the largest three-model MSE in the window; holiday / peak: the 96 target hours include a
+% statutory holiday / a zone's top-1\% demand hour. Per-model rankings in \texttt{results/preds\_analysis/worst\_windows.csv}.
+{\setlength{\tabcolsep}{4pt}%
+\begin{tabular}{@{}rlrrrrlcc@{}}
+\toprule
+ & & \multicolumn{4}{c}{Window MSE} & & & \\
+\cmidrule(lr){3-6}
+Rank & Forecast origin & Mean & iTrans. & PatchTST & DLinear & Worst zone & Holiday & Peak \\
+\midrule
+1 & 2024-06-16 21:00 & 2.1132 & 1.9008 & 1.9425 & 2.4963 & Ottawa & \xmark & \cmark \\
+2 & 2025-06-21 06:00 & 1.9914 & 2.0508 & 1.8837 & 2.0398 & Toronto & \xmark & \cmark \\
+3 & 2025-08-17 02:00 & 1.5540 & 2.2033 & 1.5598 & 0.8988 & Essa & \xmark & \xmark \\
+4 & 2024-07-01 13:00 & 1.4695 & 1.4962 & 1.4195 & 1.4927 & West & \cmark & \cmark \\
+5 & 2025-07-23 02:00 & 1.2423 & 1.0753 & 1.3170 & 1.3347 & West & \xmark & \cmark \\
+6 & 2024-08-30 23:00 & 1.1914 & 1.4763 & 1.1785 & 0.9194 & West & \cmark & \xmark \\
+7 & 2024-08-24 07:00 & 1.1588 & 0.8610 & 1.2402 & 1.3751 & West & \xmark & \cmark \\
+8 & 2025-07-30 13:00 & 1.0850 & 0.9833 & 1.1645 & 1.1072 & West & \xmark & \cmark \\
+9 & 2025-07-17 06:00 & 1.0716 & 1.1446 & 1.0522 & 1.0179 & Essa & \xmark & \cmark \\
+10 & 2024-06-02 06:00 & 0.9718 & 0.8029 & 1.0375 & 1.0751 & Ottawa & \xmark & \cmark \\
+\bottomrule
+\end{tabular}%
+}

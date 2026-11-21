@@ -968,6 +968,202 @@ def numbers_latency(df, results, N):
                   seeds=seeds_field(ps[0]["seeds"]))
 
 
+# ------------------------------------------------------------------ job K: prediction analysis (patch 0008)
+PK_MODELS = ("iTransformer", "PatchTST", "DLinear", "Seasonal naive")
+PK_SEEDS = "seed 2021 (n=1); one run per model, descriptive"
+PK_FILES = ("overall", "zone_errors", "error_by_step", "holiday_vs_rest", "peak_vs_rest", "worst_windows", "examples",
+            "holiday_dates")
+
+
+def preds_k(results):
+    """results/preds_analysis/: written on Colab by analyze_preds.py from preds_K.zip (aggregates only)."""
+    d = Path(results) / "preds_analysis"
+    t = {n: pd.read_csv(d / f"{n}.csv") for n in PK_FILES}
+    return t, json.loads((d / "checks.json").read_text())
+
+
+def pk_fmt(metric, v):
+    return {"mse_z": f"{v:.4f}", "mae_z": f"{v:.4f}", "mae_MW": f"{v:.1f}", "mape_pct": f"{v:.2f}"}[metric]
+
+
+def pk_rows(t):
+    """The categories of the failure table: (label, count text, {model: row})."""
+    ov = t["overall"].set_index("model")
+    st = t["error_by_step"].set_index(["model", "h"])
+    hv = t["holiday_vs_rest"].set_index(["model", "group"])
+    pk = t["peak_vs_rest"][t["peak_vs_rest"].zone == "all zones"].set_index(["model", "group"])
+    n_win = int(ov.loc["iTransformer", "n_cells"] // (96 * 10))
+    out = [("All test windows", f"{n_win:,}", {m: ov.loc[m] for m in PK_MODELS})]
+    for h in (1, 24, 96):
+        out.append((f"Step $h{{=}}{h}$ only", f"{n_win:,}", {m: st.loc[(m, h)] for m in PK_MODELS}))
+    for grp, lbl in (("holiday target hours", "Holiday target hours"), ("other target hours", "Other target hours"),
+                     ("windows touching a holiday", "Windows with a holiday"), ("other windows", "Other windows")):
+        r = hv.loc[("iTransformer", grp)]
+        out.append((lbl, f"{int(r['n']):,}", {m: hv.loc[(m, grp)] for m in PK_MODELS}))
+    for grp, lbl in (("peak target hours", "Peak zone-hours"), ("other target hours", "Other zone-hours"),
+                     ("windows containing a peak hour", "Zone-windows with a peak"), ("other windows", "Other zone-windows")):
+        r = pk.loc[("iTransformer", grp)]
+        out.append((lbl, f"{int(r['n']):,}", {m: pk.loc[(m, grp)] for m in PK_MODELS}))
+    return out
+
+
+def pk_cells(rowmap):
+    """MSE and MAPE per model; the lowest of each (at the precision shown) in bold."""
+    cells = []
+    for metric in ("mse_z", "mape_pct"):
+        d = 4 if metric == "mse_z" else 2
+        b = best({m: float(rowmap[m][metric]) for m in PK_MODELS}, d)
+        cells.append({m: (f"\\textbf{{{float(rowmap[m][metric]):.{d}f}}}" if m in b else f"{float(rowmap[m][metric]):.{d}f}")
+                      for m in PK_MODELS})
+    return " & ".join(f"{cells[0][m]} & {cells[1][m]}" for m in PK_MODELS)
+
+
+PK_HEAD = r"""\toprule
+ & & \multicolumn{2}{c}{iTransformer} & \multicolumn{2}{c}{PatchTST} & \multicolumn{2}{c}{DLinear} & \multicolumn{2}{c}{Seasonal naive} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(l){9-10}
+"""
+
+
+def table_predsk(results, N):
+    t, ck = preds_k(results)
+    # failure categories
+    lines = []
+    for k, (lbl, cnt, rowmap) in enumerate(pk_rows(t)):
+        if k in (1, 4, 8):
+            lines.append(r"\midrule")
+        lines.append(f"{lbl} & {cnt.replace(',', '{,}')} & {pk_cells(rowmap)} \\\\")
+    cap = ["Failure categories on ON-Zonal (real zones, $L{=}96$, $H{=}96$, every test window; job K: one run per model,",
+           "seed 2021, so these are descriptive). MSE on z-scored data and MAPE (\\%) on demand in MW; bold: lowest at the",
+           "precision shown. $n$ counts windows, (window, step) pairs for target hours (each over the 10 zones), (window,",
+           "step, zone) cells for zone-hours and (window, zone) pairs for zone-windows. Holiday: an Ontario statutory holiday",
+           "(\\texttt{holidays.Canada(subdiv=\"ON\")}, as in PatchTST+Cal); peak: a zone's top 1\\% of test-split demand.",
+           "From \\texttt{results/preds\\_analysis/} (\\texttt{analyze\\_preds.py})."]
+    put("predsK_failure", cap, r"""\begin{tabular}{@{}llrrrrrrrr@{}}
+""" + PK_HEAD + r"""Category & $n$ & MSE & MAPE & MSE & MAPE & MSE & MAPE & MSE & MAPE \\
+\midrule
+""" + "\n".join(lines) + "\n" + r"""\bottomrule
+\end{tabular}
+""", size="small", sep="3pt")
+    # zones
+    zt = t["zone_errors"].set_index(["model", "zone"])
+    ov = t["overall"].set_index("model")
+    zones = list(dict.fromkeys(t["zone_errors"]["zone"]))
+    zl = [f"{z} & {pk_cells({m: zt.loc[(m, z)] for m in PK_MODELS})} \\\\" for z in zones]
+    zl += [r"\midrule", f"All zones & {pk_cells({m: ov.loc[m] for m in PK_MODELS})} \\\\"]
+    cap = ["Errors per zone on ON-Zonal (real zones, $L{=}96$, $H{=}96$, every test window; job K, seed 2021, one run per",
+           "model). MSE on z-scored data (each zone scaled by its training mean and std) and MAPE (\\%) on demand in MW;",
+           "bold: lowest in the row. MAE in MW per zone in \\texttt{results/preds\\_analysis/zone\\_errors.csv}."]
+    put("predsK_zones", cap, r"""\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+ & \multicolumn{2}{c}{iTransformer} & \multicolumn{2}{c}{PatchTST} & \multicolumn{2}{c}{DLinear} & \multicolumn{2}{c}{Seasonal naive} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(l){8-9}
+Zone & MSE & MAPE & MSE & MAPE & MSE & MAPE & MSE & MAPE \\
+\midrule
+""" + "\n".join(zl) + "\n" + r"""\bottomrule
+\end{tabular}
+""", size="small", sep="4pt")
+    # worst windows (three-model mean ranking)
+    ww = t["worst_windows"]
+    w3 = ww[ww.ranking == "three-model mean"].sort_values("rank")
+    mk = {True: r"\cmark", False: r"\xmark"}
+    wl = [f"{int(r['rank'])} & {r['forecast_origin'][:16]} & {r['window_mse_z']:.4f} & {r['mse_z_iTransformer']:.4f} & "
+          f"{r['mse_z_PatchTST']:.4f} & {r['mse_z_DLinear']:.4f} & {r['worst_zone']} & {mk[bool(r['touches_holiday'])]} & "
+          f"{mk[bool(r['contains_peak_hour'])]} \\\\" for _, r in w3.iterrows()]
+    cap = ["The 10 worst test windows on ON-Zonal by the mean MSE of the three models (z-scored, all zones; job K, seed 2021),",
+           "chosen so that no two windows overlap (forecast origins at least 96 hours apart). Origin: the last input hour;",
+           "worst zone: the zone with the largest three-model MSE in the window; holiday / peak: the 96 target hours include a",
+           "statutory holiday / a zone's top-1\\% demand hour. Per-model rankings in \\texttt{results/preds\\_analysis/worst\\_windows.csv}."]
+    put("predsK_worst", cap, r"""\begin{tabular}{@{}rlrrrrlcc@{}}
+\toprule
+ & & \multicolumn{4}{c}{Window MSE} & & & \\
+\cmidrule(lr){3-6}
+Rank & Forecast origin & Mean & iTrans. & PatchTST & DLinear & Worst zone & Holiday & Peak \\
+\midrule
+""" + "\n".join(wl) + "\n" + r"""\bottomrule
+\end{tabular}
+""", size="small", sep="4pt")
+    numbers_predsk(t, ck, N)
+
+
+def numbers_predsk(t, ck, N):
+    S = PK_SEEDS
+    models3 = PK_MODELS[:3]
+    N.add("predsK.checks.max_abs_target_minus_rebuilt_z",
+          f"{max(ck[f'{m}.max_abs_true_minus_rebuilt_z'] for m in models3):.1e}",
+          what="exported targets vs ON-Zonal rebuilt on Colab, z-units, every model and window (stop above 1e-4)", seeds=S)
+    for m in models3:
+        N.add(f"predsK.checks.{m}.mse_reproduced", f"{ck[f'{m}.mse_from_arrays']:.6f} (logged {ck[f'{m}.mse_logged']:.6f})",
+              what="MSE from the exported arrays vs results/runs_K.csv", seeds=S)
+    N.add("predsK.checks.rebuild", f"rows {ck['rows']}, test {ck['test_period'][0]} to {ck['test_period'][1]}, "
+          f"{ck['n_windows']} windows; split and seasonal naive equal the committed files", what="checks.json", seeds=S)
+    ov = t["overall"].set_index("model")
+    for m in PK_MODELS:
+        for metric in ("mse_z", "mae_z", "mae_MW", "mape_pct"):
+            N.add(f"predsK.overall.{m}.{metric}", pk_fmt(metric, ov.loc[m, metric]), what="every test window, all zones", seeds=S)
+    zt = t["zone_errors"]
+    for m in PK_MODELS:
+        z = zt[zt.model == m].set_index("zone")
+        for zone in z.index:
+            for metric in ("mse_z", "mae_MW", "mape_pct"):
+                N.add(f"predsK.zone.{m}.{zone}.{metric}", pk_fmt(metric, z.loc[zone, metric]), what="every test window", seeds=S)
+        hi, lo = z["mape_pct"].idxmax(), z["mape_pct"].idxmin()
+        N.add(f"predsK.zone.{m}.highest_mape", f"{hi} ({z.loc[hi, 'mape_pct']:.2f}%)", what="zone with the highest MAPE", seeds=S)
+        N.add(f"predsK.zone.{m}.lowest_mape", f"{lo} ({z.loc[lo, 'mape_pct']:.2f}%)", what="zone with the lowest MAPE", seeds=S)
+        him = z["mse_z"].idxmax()
+        N.add(f"predsK.zone.{m}.highest_mse", f"{him} ({z.loc[him, 'mse_z']:.4f})", what="zone with the highest z-scored MSE",
+              seeds=S)
+    st = t["error_by_step"]
+    for m in PK_MODELS:
+        s = st[st.model == m].set_index("h")
+        for h in (1, 24, 48, 96):
+            for metric in ("mse_z", "mape_pct"):
+                N.add(f"predsK.step.{m}.h{h}.{metric}", pk_fmt(metric, s.loc[h, metric]), what=f"forecast step {h}", seeds=S)
+    piv = st[st.model.isin(models3)].pivot(index="h", columns="model", values="mse_z")
+    low = piv.idxmin(axis=1)
+    N.add("predsK.step.lowest_mse_model.h1", low.loc[1], what="lowest MSE of the three models at step 1", seeds=S)
+    it_from = next((h for h in piv.index if (low.loc[h:] == "iTransformer").all()), None)
+    N.add("predsK.step.iTransformer_lowest_from_h", f"{it_from}" if it_from else "never",
+          what="first step from which iTransformer has the lowest MSE of the three models at every later step", seeds=S)
+    hv = t["holiday_vs_rest"].set_index(["model", "group"])
+    pk = t["peak_vs_rest"][t["peak_vs_rest"].zone == "all zones"].set_index(["model", "group"])
+    for name, tab_, pairs in (("holiday", hv, (("holiday target hours", "other target hours", "hours"),
+                                             ("windows touching a holiday", "other windows", "windows"))),
+                              ("peak", pk, (("peak target hours", "other target hours", "hours"),
+                                            ("windows containing a peak hour", "other windows", "windows")))):
+        for g1, g2, kind in pairs:
+            N.add(f"predsK.{name}.{kind}.n", f"{int(tab_.loc[('iTransformer', g1), 'n'])} vs {int(tab_.loc[('iTransformer', g2), 'n'])}",
+                  what=f"{g1} vs {g2} ({tab_.loc[('iTransformer', g1), 'unit']})", seeds=S)
+            for m in PK_MODELS:
+                for metric in ("mse_z", "mae_MW", "mape_pct"):
+                    N.add(f"predsK.{name}.{kind}.{m}.{metric}",
+                          f"{pk_fmt(metric, tab_.loc[(m, g1), metric])} vs {pk_fmt(metric, tab_.loc[(m, g2), metric])}",
+                          what=f"{g1} vs {g2}", seeds=S)
+                N.add(f"predsK.{name}.{kind}.{m}.mse_ratio", f"{tab_.loc[(m, g1), 'mse_z'] / tab_.loc[(m, g2), 'mse_z']:.2f}",
+                      what=f"MSE on {g1} / MSE on {g2}", seeds=S)
+    ww = t["worst_windows"]
+    w3 = ww[ww.ranking == "three-model mean"].sort_values("rank")
+    for _, r in w3.iterrows():
+        N.add(f"predsK.worst.three_model_mean.rank{int(r['rank'])}",
+              f"origin {r['forecast_origin'][:16]}; MSE {r['window_mse_z']:.4f} (iTransformer {r['mse_z_iTransformer']:.4f}, "
+              f"PatchTST {r['mse_z_PatchTST']:.4f}, DLinear {r['mse_z_DLinear']:.4f}); worst zone {r['worst_zone']}; "
+              f"holiday {'yes' if r['touches_holiday'] else 'no'}; peak {'yes' if r['contains_peak_hour'] else 'no'}",
+              what="non-overlapping windows ranked by the three-model mean MSE", seeds=S)
+    months = pd.to_datetime(w3["forecast_origin"]).dt.month
+    N.add("predsK.worst.three_model_mean.summary",
+          f"{int(months.between(6, 9).sum())} of {len(w3)} start in June-September; {int(w3['contains_peak_hour'].sum())} contain a "
+          f"peak hour; {int(w3['touches_holiday'].sum())} touch a holiday", what="the 10 worst windows above", seeds=S)
+    for m in models3:
+        r = ww[(ww.ranking == m) & (ww["rank"] == 1)].iloc[0]
+        N.add(f"predsK.worst.{m}.rank1", f"origin {r['forecast_origin'][:16]}; MSE {r['window_mse_z']:.4f}; worst zone {r['worst_zone']}",
+              what=f"worst window of {m}", seeds=S)
+    for _, r in t["examples"].iterrows():
+        N.add(f"predsK.example.{r['panel']}",
+              f"origin {r['forecast_origin'][:16]}; Toronto MSE " + ", ".join(f"{m} {r[f'mse_z_{m}_Toronto']:.3f}" for m in models3),
+              what=f"fig_forecast_examples: {r['rule']}", seeds=S)
+    N.add("predsK.holiday_dates", f"{len(t['holiday_dates'])} dates, {t['holiday_dates']['date'].iloc[0]} to "
+          f"{t['holiday_dates']['date'].iloc[-1]}", what="statutory holidays inside the test targets", seeds=S)
+
+
 # ------------------------------------------------------------------ main
 def build(df, P, results):
     N = Numbers()
@@ -982,6 +1178,7 @@ def build(df, P, results):
     table_env(df, results, N)
     table_timing(results, N)
     numbers_latency(df, results, N)
+    table_predsk(results, N)
     N.write(Path(results) / "report_numbers.txt")
     return N
 
