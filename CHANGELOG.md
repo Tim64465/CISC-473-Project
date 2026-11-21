@@ -114,3 +114,50 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
 - `tests/output/test_report_tables.txt`: refreshed (PASS 7/7 with the results files of jobs A, B, C, D, E, F, G,
   H, J, K, L, M, N, P, Q, V and Vcolab).
 - `README.md`: names the new table.
+
+## Patch 6 (2026-11-18, task P3: final tables and figures from the committed results)
+- `final_tables.py` (new; called at the end of `report_tables.main`, so `python report_tables.py results` builds
+  everything): ten tables, each from `results/` and `published.csv` only, with a suggested caption (LaTeX comment)
+  naming scoring, seeds and tests, and the size at which it fits the report's 6.5 in text width:
+  `main_ETTh1` (published PatchTST/42, DLinear, iTransformer vs our PatchTST, job A, and PatchTST+Cal, job J;
+  official loader; paired PatchTST+Cal - PatchTST), `main_ONZ` (seasonal naive, DLinear, PatchTST, iTransformer,
+  PatchTST+Cal at H=96, jobs B/H; the baselines at H=720, job P; every window, seeds 2021-23), `repro_ETTm1` (job D vs
+  published, F1 from the dual-scored rows), `rq1_decomposition` (G under pi_0 to pi_3, C_k, Shapley values on the
+  F1 x F2 design at common L=96 and L=336; jobs A, C, G, Q, Q2), `f3_selection` (appendix), `rq2_final` (H=96: B+F with
+  5 seeds, no tokens E+F, Control 2 L with 3 seeds; D per control, controls compared, Control 2 - iTransformer on
+  real and shifted zones, calendar tokens; then H=720, job P), `ablation_cal_ONZ` (job H), `grid_PxL_H336` (jobs M, A,
+  G; every window and official loader), `env_per_job` (all results/env_*.txt) and `timing_main` (job T).
+  Statistics are report_tables.py's own helpers: mean +- sample std over the seeds present in every cell of a row or
+  comparison; paired t-interval within a model; Welch between models and for differences of within-model effects.
+- `results/report_numbers.txt` (new, written by the build): 446 labelled lines, `key | value | 95% CI | test, p | seeds`.
+- `tests/verify_report_numbers.py` (new): a second, independent computation (csv module, its own run merging, run_id
+  lookup and t-intervals) of every line of report_numbers.txt and, number by number in reading order, of every number
+  in the ten new tables (762). PASS on the committed results; a changed digit or two swapped rows fail it.
+- Figures (`plot_final.py`, new; style in `p24_plotstyle.py`): `fig_pxl_heatmap`, `fig_rq2_forest`, `fig_cal_ablation`,
+  `fig_mse_vs_latency` (batch-32 latency, interquartile ranges, Pareto set marked and labelled). Vector PDFs (the heatmap
+  and its colour bar are drawn as vector cells), DejaVu Sans, at most three hues, every series with its own marker
+  (readable in greyscale). Each plotted number comes from the functions that write the tables.
+- Reproducible figures (handoff section 8): PDFs are saved without `CreationDate`, so rebuilds are byte-identical;
+  `figures/fig_ablation.pdf` is re-rendered by the unchanged plotting code (same data; the October file was made with
+  matplotlib 3.11.2 and carried its build date). PNG copies are written for slides and git-ignored (`figures/*.png`).
+  `requirements-tables.txt` (new) pins the table/figure build (numpy 2.3.5, pandas 2.3.3, scipy 1.16.3, matplotlib
+  3.10.9; wheels for Python 3.11-3.14); the committed PDFs were rendered with exactly these.
+- `reproduce.sh tables`: also runs `plot_final.py`, prints the installed versions against `requirements-tables.txt`,
+  and ends with `git status --porcelain -- tables figures results/report_numbers.txt`, failing if anything changed.
+- Bug fix, `p24.py f3select`: the PatchTST default-LR candidate is now restricted to the default patch (P=16, S=8).
+  Plan grid336 logs PatchTST at L=96, H=336 with P=8/32/64 and no variant tag; the old code took the last such row, so
+  the committed `results/f3_selection.json` listed 1.3259569 (the P=64 run) as PatchTST's H=336 validation loss at LR
+  1e-4 instead of 1.2891653 (`PatchTST_ETTh1_L96_H336_s2021`, job G). The file is regenerated: that one value changes;
+  all eight winners are unchanged (3e-4 still has the lowest loss, 1.2764710), so job Q2 ran the right configurations.
+  `final_tables.py` checks the committed selection against the logged validation losses and stops if they disagree.
+- `results/env_D_session1.txt` (new): byte-identical to `git show 6269e2c:results/env_D.txt` (job D's first session,
+  kit `2a50dc1`; 22 of its 36 runs); session 2 is `env_D.txt`. Both list the same GPU, driver, torch and numpy.
+- `tests/test_report_tables.py`: test 1 also compares `report_numbers.txt`; the fixture file is `runs_TEST.csv`
+  (T is now a real job, timing); fixture tests compare everything except `env_per_job.tex` and the `env.*` lines, which
+  list the results files themselves; test 4's variant fixtures use seed 2026 (the final tables use the real variant runs,
+  and a second row for one of their seeds rightly stops the build); 5b expects `onzonal_rq2.tex`, `rq2_final.tex` and
+  `report_numbers.txt` to change.
+- New tests: `tests/test_final_tables.py` (rebuild, independent second computation, hash-seed independence, format,
+  helper fixtures, F3 selection file and the old P=64 value, env_D_session1.txt vs git history, every table compiles and
+  fits at its stated size), `tests/test_figures.py` (byte-identical rebuilds, no creation date, committed PDFs with the
+  pinned versions, plotted values = report_numbers.txt, vector PDFs). Outputs in `tests/output/`.

@@ -1,0 +1,24 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% ON-Zonal (real zones), $L{=}96$, every test window, mean $\pm$ std over 3 seeds (2021--2023); bold: lowest at the precision shown. Seasonal naive repeats the last week (deterministic).
+% Bottom rows: MSE differences with 95\% t-intervals, paired within PatchTST (same seeds), Welch between models.
+% PatchTST+Cal (hour, day of week, Ontario holiday) was run at $H{=}96$ only.
+{\setlength{\tabcolsep}{3pt}%
+\begin{tabular}{@{}lllll@{}}
+\toprule
+ & \multicolumn{2}{c}{$H{=}96$} & \multicolumn{2}{c}{$H{=}720$} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Model & MSE & MAE & MSE & MAE \\
+\midrule
+Seasonal naive (1 week) & 0.5331 & 0.5295 & 0.6733 & 0.6074 \\
+DLinear & 0.3076$\pm$0.0005 & 0.4087$\pm$0.0004 & 0.5230$\pm$0.0019 & 0.5408$\pm$0.0010 \\
+PatchTST & 0.2925$\pm$0.0005 & 0.3936$\pm$0.0004 & 0.4893$\pm$0.0018 & 0.5206$\pm$0.0009 \\
+iTransformer & \textbf{0.2853}$\pm$0.0008 & 0.3878$\pm$0.0005 & \textbf{0.4698}$\pm$0.0029 & \textbf{0.5101}$\pm$0.0018 \\
+PatchTST+Cal (proposed) & 0.2859$\pm$0.0002 & \textbf{0.3862}$\pm$0.0001 & -- & -- \\
+\midrule
+\multicolumn{5}{@{}l}{MSE difference [95\% CI], seeds 2021--2023:} \\
+PatchTST+Cal $-$ PatchTST (paired) & \multicolumn{2}{l}{$-$0.0066 [$-$0.0075, $-$0.0056]} & \multicolumn{2}{l}{--} \\
+PatchTST+Cal $-$ iTrans. (Welch) & \multicolumn{2}{l}{+0.0006 [$-$0.0014, +0.0025]} & \multicolumn{2}{l}{--} \\
+PatchTST $-$ iTrans. (Welch) & \multicolumn{2}{l}{+0.0071 [+0.0054, +0.0089]} & \multicolumn{2}{l}{+0.0196 [+0.0136, +0.0256]} \\
+\bottomrule
+\end{tabular}%
+}

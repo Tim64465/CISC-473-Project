@@ -700,6 +700,8 @@ def f3select(dirs, smoke=False):
                 var = "" if lr == F3_DEFAULT else f"lr{lr:g}"
                 r = df[(df.model == model) & (df.H == H) & (df["variant"].fillna("") == var)
                        & df["vali_loss_best"].notna()]
+                if model == "PatchTST":  # the default patch (P=16, S=8): plan grid336 logs other P at L=96, H=336
+                    r = r[(r.patch_len == 16) & (r.stride == 8)]
                 if len(r):
                     cand[lr] = float(r["vali_loss_best"].iloc[-1])
             missing = [lr for lr in F3_LRS if lr not in cand]

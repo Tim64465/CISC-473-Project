@@ -9,14 +9,20 @@ built from IESO's public reports.
 ## One command
 
 ```bash
-pip install -r requirements.txt
-./reproduce.sh tables   # rebuild every table, the ablation figure and the GPU-time summary from results/ (no GPU)
+pip install -r requirements-tables.txt   # tables and figures only (CPU); the GPU runs use requirements.txt
+./reproduce.sh tables   # rebuild every table, figure and results/report_numbers.txt from results/, then check git status
 ./reproduce.sh all      # setup + ON-Zonal + Weather + every plan + timing + tables + figures (GPU; days of compute)
 ```
 
-`./reproduce.sh tables` runs `report_tables.py results` (writes `tables/*.tex`, the midterm
-report's Tables 1–4 and 10, and prints every number quoted in the text), `plot_ablation.py
-results` (`figures/fig_ablation.pdf`, Figure 1) and `budget.py results`. Since job F,
+`./reproduce.sh tables` runs `report_tables.py results` (writes `tables/*.tex`: the midterm
+report's Tables 1–4 and 10, then the final report's tables via `final_tables.py`, and
+`results/report_numbers.txt`, every number the report quotes with its seeds, test and 95% CI),
+`plot_ablation.py results` (`figures/fig_ablation.pdf`, Figure 1), `plot_final.py results` (the
+final report's figures) and `budget.py results`, and then checks that `git status` is clean for
+`tables/`, `figures/` and `results/report_numbers.txt`: the committed files are exactly what the
+committed results give. The figure PDFs are byte-identical only with the versions in
+`requirements-tables.txt` (the script warns if others are installed); the tables do not depend on
+them. PNG copies of the figures (for slides) are written next to the PDFs and are not committed. Since job F,
 `tables/onzonal_rq2.tex` uses seeds 2021–25; the midterm's version used seeds 2021–23 (git history).
 Since job N, `tables/ablation_ETTh1_all.tex` is the PatchTST ablation scored on every test window.
 
@@ -28,7 +34,9 @@ ON-Zonal build outputs (`onzonal_checks.json`, `onzonal_stats.json`,
 `onzonal_seasonal_naive.csv`, `fig_onzonal_corr.png` = Figure 2). Console logs for Jobs B
 and C are in `logs/`. All runs used NVIDIA Tesla T4 GPUs on Kaggle and Colab. Jobs A and C
 share six PatchTST runs; `report_tables.py` checks that they agree exactly (they do).
-New jobs add `results/runs_<JOB>.csv` and `logs/logs_<JOB>/` (see the notebook's JOB table).
+New jobs add `results/runs_<JOB>.csv` and `logs/logs_<JOB>/` (see the notebook's JOB table). `results/env_D_session1.txt`
+is job D's first-session `env.txt` from git history (commit `6269e2c`; session 2's is `env_D.txt`).
+`results/report_numbers.txt` is written by the table build (never by hand).
 `runs_Vcolab.csv`, `env_Vcolab.txt` and `logs/logs_Vcolab/` are plan V re-run on Colab (torch 2.14.1), a
 cross-platform check rather than a job of its own; its rows repeat logged run_ids within `DUP_TOL`.
 
@@ -40,7 +48,10 @@ cross-platform check rather than a job of its own; its rows repeat logged run_id
 | `patch_repos.py` | The only changes made to the official code (see below). Every patch asserts that it applied the expected number of times. |
 | `p24_calendar.py` | PatchTST+Cal's calendar embeddings; `patch_repos.py` copies it into PatchTST as `layers/P24_calendar.py`. |
 | `onzonal.py` | Downloads IESO Hourly Zonal Demand 2015–2025, validates it, builds `ONZ_real.csv` and the shifted control `ONZ_shift.csv`, and computes the similarity statistics and the seasonal-naive baseline. |
-| `report_tables.py`, `plot_ablation.py` | Build the report's tables and Figure 1 from `results/`. |
+| `report_tables.py`, `plot_ablation.py` | Build the midterm report's tables and Figure 1 from `results/`; `report_tables.py` then calls `final_tables.py`. |
+| `final_tables.py` | The final report's tables (`main_ETTh1`, `main_ONZ`, `repro_ETTm1`, `rq1_decomposition`, `f3_selection`, `rq2_final`, `ablation_cal_ONZ`, `grid_PxL_H336`, `env_per_job`, `timing_main`) and `results/report_numbers.txt`. Each table file starts with a suggested caption naming its scoring, seeds and tests. |
+| `plot_final.py`, `p24_plotstyle.py` | The final report's figures (`fig_pxl_heatmap`, `fig_rq2_forest`, `fig_cal_ablation`, `fig_mse_vs_latency`) and the shared figure style; PDFs carry no creation date, so rebuilds are byte-identical. |
+| `requirements-tables.txt` | Versions for the table and figure build (Python 3.11–3.14, CPU). |
 | `timing.py` | Forward-pass latency (batch 1 and 32) and parameter count per model config → `results/timing.csv`. |
 | `budget.py` | GPU-hours used per job and config; projection for the remaining plan runs from logged seed-2021 times only. |
 | `tables.py` | Quick per-job tables used inside the notebook. |
@@ -256,7 +267,10 @@ git show 82a177c:patch_repos.py > /tmp/patch_old.py      # the kit before this b
 python tests/test_flags_off.py OLD_REPOS NEW_REPOS       # rule 2 + C1 (dual scoring)
 python tests/test_cal.py NEW_REPOS work/data/ONZ_real.csv # C3: PatchTST+Cal
 python tests/test_itr_ci.py NEW_REPOS                    # C4: Control 2
-python tests/test_report_tables.py                       # C6 + rule 4 (byte-identical tables)
+python tests/test_report_tables.py                       # C6 + rule 4 (byte-identical tables, report_numbers.txt)
+python tests/test_final_tables.py                        # final tables: rebuild, second computation, F3 file, LaTeX width
+python tests/verify_report_numbers.py                    # every report number and table number, computed independently
+python tests/test_figures.py                             # figures: reproducible bytes, plotted values, vector PDFs
 git show 82a177c:p24.py > /tmp/p24_old.py && python tests/test_plans_unchanged.py /tmp/p24_old.py
 bash tests/smoke_all.sh                                  # 1-epoch smoke of every plan (synthetic ON-Zonal/Weather)
 ```

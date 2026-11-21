@@ -12,10 +12,11 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from p24_plotstyle import save  # noqa: E402
 from report_tables import ablation_cells, load  # noqa: E402
 
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
@@ -60,11 +61,7 @@ def main():
     fig.legend(handles + [star], labels + ["published PatchTST/42 (Nie et al., Table 3)"],
                loc="lower center", ncol=3, frameon=False, fontsize=8)
     fig.tight_layout(rect=(0, 0.1, 1, 1))
-    out = Path(__file__).resolve().parent / "figures"
-    out.mkdir(exist_ok=True)
-    fig.savefig(out / "fig_ablation.pdf")
-    fig.savefig(out / "fig_ablation.png", dpi=200)
-    print(f"wrote {out / 'fig_ablation.pdf'}")
+    save(fig, "fig_ablation")  # PDF without a creation date (reproducible), git-ignored PNG copy
 
 
 if __name__ == "__main__":

@@ -10,3 +10,5 @@ PUB_DemandZonal_*.csv
 preds/
 results_*/
 /results/smoke_runs.csv
+# PNG copies of figures/*.pdf for slides, rewritten by ./reproduce.sh tables (not committed)
+figures/*.png

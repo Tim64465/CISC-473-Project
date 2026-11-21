@@ -1,0 +1,40 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% Parameters and median forward-pass latency (ms) at batch 1 and 32 (\texttt{timing.py}, job T: Tesla T4, torch
+% 2.14.1+cu130; 10 warm-up + 50 timed passes; quartiles in \texttt{results/timing.csv}). Data loading and host-to-device
+% copies excluded. ON-Zonal: real-zone configurations ($L{=}96$).
+\begin{tabular}{@{}lllrrr@{}}
+\toprule
+Data & Model & $H$ & Parameters & Batch 1 & Batch 32 \\
+\midrule
+ETTh1 & \multirow{4}{*}{PatchTST ($L{=}336$)} & 96 & 81{,}731 & 2.93 & 3.30 \\
+ &  & 192 & 146{,}339 & 3.01 & 3.07 \\
+ &  & 336 & 243{,}251 & 3.34 & 3.17 \\
+ &  & 720 & 501{,}683 & 3.50 & 3.02 \\
+ & \multirow{4}{*}{PatchTST+Cal ($L{=}336$)} & 96 & 82{,}227 & 4.90 & 4.52 \\
+ &  & 192 & 146{,}835 & 5.07 & 4.28 \\
+ &  & 336 & 243{,}747 & 5.25 & 5.04 \\
+ &  & 720 & 502{,}179 & 4.49 & 4.31 \\
+ & \multirow{4}{*}{DLinear ($L{=}336$)} & 96 & 64{,}704 & 0.42 & 0.46 \\
+ &  & 192 & 129{,}408 & 0.45 & 0.49 \\
+ &  & 336 & 226{,}464 & 0.45 & 0.51 \\
+ &  & 720 & 485{,}280 & 0.41 & 0.49 \\
+ & \multirow{4}{*}{iTransformer ($L{=}96$)} & 96 & 841{,}568 & 2.14 & 2.57 \\
+ &  & 192 & 866{,}240 & 2.23 & 2.42 \\
+ &  & 336 & 3{,}379{,}024 & 2.04 & 2.53 \\
+ &  & 720 & 3{,}576{,}016 & 2.10 & 2.35 \\
+ & \multirow{4}{*}{Autoformer ($L{=}96$)} & 96 & 10{,}535{,}943 & 16.66 & 77.68 \\
+ &  & 192 & 10{,}535{,}943 & 17.52 & 111.32 \\
+ &  & 336 & 10{,}535{,}943 & 17.56 & 172.18 \\
+ &  & 720 & 10{,}535{,}943 & 20.50 & 343.08 \\
+\midrule
+ON-Zonal & \multirow{2}{*}{DLinear} & 96 & 18{,}624 & 0.39 & 0.40 \\
+ &  & 720 & 139{,}680 & 0.39 & 0.39 \\
+ & \multirow{2}{*}{PatchTST} & 96 & 548{,}707 & 2.96 & 3.57 \\
+ &  & 720 & 1{,}507{,}795 & 3.77 & 4.00 \\
+ & \multirow{1}{*}{PatchTST+Cal (full)} & 96 & 552{,}931 & 3.41 & 3.88 \\
+ & \multirow{2}{*}{iTransformer} & 96 & 224{,}224 & 2.16 & 2.46 \\
+ &  & 720 & 304{,}720 & 3.39 & 3.42 \\
+ & \multirow{1}{*}{iTransformer, no tokens} & 96 & 224{,}224 & 2.23 & 2.64 \\
+ & \multirow{1}{*}{Control 2 (iTransformer-CI)} & 96 & 224{,}224 & 2.88 & 3.00 \\
+\bottomrule
+\end{tabular}

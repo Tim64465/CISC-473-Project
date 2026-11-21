@@ -1,6 +1,9 @@
-"""Rebuild every table in the midterm report from the run logs.
+"""Rebuild every table in the midterm report from the run logs, then the final report's tables.
 
-    python report_tables.py results            # writes tables/*.tex and prints checks
+    python report_tables.py results            # writes tables/*.tex, results/report_numbers.txt, prints checks
+
+The final report's tables and report_numbers.txt are built by final_tables.py (called at the end
+of main(), with the same loaded runs).
 
 Inputs (all in the results folder):
   runs_*.csv                  one row per run, written by p24.py
@@ -387,6 +390,8 @@ def main():
     rq2 = table_rq2(df, results)
     table_ablation(df, "all")  # written only when every cell has every-window scores
     text_numbers(df, P, results, rq2)
+    import final_tables  # final-report tables and results/report_numbers.txt (patch 0006)
+    final_tables.build(df, P, results)
 
 
 if __name__ == "__main__":

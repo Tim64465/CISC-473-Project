@@ -1,0 +1,10 @@
+[PASS] 1. new tables and report_numbers.txt rebuild byte-identical  -- 10 tables + report_numbers.txt
+[PASS] 2. independent second computation agrees with every number  -- tables: 762 numbers in 10 new tables compared one by one with the recomputation / report_numbers.txt: 446 lines; recomputed independently: 446 / OVERALL: PASS
+[PASS] 3. output independent of the hash seed
+[PASS] 4. report_numbers.txt: 5 fields per line, unique keys  -- 446 lines
+[PASS] 5. helpers: ties at shown precision, seed ranges, Pareto set, difference direction  -- best True, seeds True, pareto True, b-a True
+[PASS] 6. f3_selection.json = p24.py f3select on the logged runs (P=16 only); the old P=64 value stops the build  -- AssertionError: ('PatchTST', 336, {'vali_loss_best': {'3e-05': 1.3475721, '0.0001': 1.3259569, '0.0003': 1.276471}, 'mis
+[PASS] 7. env_D_session1.txt = git show 6269e2c:results/env_D.txt
+[PASS] 8. every new table compiles and fits the text width at its stated size
+
+OVERALL: PASS (8/8 checks)
