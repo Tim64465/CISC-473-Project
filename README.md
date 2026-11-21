@@ -6,12 +6,15 @@ A controlled re-evaluation of PatchTST, iTransformer and DLinear (with Autoforme
 older baseline) on ETTh1/ETTm1, and a new ten-zone Ontario demand dataset (ON-Zonal)
 built from IESO's public reports.
 
-## One command
+## Reproduce
+
+### Every table and figure from the logged runs (CPU, one command)
 
 ```bash
-pip install -r requirements-tables.txt   # tables and figures only (CPU); the GPU runs use requirements.txt
-./reproduce.sh tables   # rebuild every table, figure and results/report_numbers.txt from results/, then check git status
-./reproduce.sh all      # setup + ON-Zonal + Weather + every plan + timing + tables + figures (GPU; days of compute)
+git clone https://github.com/Tim64465/CISC-473-Project.git && cd CISC-473-Project
+python -m venv .venv && . .venv/bin/activate      # Python 3.11-3.14
+pip install -r requirements-tables.txt            # the table and figure build only (no GPU, no torch)
+./reproduce.sh tables                             # ends with "CLEAN: ..." when the rebuild equals the committed files
 ```
 
 `./reproduce.sh tables` runs `report_tables.py results` (writes `tables/*.tex`: the midterm
@@ -25,6 +28,55 @@ committed results give. The figure PDFs are byte-identical only with the version
 them. PNG copies of the figures (for slides) are written next to the PDFs and are not committed. Since job F,
 `tables/onzonal_rq2.tex` uses seeds 2021–25; the midterm's version used seeds 2021–23 (git history).
 Since job N, `tables/ablation_ETTh1_all.tex` is the PatchTST ablation scored on every test window.
+
+Checks after a fresh clone (CPU, a few minutes; outputs of the committed run in `tests/output/`):
+
+```bash
+python tests/test_report_tables.py                # midterm tables + report_numbers.txt byte-identical, merge rules
+python tests/test_final_tables.py                 # final tables, second computation, job K files, LaTeX width
+python tests/verify_report_numbers.py             # every report number and table number, computed independently
+python tests/test_figures.py                      # figures: byte-identical rebuilds with the pinned versions
+python tests/test_analyze_preds.py                # job K analysis on synthetic data
+```
+
+### Retraining (GPU)
+
+Every run was made with `notebooks/P24_run.ipynb` from branch `final-runs` on a Tesla T4 (Kaggle or
+Colab): set `JOB`, run all cells, then commit `results_<JOB>/runs.csv` as `results/runs_<JOB>.csv`,
+`env.txt` as `results/env_<JOB>.txt` and `logs_<JOB>/` as `logs/logs_<JOB>/` (the notebook's first
+cell has the full procedure). Jobs of the final report (environment per job: `tables/env_per_job.tex`):
+
+| JOB | `p24.py` plan | Seeds | Used for |
+|---|---|---|---|
+| A, B, C | `A`, `onzonal`, `ablation` (October, notebook of the midterm kit) | 2021-23 | ETTh1 reproduction and F1; RQ2 at H=96; P and L ablation |
+| V, Vcolab | `V` | 2021 | validation gate on Kaggle and on Colab |
+| D | `ETTm1 --only PatchTST Autoformer iTransformer` | 2021-23 | ETTm1 reproduction |
+| E | `onzonal_nots` | 2021-23 | RQ2: iTransformer without calendar tokens |
+| F | `onzonal_seeds` | 2024-25 | RQ2: seeds 4 and 5 |
+| G | `sameL` | 2021-23 | RQ1 F2 (same look-back) |
+| H | `onzonal_cal` | 2021-23 | PatchTST+Cal ablation on ON-Zonal |
+| J | `etth1_cal` | 2021-23 | PatchTST+Cal on ETTh1 |
+| K | `onzonal_export` | 2021 | saved predictions (`analyze_preds.py`) |
+| L | `onzonal_ci` | 2021-23 | RQ2 Control 2 |
+| M | `grid336` | 2021-23 | P x L grid at H=336 |
+| N | `ablation_redo` | 2021-23 | the ablation scored on every window |
+| P | `onzonal_h720` | 2021-23 | RQ2 at H=720 |
+| Q, Q2 | `f3 --seeds 2021`, then `f3select`, then `f3 --seeds 2022 2023` | 2021-23 | RQ1 F3 (learning rate) |
+| T | `python timing.py` (no training) | - | latency and parameters |
+
+Jobs W, X, Y and Z of the notebook (Weather, Weather L=336, RQ2 at L=336, extra same-L runs) were
+not run. Job S is the 1-epoch smoke test of every plan (rows go to `smoke_runs.csv`, not used in
+the report). `./reproduce.sh all` runs every plan above on one GPU machine (days of GPU time)
+and then the table build. New rows go to `results/runs.csv` (a run already in that file
+is skipped, so an interrupted run continues), and `report_tables.py` stops if a re-run of a logged
+run_id differs from the logged scores by more than `DUP_TOL`.
+
+### Branches
+
+`final-runs` holds every run and patch; `main` is fast-forwarded to it for submission. Keep
+`final-runs`: the notebook's `KIT_BRANCH` points to it.
+
+### What `results/` holds
 
 `results/` holds every logged run: `runs_A.csv` (ETTh1 reproduction and F1, Job A),
 `runs_B.csv` (ON-Zonal RQ2, Job B), `runs_C.csv` (PatchTST ablation, Job C), `runs_V.csv`
@@ -97,10 +149,10 @@ columns) is never appended to: use a new `P24_RESULTS` folder (a new JOB letter)
 | `ablation_redo` | S2 | 24 | the 24 official-only ablation runs of `runs_C.csv`, re-trained dual-scored |
 | `onzonal_h720` | S3 | 18 | RQ2 at H=720 (L=96) |
 | `f3` | S4 | 20 (seed 2021) | LR ∈ {3e-5, 1e-4, 3e-4} at L=96 for PatchTST and iTransformer; then `f3select`, commit `results/f3_selection.json`, and `run --plan f3 --seeds 2022 2023` runs only the non-default winners |
-| `weather` | S5 | 24 | PatchTST L=336 + iTransformer L=96, official Weather configs |
-| `weather_l336` | I1 | 12 | iTransformer L=336 on Weather (same-L pair) |
-| `onzonal_l336` | I2 | 18 | RQ2 at L=336 (H=96) |
-| `sameL_extra` | I3 | 24 | ETTh1: DLinear L=96 and Autoformer L=336 |
+| `weather` | S5 | 24 | PatchTST L=336 + iTransformer L=96, official Weather configs (not run) |
+| `weather_l336` | I1 | 12 | iTransformer L=336 on Weather (same-L pair) (not run) |
+| `onzonal_l336` | I2 | 18 | RQ2 at L=336 (H=96) (not run) |
+| `sameL_extra` | I3 | 24 | ETTh1: DLinear L=96 and Autoformer L=336 (not run) |
 | `A`, `ablation`, `onzonal` | done | 60, 36, 24 | Jobs A, C, B (unchanged commands: `tests/output/test_plans_unchanged.txt`) |
 
 M9 is `python timing.py` (no training). I4 (PatchTST+Cal injection point / time anchor) and
@@ -209,9 +261,10 @@ plus changes 1–3 computes (`tests/output/test_flags_off.txt`: identical logs a
    their observed days; the Civic Holiday is not included), to the calendar features.
    `batch_x_mark` is passed to the model only when a flag is on (`exp/exp_main.py`, all 8 calls).
    Without a flag the argparse namespace has no `cal_*` entry (`argparse.SUPPRESS`), so even
-   the printed "Args in experiment" line is unchanged. Added parameters: 24+7+2 = 33 × d_model
-   for all three (ETTh1 hour+dow, d_model 16: 496; ON-Zonal full, d_model 128: 4,224; see
-   `tests/output/test_cal.txt`).
+   the printed "Args in experiment" line is unchanged. Added parameters: one d_model vector per
+   hour (24), weekday (7) and holiday flag (2) that is switched on. ETTh1 uses hour and weekday
+   only: (24+7) × d_model = 31 × 16 = 496. ON-Zonal uses all three: (24+7+2) × d_model =
+   33 × 128 = 4,224 (`tests/output/test_cal.txt`; `results/timing.csv`).
 7. `P24_ITR_CI=1` (iTransformer, Control 2): channel-independent iTransformer. After the
    normalisation, `[B, L, N]` becomes `[B·N, L, 1]` and the calendar tokens are repeated per
    variate, so each sequence holds one variate token plus its own calendar tokens; outputs are
@@ -291,11 +344,10 @@ Autoformer repo (`utils/download_data.py:4`) and keeps `weather/weather.csv`. If
 is refused, the manual step is: download the zip from the Google Drive folder in the
 Autoformer README, take `all_six_datasets/weather/weather.csv`, and either put it in
 `work/data/` or set `P24_WEATHER_CSV=/path/to/weather.csv` (on Kaggle: upload it as a Kaggle
-dataset). The expected checksum is not recorded yet: the first download prints it and writes
-`results/weather_sha256.txt`; record it as `WEATHER_SHA256` in `p24.py` \TODO{sha256 after the
-first verified download} so every later copy is checked. The published Weather targets must
-be verified before any table uses them: \TODO{published Weather MSE/MAE for PatchTST/42 and
-iTransformer, with paper and table}.
+dataset). Weather is not used in the report (jobs W and X were not run), so its checksum was
+never recorded (`WEATHER_SHA256 = None` in `p24.py`) and no published Weather targets were
+checked. A first download prints the checksum and writes `results/weather_sha256.txt`; record
+it as `WEATHER_SHA256` so every later copy is checked.
 
 ON-Zonal is built from IESO's Hourly Zonal Demand reports
 (https://reports-public.ieso.ca/public/DemandZonal/). Copyright © Independent Electricity
@@ -307,6 +359,8 @@ rasterized. Predictions (`preds_*.zip`) and `onzonal_anomalies.csv` are never co
 (`tests/test_final_tables.py` checks).
 
 ## Tests (CPU)
+
+The table and figure checks are listed under Reproduce; the kit's own tests:
 
 ```bash
 git show 82a177c:patch_repos.py > /tmp/patch_old.py      # the kit before this branch

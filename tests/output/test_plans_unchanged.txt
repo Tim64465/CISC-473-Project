@@ -14,5 +14,10 @@
 [PASS] plan V: 1 run_ids are logged runs (expected 1); they must reproduce them  -- PatchTST_ETTh1_L336_H96_s2021 = runs_A.csv:2
 [PASS] plan sameL: 6 run_ids are logged runs (the 6 PatchTST L=96 runs of runs_C.csv)
 [PASS] plan f3: 4 default-LR runs re-run logged iTransformer rows (validation loss was not logged)
+[PASS] plan V: all 3 runs are logged (the job ran)
+[PASS] plan sameL: all 24 runs are logged (the job ran)
+[PASS] plan f3: all 20 runs are logged (the job ran)
+[PASS] plan ablation_redo: all 24 runs are logged (the job ran)
+[PASS] plan onzonal_export: all 3 runs are logged (the job ran)
 
-OVERALL: PASS (16/16 checks)
+OVERALL: PASS (21/21 checks)

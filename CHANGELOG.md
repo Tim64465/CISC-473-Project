@@ -199,3 +199,18 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
   CSVs with the csv module (719 lines, 986 table numbers: PASS). `tests/test_final_tables.py` check 9: MANIFEST hashes,
   figure copies, the recorded checks, aggregate columns only, raster example lines, and no `preds_*.zip`, `preds/`,
   `.npy`, `.npz` or `onzonal_anomalies.csv` tracked.
+
+## Patch 9 (2026-11-21, task P3: final patch)
+- README: "Reproduce" replaces "One command": the clone-to-`CLEAN` steps for every table and figure (CPU), the test
+  commands after a fresh clone, the notebook JOB table for retraining (jobs A to T of the final report; W, X, Y and Z
+  not run; S is the smoke test), and the branch note (keep `final-runs`, the notebook's `KIT_BRANCH`). The PatchTST+Cal
+  parameter sentence now says ETTh1 adds (24+7) x 16 = 496 parameters (hour and weekday only) and ON-Zonal adds
+  (24+7+2) x 128 = 4,224. The four plans that were not run are marked in the plan table, and the Weather `\TODO`s are
+  replaced by the fact that Weather was not run (also the `WEATHER_SHA256` comment in `p24.py:80`; no code change).
+  The `final_tables.py` row lists the job K tables (amended into patch 8).
+- `reproduce.sh all`: only the plans the report uses (no `weather-data`, `weather`, `weather_l336`, `onzonal_l336`,
+  `sameL_extra`), and F3 in the order of jobs Q and Q2 (`f3 --seeds 2021`, `f3select`, `f3 --seeds 2022 2023`).
+- `tests/test_plans_unchanged.py`: the merge check now reads only the October logs (`runs_A/B/C.csv`); with every
+  results file it failed once jobs V, G and Q had logged their own runs. New checks: every run of plans V, sameL,
+  f3 (seed 2021), ablation_redo and onzonal_export is logged (21/21 PASS, `tests/output/test_plans_unchanged.txt`).
+- Closes "Not done / open": the Weather items are moot (Weather was not run); I4 and I5 were not implemented.

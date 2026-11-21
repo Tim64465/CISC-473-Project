@@ -7,7 +7,10 @@ onzonal_nots and ETTm1 we compare, run by run, the run_id, the full command line
 environment switches. Expected, and reported: (1) PatchTST training runs now also get
 P24_ALL_WINDOWS=1 (dual scoring; tests/test_flags_off.py shows it leaves training and the
 official score unchanged); (2) plan ETTm1 no longer has re-score runs (dual scoring replaces them).
-Also checks that the run_ids of the re-run plans exist in the logged CSVs, so they merge.
+Also checks that the run_ids of the re-run plans exist in the October logs (runs_A/B/C.csv), so they
+merge with the runs they must reproduce, and that every run of those plans is now logged.
+(Until patch 9 the first check counted every results file, so it failed once jobs V, G and Q had
+logged their own runs; the plans themselves did not change.)
 """
 import csv
 import importlib.util
@@ -68,11 +71,13 @@ r_old = sum(1 for s in old.plan_specs("ETTm1", list(seeds)) if s.get("mode") == 
 check(f"plan ETTm1: the {r_old} re-score runs are gone (dual scoring logs both scores in the training run)",
       not any(s.get("mode") == "rescore_bs1" for s in p24.plan_specs("ETTm1", seeds)))
 
-logged = {}
+logged, logged_all = {}, set()  # October logs (the runs the re-run plans must reproduce); every logged run
 for f in sorted((KIT / "results").glob("runs_*.csv")):
     with open(f) as fh:
         for i, r in enumerate(csv.DictReader(fh), start=2):
-            logged.setdefault(r["run_id"], f"{f.name}:{i}")
+            logged_all.add(r["run_id"])
+            if f.name in ("runs_A.csv", "runs_B.csv", "runs_C.csv"):
+                logged.setdefault(r["run_id"], f"{f.name}:{i}")
 for plan, expect in (("ablation_redo", 24), ("onzonal_export", 3), ("V", 1)):
     ids = [p24.run_id_of(s) for s in p24.plan_specs(plan, p24.PLANS[plan][1])]
     hit = [i for i in ids if i in logged]
@@ -84,5 +89,10 @@ check(f"plan sameL: {len(same)} run_ids are logged runs (the 6 PatchTST L=96 run
 f3d = [p24.run_id_of(s) for s in p24.plan_specs("f3", (2021,)) if p24.run_id_of(s) in logged]
 check(f"plan f3: {len(f3d)} default-LR runs re-run logged iTransformer rows (validation loss was not logged)",
       len(f3d) == 4 and all(i.startswith("iTransformer") and logged[i].startswith("runs_A") for i in f3d))
+for plan, seeds_ in (("V", p24.PLANS["V"][1]), ("sameL", seeds), ("f3", (2021,)), ("ablation_redo", p24.PLANS["ablation_redo"][1]),
+                     ("onzonal_export", p24.PLANS["onzonal_export"][1])):
+    ids = [p24.run_id_of(s) for s in p24.plan_specs(plan, seeds_)]
+    miss = [i for i in ids if i not in logged_all]
+    check(f"plan {plan}: all {len(ids)} runs are logged (the job ran)", not miss, f"missing: {miss[:3]}" if miss else "")
 print("\nOVERALL:", "PASS" if all(OK) else "FAIL", f"({sum(OK)}/{len(OK)} checks)")
 sys.exit(0 if all(OK) else 1)

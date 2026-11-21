@@ -77,7 +77,7 @@ ETT_SHA256 = {  # files as downloaded on 2026-10-17
 # Weather: the official download in the pinned Autoformer repo (utils/download_data.py:4),
 # a zip of the six benchmarks; we keep only weather/weather.csv.
 WEATHER_URL = "https://cloud.tsinghua.edu.cn/d/e1ccfff39ad541908bae/files/?p=%2Fall_six_datasets.zip&dl=1"
-WEATHER_SHA256 = None  # \TODO{record the sha256 printed by the first verified download, then commit}
+WEATHER_SHA256 = None  # not recorded: Weather was not run (jobs W, X); record the first download's sha256 here
 WEATHER_DIR = {"PatchTST": "dataset", "iTransformer": "dataset/weather"}  # paths used by the official scripts
 WEATHER_NVAR = 21  # --enc_in 21 in scripts/PatchTST/weather.sh and iTransformer's Weather script
 
