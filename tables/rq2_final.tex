@@ -1,0 +1,43 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% RQ2 on ON-Zonal ($L{=}96$, every test window). Zone $k$ of the shifted copy is lagged by $k$ weeks. Each row and
+% each comparison uses the seeds present in all its cells (column Seeds). $\Delta$: shifted $-$ real, paired 95\%
+% t-interval over seeds; $D$ and the comparisons of controls: Welch 95\% t-intervals on the per-seed shift effects;
+% Control 2 $-$ iTransformer: Welch on MSE; calendar tokens (iTransformer with $-$ without): paired. Control 2 (C2) is
+% iTransformer with each zone attended separately (channel-independent; calendar tokens kept).
+{\setlength{\tabcolsep}{3.5pt}%
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Model & Seeds & Real zones & Shifted zones & $\Delta$ or $D$ [95\% CI] \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{$H{=}96$: MSE and $\Delta=$ shifted $-$ real [95\% CI, paired]}} \\
+iTransformer & 2021--2025 & 0.2861$\pm$0.0012 & 0.2876$\pm$0.0004 & +0.0015 [+0.0004, +0.0027] \\
+iTransformer, no tokens & 2021--2025 & 0.2934$\pm$0.0004 & 0.2948$\pm$0.0002 & +0.0014 [+0.0009, +0.0019] \\
+PatchTST & 2021--2025 & 0.2923$\pm$0.0005 & 0.2899$\pm$0.0003 & $-$0.0024 [$-$0.0027, $-$0.0021] \\
+DLinear & 2021--2025 & 0.3079$\pm$0.0005 & 0.3067$\pm$0.0005 & $-$0.0012 [$-$0.0022, $-$0.0002] \\
+Control 2 (iTrans.-CI) & 2021--2023 & 0.2922$\pm$0.0002 & 0.2877$\pm$0.0001 & $-$0.0045 [$-$0.0054, $-$0.0035] \\
+\addlinespace
+\multicolumn{5}{@{}l}{\textit{$H{=}96$: $D=\Delta_{\mathrm{iTrans}}-\Delta_{\mathrm{control}}$, controls compared [95\% CI, Welch]}} \\
+$D$ vs PatchTST & 2021--2025 & & & +0.0039 [+0.0028, +0.0050] \\
+$D$ vs DLinear & 2021--2025 & & & +0.0027 [+0.0015, +0.0040] \\
+$D$ vs Control 2 & 2021--2023 & & & +0.0066 [+0.0053, +0.0078] \\
+$D$ vs PatchTST (no tokens) & 2021--2025 & & & +0.0038 [+0.0033, +0.0043] \\
+$D$ vs DLinear (no tokens) & 2021--2025 & & & +0.0026 [+0.0016, +0.0036] \\
+$\Delta_{\mathrm{PatchTST}}-\Delta_{\mathrm{DLinear}}$ & 2021--2025 & & & $-$0.0012 [$-$0.0022, $-$0.0002] \\
+$\Delta_{\mathrm{C2}}-\Delta_{\mathrm{PatchTST}}$ & 2021--2023 & & & $-$0.0020 [$-$0.0028, $-$0.0012] \\
+$\Delta_{\mathrm{C2}}-\Delta_{\mathrm{DLinear}}$ & 2021--2023 & & & $-$0.0039 [$-$0.0046, $-$0.0031] \\
+Control 2 $-$ iTrans., real & 2021--2023 & & & +0.0069 [+0.0050, +0.0088] \\
+Control 2 $-$ iTrans., shifted & 2021--2023 & & & +0.0003 [$-$0.0005, +0.0011] \\
+Tokens, real zones (paired) & 2021--2025 & & & $-$0.0073 [$-$0.0092, $-$0.0054] \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{$H{=}720$: MSE and $\Delta=$ shifted $-$ real [95\% CI, paired]}} \\
+iTransformer & 2021--2023 & 0.4698$\pm$0.0029 & 0.4636$\pm$0.0006 & $-$0.0061 [$-$0.0134, +0.0012] \\
+PatchTST & 2021--2023 & 0.4893$\pm$0.0018 & 0.4865$\pm$0.0011 & $-$0.0028 [$-$0.0047, $-$0.0009] \\
+DLinear & 2021--2023 & 0.5230$\pm$0.0019 & 0.5106$\pm$0.0011 & $-$0.0124 [$-$0.0190, $-$0.0057] \\
+\addlinespace
+\multicolumn{5}{@{}l}{\textit{$H{=}720$: $D=\Delta_{\mathrm{iTrans}}-\Delta_{\mathrm{control}}$, controls compared [95\% CI, Welch]}} \\
+$D$ vs PatchTST & 2021--2023 & & & $-$0.0033 [$-$0.0101, +0.0034] \\
+$D$ vs DLinear & 2021--2023 & & & +0.0062 [$-$0.0002, +0.0126] \\
+$\Delta_{\mathrm{PatchTST}}-\Delta_{\mathrm{DLinear}}$ & 2021--2023 & & & +0.0095 [+0.0034, +0.0157] \\
+\bottomrule
+\end{tabular}%
+}

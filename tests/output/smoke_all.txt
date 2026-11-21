@@ -1,0 +1,716 @@
+CPU SMOKE TEST OF EVERY NEW PLAN (tests/smoke_all.sh) -- code-path check only, NOT results.
+Run 2026-11-11 05:18-07:19 UTC, 2 CPU cores / 8 GB RAM, torch 2.15.0+cu132 (CPU), pandas 3.0.5.
+--smoke = 1 epoch; first seed of each plan; synthetic ON-Zonal and Weather (tests/make_smoke_data.py);
+real ETTh1/ETTm1 (sha256-verified). Every row is in tests/output/smoke_runs.csv.
+
+Summary: 106 runs logged, 4 failed: PatchTST_weather_L336_H96_s2021, PatchTST_weather_L336_H192_s2021, PatchTST_weather_L336_H336_s2021, PatchTST_weather_L336_H720_s2021
+  by plan: {'V': 3, 'onzonal_nots': 2, 'onzonal_seeds': 8, 'sameL': 8, 'onzonal_cal': 4, 'etth1_cal': 4, 'ETTm1': 4, 'onzonal_export': 3, 'onzonal_ci': 2, 'grid336': 10, 'ablation_redo': 8, 'onzonal_h720': 6, 'f3': 26, 'weather': 4, 'weather_l336': 4, 'onzonal_l336': 6, 'sameL_extra': 4}
+  by scoring: {'all+official': 54, 'official': 52}
+  every dual-scored row has n_scored == n_test_windows and n_scored_official == floor(n/128)*128: True
+
+Notes
+- V1a/V1b FAIL here by design (1 epoch on CPU cannot reproduce a 100-epoch T4 run); V2 and V3 PASS bit for bit.
+- The 4 PatchTST Weather runs were killed (exit -9): the official config (batch 128 x 21 channels)
+  needs more than this machine's 8 GB RAM; it fits a 16 GB T4. The same path at batch 16:
+  tests/output/weather_patchtst_cpu.txt (PASS).
+- Autoformer is not trained on CPU (one epoch takes about an hour on 2 cores); every planned
+  Autoformer config is built and run forward in tests/output/timing_all_configs_cpu.txt.
+- Changes after this run: the pandas>=3 't'-alias compat patch (only Autoformer --freq t is
+  affected; tests/output/test_freq_alias.txt), which also fixed the timing step's Autoformer ETTm1
+  crash seen below (re-run: timing_all_configs_cpu.txt); the script's last step (budget on smoke
+  rows, which budget.py ignores) was replaced by the summary above; budget.py output format.
+================================================================================================
+
+################ V (V1-V3) (05:18:20)
+Plan V (V1-V3): 3 runs, 3 trainings, seeds [2021]
+
+=== PatchTST_ETTh1_L336_H96_s2021 ===
+done PatchTST_ETTh1_L336_H96_s2021: mse=0.8149 mae=0.6096 (0.7 min, scored 2785/2785, official subset 2688: mse=0.8136)
+exported PatchTST_ETTh1_L336_H96_s2021: pred(2785, 96, 7), true(2785, 96, 7), 2 PDFs
+
+=== PatchTST_ETTh1_L336_H96_s2021_cal-none ===
+done PatchTST_ETTh1_L336_H96_s2021_cal-none: mse=0.8149 mae=0.6096 (0.7 min, scored 2785/2785, official subset 2688: mse=0.8136)
+exported PatchTST_ETTh1_L336_H96_s2021_cal-none: pred(2785, 96, 7), true(2785, 96, 7), 2 PDFs
+
+=== PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen ===
+done PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen: mse=0.8149 mae=0.6096 (0.7 min, scored 2785/2785, official subset 2688: mse=0.8136)
+exported PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen: pred(2785, 96, 7), true(2785, 96, 7), 2 PDFs
+
+--- plan V checks (SMOKE: 1 epoch on CPU, V1a/V1b are expected to FAIL) ---
+V1a: FAIL  official subset (2688 windows): mse 0.813625 mae 0.609114 | runs_A.csv:2 mse 0.381600 mae 0.405070 (2688 windows)
+V1b: FAIL  every window (2785): mse 0.814879 | runs_A.csv:3 re-score mse 0.385104 | difference +4.30e-01 (tolerance 1e-05)
+V2: PASS  PatchTST_ETTh1_L336_H96_s2021_cal-none vs V1: metrics identical: True; predictions bitwise identical: True (max |diff| 0.0e+00)
+V3: PASS  PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen vs V1: metrics identical: True; predictions bitwise identical: True (max |diff| 0.0e+00)
+--- V overall: FAIL ---
+
+################ M1 onzonal_nots (05:20:29)
+Plan onzonal_nots (M1): 2 runs, 2 trainings, seeds [2021]
+
+=== iTransformer_ONZ_real_L96_H96_s2021_nots ===
+done iTransformer_ONZ_real_L96_H96_s2021_nots: mse=0.0434 mae=0.1659 (0.7 min, scored 1705/1705)
+
+=== iTransformer_ONZ_shift_L96_H96_s2021_nots ===
+done iTransformer_ONZ_shift_L96_H96_s2021_nots: mse=0.0437 mae=0.1664 (0.5 min, scored 1705/1705)
+
+################ M2 onzonal_seeds (05:21:44)
+Plan onzonal_seeds (M2): 8 runs, 8 trainings, seeds [2024]
+
+=== iTransformer_ONZ_real_L96_H96_s2024 ===
+done iTransformer_ONZ_real_L96_H96_s2024: mse=0.0487 mae=0.1755 (0.5 min, scored 1705/1705)
+
+=== PatchTST_ONZ_real_L96_H96_s2024 ===
+done PatchTST_ONZ_real_L96_H96_s2024: mse=0.2245 mae=0.3920 (1.0 min, scored 1705/1705, official subset 1664: mse=0.2250)
+
+=== DLinear_ONZ_real_L96_H96_s2024 ===
+done DLinear_ONZ_real_L96_H96_s2024: mse=0.0382 mae=0.1560 (0.2 min, scored 1705/1705)
+
+=== iTransformer_ONZ_real_L96_H96_s2024_nots ===
+done iTransformer_ONZ_real_L96_H96_s2024_nots: mse=0.0473 mae=0.1730 (0.5 min, scored 1705/1705)
+
+=== iTransformer_ONZ_shift_L96_H96_s2024 ===
+done iTransformer_ONZ_shift_L96_H96_s2024: mse=0.0490 mae=0.1760 (0.5 min, scored 1705/1705)
+
+=== PatchTST_ONZ_shift_L96_H96_s2024 ===
+done PatchTST_ONZ_shift_L96_H96_s2024: mse=0.2262 mae=0.3935 (1.0 min, scored 1705/1705, official subset 1664: mse=0.2265)
+
+=== DLinear_ONZ_shift_L96_H96_s2024 ===
+done DLinear_ONZ_shift_L96_H96_s2024: mse=0.0383 mae=0.1562 (0.2 min, scored 1705/1705)
+
+=== iTransformer_ONZ_shift_L96_H96_s2024_nots ===
+done iTransformer_ONZ_shift_L96_H96_s2024_nots: mse=0.0476 mae=0.1735 (0.5 min, scored 1705/1705)
+
+################ M3 sameL (05:26:17)
+Plan sameL (M3): 8 runs, 8 trainings, seeds [2021]
+
+=== PatchTST_ETTh1_L96_H96_s2021 ===
+done PatchTST_ETTh1_L96_H96_s2021: mse=0.8301 mae=0.6053 (0.3 min, scored 2785/2785, official subset 2688: mse=0.8292)
+
+=== PatchTST_ETTh1_L96_H192_s2021 ===
+done PatchTST_ETTh1_L96_H192_s2021: mse=0.8520 mae=0.6191 (0.3 min, scored 2689/2689, official subset 2688: mse=0.8520)
+
+=== PatchTST_ETTh1_L96_H336_s2021 ===
+done PatchTST_ETTh1_L96_H336_s2021: mse=0.8489 mae=0.6256 (0.3 min, scored 2545/2545, official subset 2432: mse=0.8307)
+
+=== PatchTST_ETTh1_L96_H720_s2021 ===
+done PatchTST_ETTh1_L96_H720_s2021: mse=0.8309 mae=0.6340 (0.3 min, scored 2161/2161, official subset 2048: mse=0.8298)
+
+=== iTransformer_ETTh1_L336_H96_s2021 ===
+done iTransformer_ETTh1_L336_H96_s2021: mse=0.4076 mae=0.4242 (0.9 min, scored 2785/2785)
+
+=== iTransformer_ETTh1_L336_H192_s2021 ===
+done iTransformer_ETTh1_L336_H192_s2021: mse=0.4402 mae=0.4442 (0.9 min, scored 2689/2689)
+
+=== iTransformer_ETTh1_L336_H336_s2021 ===
+done iTransformer_ETTh1_L336_H336_s2021: mse=0.4714 mae=0.4663 (1.1 min, scored 2545/2545)
+
+=== iTransformer_ETTh1_L336_H720_s2021 ===
+done iTransformer_ETTh1_L336_H720_s2021: mse=0.5316 mae=0.5192 (1.0 min, scored 2161/2161)
+
+################ M4 onzonal_cal (05:31:26)
+Plan onzonal_cal (M4): 4 runs, 4 trainings, seeds [2021]
+
+=== PatchTST_ONZ_real_L96_H96_s2021_cal-hour-dow-hol ===
+done PatchTST_ONZ_real_L96_H96_s2021_cal-hour-dow-hol: mse=0.2176 mae=0.3872 (1.0 min, scored 1705/1705, official subset 1664: mse=0.2178)
+
+=== PatchTST_ONZ_real_L96_H96_s2021_cal-dow-hol ===
+done PatchTST_ONZ_real_L96_H96_s2021_cal-dow-hol: mse=0.2176 mae=0.3872 (1.0 min, scored 1705/1705, official subset 1664: mse=0.2178)
+
+=== PatchTST_ONZ_real_L96_H96_s2021_cal-hour-hol ===
+done PatchTST_ONZ_real_L96_H96_s2021_cal-hour-hol: mse=0.2191 mae=0.3886 (0.9 min, scored 1705/1705, official subset 1664: mse=0.2193)
+
+=== PatchTST_ONZ_real_L96_H96_s2021_cal-hour-dow ===
+done PatchTST_ONZ_real_L96_H96_s2021_cal-hour-dow: mse=0.2176 mae=0.3872 (0.9 min, scored 1705/1705, official subset 1664: mse=0.2178)
+
+################ M5 etth1_cal (05:35:19)
+Plan etth1_cal (M5): 4 runs, 4 trainings, seeds [2021]
+
+=== PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow ===
+done PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow: mse=0.8148 mae=0.6096 (0.7 min, scored 2785/2785, official subset 2688: mse=0.8136)
+
+=== PatchTST_ETTh1_L336_H192_s2021_cal-hour-dow ===
+done PatchTST_ETTh1_L336_H192_s2021_cal-hour-dow: mse=0.8059 mae=0.6099 (0.7 min, scored 2689/2689, official subset 2688: mse=0.8059)
+
+=== PatchTST_ETTh1_L336_H336_s2021_cal-hour-dow ===
+done PatchTST_ETTh1_L336_H336_s2021_cal-hour-dow: mse=0.8017 mae=0.6138 (0.7 min, scored 2545/2545, official subset 2432: mse=0.7845)
+
+=== PatchTST_ETTh1_L336_H720_s2021_cal-hour-dow ===
+done PatchTST_ETTh1_L336_H720_s2021_cal-hour-dow: mse=0.7984 mae=0.6283 (0.7 min, scored 2161/2161, official subset 2048: mse=0.7928)
+
+################ M6 ETTm1 (H 96,720) (05:38:05)
+Plan ETTm1 (M6): 4 runs, 4 trainings, seeds [2021]
+
+=== PatchTST_ETTm1_L336_H96_s2021 ===
+done PatchTST_ETTm1_L336_H96_s2021: mse=0.3020 mae=0.3506 (11.2 min, scored 11425/11425, official subset 11392: mse=0.3025)
+
+=== PatchTST_ETTm1_L336_H720_s2021 ===
+done PatchTST_ETTm1_L336_H720_s2021: mse=0.4311 mae=0.4231 (11.8 min, scored 10801/10801, official subset 10752: mse=0.4305)
+
+=== iTransformer_ETTm1_L96_H96_s2021 ===
+done iTransformer_ETTm1_L96_H96_s2021: mse=0.3475 mae=0.3777 (2.9 min, scored 11425/11425)
+
+=== iTransformer_ETTm1_L96_H720_s2021 ===
+done iTransformer_ETTm1_L96_H720_s2021: mse=0.4894 mae=0.4549 (3.0 min, scored 10801/10801)
+
+################ M7 onzonal_export (06:07:06)
+Plan onzonal_export (M7): 3 runs, 3 trainings, seeds [2021]
+
+=== iTransformer_ONZ_real_L96_H96_s2021 ===
+done iTransformer_ONZ_real_L96_H96_s2021: mse=0.0444 mae=0.1679 (0.6 min, scored 1705/1705)
+exported iTransformer_ONZ_real_L96_H96_s2021: pred(1705, 96, 10), true(1705, 96, 10), 86 PDFs
+
+=== PatchTST_ONZ_real_L96_H96_s2021 ===
+done PatchTST_ONZ_real_L96_H96_s2021: mse=0.2191 mae=0.3886 (1.0 min, scored 1705/1705, official subset 1664: mse=0.2193)
+exported PatchTST_ONZ_real_L96_H96_s2021: pred(1705, 96, 10), true(1705, 96, 10), 1 PDFs
+
+=== DLinear_ONZ_real_L96_H96_s2021 ===
+done DLinear_ONZ_real_L96_H96_s2021: mse=0.0382 mae=0.1560 (0.2 min, scored 1705/1705)
+exported DLinear_ONZ_real_L96_H96_s2021: pred(1705, 96, 10), true(1705, 96, 10), 11 PDFs
+
+################ M8 onzonal_ci (06:08:59)
+Plan onzonal_ci (M8): 2 runs, 2 trainings, seeds [2021]
+
+=== iTransformer_ONZ_real_L96_H96_s2021_ci ===
+done iTransformer_ONZ_real_L96_H96_s2021_ci: mse=0.0572 mae=0.1905 (0.7 min, scored 1705/1705)
+
+=== iTransformer_ONZ_shift_L96_H96_s2021_ci ===
+done iTransformer_ONZ_shift_L96_H96_s2021_ci: mse=0.0575 mae=0.1910 (0.7 min, scored 1705/1705)
+
+################ S1 grid336 (06:10:27)
+Plan grid336 (S1): 10 runs, 10 trainings, seeds [2021]
+
+=== PatchTST_ETTh1_L96_H336_s2021_P8S4 ===
+done PatchTST_ETTh1_L96_H336_s2021_P8S4: mse=0.8099 mae=0.6127 (0.4 min, scored 2545/2545, official subset 2432: mse=0.7929)
+
+=== PatchTST_ETTh1_L96_H336_s2021_P32S16 ===
+done PatchTST_ETTh1_L96_H336_s2021_P32S16: mse=0.8203 mae=0.6150 (0.2 min, scored 2545/2545, official subset 2432: mse=0.8026)
+
+=== PatchTST_ETTh1_L96_H336_s2021_P64S32 ===
+done PatchTST_ETTh1_L96_H336_s2021_P64S32: mse=0.8206 mae=0.6160 (0.2 min, scored 2545/2545, official subset 2432: mse=0.8026)
+
+=== PatchTST_ETTh1_L336_H336_s2021_P8S4 ===
+done PatchTST_ETTh1_L336_H336_s2021_P8S4: mse=0.7633 mae=0.5998 (1.8 min, scored 2545/2545, official subset 2432: mse=0.7460)
+
+=== PatchTST_ETTh1_L336_H336_s2021_P32S16 ===
+done PatchTST_ETTh1_L336_H336_s2021_P32S16: mse=0.8013 mae=0.6139 (0.4 min, scored 2545/2545, official subset 2432: mse=0.7845)
+
+=== PatchTST_ETTh1_L336_H336_s2021_P64S32 ===
+done PatchTST_ETTh1_L336_H336_s2021_P64S32: mse=0.8164 mae=0.6201 (0.3 min, scored 2545/2545, official subset 2432: mse=0.7992)
+
+=== PatchTST_ETTh1_L720_H336_s2021_P8S4 ===
+done PatchTST_ETTh1_L720_H336_s2021_P8S4: mse=0.7306 mae=0.5983 (8.4 min, scored 2545/2545, official subset 2432: mse=0.7147)
+
+=== PatchTST_ETTh1_L720_H336_s2021 ===
+done PatchTST_ETTh1_L720_H336_s2021: mse=0.7891 mae=0.6202 (1.9 min, scored 2545/2545, official subset 2432: mse=0.7733)
+
+=== PatchTST_ETTh1_L720_H336_s2021_P32S16 ===
+done PatchTST_ETTh1_L720_H336_s2021_P32S16: mse=0.8251 mae=0.6351 (0.8 min, scored 2545/2545, official subset 2432: mse=0.8100)
+
+=== PatchTST_ETTh1_L720_H336_s2021_P64S32 ===
+done PatchTST_ETTh1_L720_H336_s2021_P64S32: mse=0.8259 mae=0.6354 (0.4 min, scored 2545/2545, official subset 2432: mse=0.8109)
+
+################ S2 ablation_redo (06:25:25)
+Plan ablation_redo (S2): 8 runs, 8 trainings, seeds [2021]
+
+=== PatchTST_ETTh1_L336_H96_s2021_P8S4 ===
+done PatchTST_ETTh1_L336_H96_s2021_P8S4: mse=0.7673 mae=0.5919 (1.8 min, scored 2785/2785, official subset 2688: mse=0.7658)
+
+=== PatchTST_ETTh1_L336_H96_s2021_P32S16 ===
+done PatchTST_ETTh1_L336_H96_s2021_P32S16: mse=0.7870 mae=0.5999 (0.4 min, scored 2785/2785, official subset 2688: mse=0.7861)
+
+=== PatchTST_ETTh1_L336_H96_s2021_P64S32 ===
+done PatchTST_ETTh1_L336_H96_s2021_P64S32: mse=0.8324 mae=0.6157 (0.3 min, scored 2785/2785, official subset 2688: mse=0.8308)
+
+=== PatchTST_ETTh1_L720_H96_s2021 ===
+done PatchTST_ETTh1_L720_H96_s2021: mse=0.7934 mae=0.6113 (1.9 min, scored 2785/2785, official subset 2688: mse=0.7916)
+
+=== PatchTST_ETTh1_L336_H720_s2021_P8S4 ===
+done PatchTST_ETTh1_L336_H720_s2021_P8S4: mse=0.7586 mae=0.6138 (1.7 min, scored 2161/2161, official subset 2048: mse=0.7535)
+
+=== PatchTST_ETTh1_L336_H720_s2021_P32S16 ===
+done PatchTST_ETTh1_L336_H720_s2021_P32S16: mse=0.8025 mae=0.6297 (0.4 min, scored 2161/2161, official subset 2048: mse=0.7971)
+
+=== PatchTST_ETTh1_L336_H720_s2021_P64S32 ===
+done PatchTST_ETTh1_L336_H720_s2021_P64S32: mse=0.8112 mae=0.6339 (0.3 min, scored 2161/2161, official subset 2048: mse=0.8056)
+
+=== PatchTST_ETTh1_L720_H720_s2021 ===
+done PatchTST_ETTh1_L720_H720_s2021: mse=0.8084 mae=0.6445 (1.9 min, scored 2161/2161, official subset 2048: mse=0.8055)
+
+################ S3 onzonal_h720 (06:34:14)
+Plan onzonal_h720 (S3): 6 runs, 6 trainings, seeds [2021]
+
+=== iTransformer_ONZ_real_L96_H720_s2021 ===
+done iTransformer_ONZ_real_L96_H720_s2021: mse=0.1572 mae=0.3105 (0.5 min, scored 1081/1081)
+
+=== PatchTST_ONZ_real_L96_H720_s2021 ===
+done PatchTST_ONZ_real_L96_H720_s2021: mse=0.2132 mae=0.3707 (1.0 min, scored 1081/1081, official subset 1024: mse=0.2122)
+
+=== DLinear_ONZ_real_L96_H720_s2021 ===
+done DLinear_ONZ_real_L96_H720_s2021: mse=0.0385 mae=0.1565 (0.2 min, scored 1081/1081)
+
+=== iTransformer_ONZ_shift_L96_H720_s2021 ===
+done iTransformer_ONZ_shift_L96_H720_s2021: mse=0.1578 mae=0.3110 (0.5 min, scored 1081/1081)
+
+=== PatchTST_ONZ_shift_L96_H720_s2021 ===
+done PatchTST_ONZ_shift_L96_H720_s2021: mse=0.2144 mae=0.3719 (1.0 min, scored 1081/1081, official subset 1024: mse=0.2134)
+
+=== DLinear_ONZ_shift_L96_H720_s2021 ===
+done DLinear_ONZ_shift_L96_H720_s2021: mse=0.0387 mae=0.1570 (0.2 min, scored 1081/1081)
+
+################ S4 f3 (seed 2021) (06:37:39)
+Plan f3 (S4): 20 runs, 20 trainings, seeds [2021]
+
+=== PatchTST_ETTh1_L96_H96_s2021_lr3e-05 ===
+done PatchTST_ETTh1_L96_H96_s2021_lr3e-05: mse=0.8406 mae=0.6090 (0.4 min, scored 2785/2785, official subset 2688: mse=0.8397)
+
+=== PatchTST_ETTh1_L96_H96_s2021_lr0.0003 ===
+done PatchTST_ETTh1_L96_H96_s2021_lr0.0003: mse=0.8015 mae=0.5951 (0.3 min, scored 2785/2785, official subset 2688: mse=0.8008)
+
+=== PatchTST_ETTh1_L96_H192_s2021_lr3e-05 ===
+done PatchTST_ETTh1_L96_H192_s2021_lr3e-05: mse=0.8618 mae=0.6226 (0.4 min, scored 2689/2689, official subset 2688: mse=0.8618)
+
+=== PatchTST_ETTh1_L96_H192_s2021_lr0.0003 ===
+done PatchTST_ETTh1_L96_H192_s2021_lr0.0003: mse=0.8258 mae=0.6098 (0.3 min, scored 2689/2689, official subset 2688: mse=0.8258)
+
+=== PatchTST_ETTh1_L96_H336_s2021_lr3e-05 ===
+done PatchTST_ETTh1_L96_H336_s2021_lr3e-05: mse=0.8575 mae=0.6287 (0.3 min, scored 2545/2545, official subset 2432: mse=0.8391)
+
+=== PatchTST_ETTh1_L96_H336_s2021_lr0.0003 ===
+done PatchTST_ETTh1_L96_H336_s2021_lr0.0003: mse=0.8260 mae=0.6172 (0.3 min, scored 2545/2545, official subset 2432: mse=0.8086)
+
+=== PatchTST_ETTh1_L96_H720_s2021_lr3e-05 ===
+done PatchTST_ETTh1_L96_H720_s2021_lr3e-05: mse=0.8389 mae=0.6369 (0.4 min, scored 2161/2161, official subset 2048: mse=0.8380)
+
+=== PatchTST_ETTh1_L96_H720_s2021_lr0.0003 ===
+done PatchTST_ETTh1_L96_H720_s2021_lr0.0003: mse=0.8096 mae=0.6264 (0.4 min, scored 2161/2161, official subset 2048: mse=0.8078)
+
+=== iTransformer_ETTh1_L96_H96_s2021_lr3e-05 ===
+done iTransformer_ETTh1_L96_H96_s2021_lr3e-05: mse=0.4440 mae=0.4431 (1.0 min, scored 2785/2785)
+
+=== iTransformer_ETTh1_L96_H96_s2021 ===
+done iTransformer_ETTh1_L96_H96_s2021: mse=0.3996 mae=0.4121 (1.0 min, scored 2785/2785)
+
+=== iTransformer_ETTh1_L96_H96_s2021_lr0.0003 ===
+done iTransformer_ETTh1_L96_H96_s2021_lr0.0003: mse=0.3927 mae=0.4086 (1.0 min, scored 2785/2785)
+
+=== iTransformer_ETTh1_L96_H192_s2021_lr3e-05 ===
+done iTransformer_ETTh1_L96_H192_s2021_lr3e-05: mse=0.5050 mae=0.4772 (0.9 min, scored 2689/2689)
+
+=== iTransformer_ETTh1_L96_H192_s2021 ===
+done iTransformer_ETTh1_L96_H192_s2021: mse=0.4521 mae=0.4427 (1.0 min, scored 2689/2689)
+
+=== iTransformer_ETTh1_L96_H192_s2021_lr0.0003 ===
+done iTransformer_ETTh1_L96_H192_s2021_lr0.0003: mse=0.4410 mae=0.4345 (0.9 min, scored 2689/2689)
+
+=== iTransformer_ETTh1_L96_H336_s2021_lr3e-05 ===
+done iTransformer_ETTh1_L96_H336_s2021_lr3e-05: mse=0.5068 mae=0.4724 (1.2 min, scored 2545/2545)
+
+=== iTransformer_ETTh1_L96_H336_s2021 ===
+done iTransformer_ETTh1_L96_H336_s2021: mse=0.4914 mae=0.4609 (1.2 min, scored 2545/2545)
+
+=== iTransformer_ETTh1_L96_H336_s2021_lr0.0003 ===
+done iTransformer_ETTh1_L96_H336_s2021_lr0.0003: mse=0.5009 mae=0.4679 (1.2 min, scored 2545/2545)
+
+=== iTransformer_ETTh1_L96_H720_s2021_lr3e-05 ===
+done iTransformer_ETTh1_L96_H720_s2021_lr3e-05: mse=0.5266 mae=0.5061 (1.2 min, scored 2161/2161)
+
+=== iTransformer_ETTh1_L96_H720_s2021 ===
+done iTransformer_ETTh1_L96_H720_s2021: mse=0.5056 mae=0.4910 (1.2 min, scored 2161/2161)
+
+=== iTransformer_ETTh1_L96_H720_s2021_lr0.0003 ===
+done iTransformer_ETTh1_L96_H720_s2021_lr0.0003: mse=0.4748 mae=0.4748 (1.1 min, scored 2161/2161)
+
+################ S4 f3select (06:53:27)
+PatchTST H=96: lr 3e-05: 1.2897451, lr 0.0001: 1.2775307, lr 0.0003: 1.2444105 -> winner 0.0003
+PatchTST H=192: lr 3e-05: 1.5625060, lr 0.0001: 1.5508550, lr 0.0003: 1.5195291 -> winner 0.0003
+PatchTST H=336: lr 3e-05: 1.8231102, lr 0.0001: 1.7867740, lr 0.0003: 1.7830720 -> winner 0.0003
+PatchTST H=720: lr 3e-05: 2.0702207, lr 0.0001: 2.0599582, lr 0.0003: 2.0324817 -> winner 0.0003
+iTransformer H=96: lr 3e-05: 0.7677237, lr 0.0001: 0.7086536, lr 0.0003: 0.7003515 -> winner 0.0003
+iTransformer H=192: lr 3e-05: 1.0826000, lr 0.0001: 1.0109115, lr 0.0003: 0.9930907 -> winner 0.0003
+iTransformer H=336: lr 3e-05: 1.3119715, lr 0.0001: 1.2787684, lr 0.0003: 1.3010116 -> winner 0.0001
+iTransformer H=720: lr 3e-05: 1.5908689, lr 0.0001: 1.5690582, lr 0.0003: 1.6040817 -> winner 0.0001
+wrote /home/claude/smoke/results/f3_selection_smoke.json (commit it; plan f3 with seeds 2022 2023 reads it)
+
+################ S4 f3 (seed 2022: non-default winners only) (06:53:27)
+Plan f3 (S4): 6 runs, 6 trainings, seeds [2022]
+
+=== PatchTST_ETTh1_L96_H96_s2022_lr0.0003 ===
+done PatchTST_ETTh1_L96_H96_s2022_lr0.0003: mse=0.7708 mae=0.5840 (0.3 min, scored 2785/2785, official subset 2688: mse=0.7711)
+
+=== PatchTST_ETTh1_L96_H192_s2022_lr0.0003 ===
+done PatchTST_ETTh1_L96_H192_s2022_lr0.0003: mse=0.7860 mae=0.5957 (0.3 min, scored 2689/2689, official subset 2688: mse=0.7860)
+
+=== PatchTST_ETTh1_L96_H336_s2022_lr0.0003 ===
+done PatchTST_ETTh1_L96_H336_s2022_lr0.0003: mse=0.8011 mae=0.6095 (0.3 min, scored 2545/2545, official subset 2432: mse=0.7846)
+
+=== PatchTST_ETTh1_L96_H720_s2022_lr0.0003 ===
+done PatchTST_ETTh1_L96_H720_s2022_lr0.0003: mse=0.7910 mae=0.6207 (0.4 min, scored 2161/2161, official subset 2048: mse=0.7884)
+
+=== iTransformer_ETTh1_L96_H96_s2022_lr0.0003 ===
+done iTransformer_ETTh1_L96_H96_s2022_lr0.0003: mse=0.3897 mae=0.4057 (1.0 min, scored 2785/2785)
+
+=== iTransformer_ETTh1_L96_H192_s2022_lr0.0003 ===
+done iTransformer_ETTh1_L96_H192_s2022_lr0.0003: mse=0.4519 mae=0.4414 (0.9 min, scored 2689/2689)
+
+################ S5 weather (06:56:46)
+weather.csv sha256 verified (e2233da96c04...)
+Weather ready.
+Plan weather (S5 / I1): 8 runs, 8 trainings, seeds [2021]
+
+=== PatchTST_weather_L336_H96_s2021 ===
+FAILED PatchTST_weather_L336_H96_s2021 (exit -9). Last lines of /home/claude/smoke/logs/PatchTST_weather_L336_H96_s2021_SMOKE.log:
+CMD: python run_longExp.py --random_seed 2021 --is_training 1 --root_path ./dataset/ --data_path weather.csv --model_id weather_336_96_P16S8 --model PatchTST --data custom --features M --seq_len 336 --pred_len 96 --enc_in 21 --e_layers 3 --patch_len 16 --stride 8 --des Exp_s2021 --itr 1 --batch_size 128 --learning_rate 0.0001 --n_heads 16 --d_model 128 --d_ff 256 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --train_epochs 1 --patience 20
+SEED=2021
+P24_ENV: P24_ALL_WINDOWS=1
+Args in experiment:
+Namespace(random_seed=2021, is_training=1, model_id='weather_336_96_P16S8', model='PatchTST', data='custom', root_path='./dataset/', data_path='weather.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=336, label_len=48, pred_len=96, fc_dropout=0.2, head_dropout=0.0, patch_len=16, stride=8, padding_patch='end', revin=1, affine=0, subtract_last=0, decomposition=0, kernel_size=25, individual=0, embed_type=0, enc_in=21, dec_in=7, c_out=7, d_model=128, n_heads=16, e_layers=3, d_layers=1, d_ff=256, moving_avg=25, factor=1, distil=True, dropout=0.2, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=1, batch_size=128, patience=20, learning_rate=0.0001, des='Exp_s2021', loss='mse', lradj='type3', pct_start=0.3, use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+Use CPU
+>>>>>>>start training : weather_336_96_P16S8_PatchTST_custom_ftM_sl336_ll48_pl96_dm128_nh16_el3_dl1_df256_fc1_ebtimeF_dtTrue_Exp_s2021_0>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 5869
+val 805
+test 1705
+
+=== PatchTST_weather_L336_H192_s2021 ===
+FAILED PatchTST_weather_L336_H192_s2021 (exit -9). Last lines of /home/claude/smoke/logs/PatchTST_weather_L336_H192_s2021_SMOKE.log:
+CMD: python run_longExp.py --random_seed 2021 --is_training 1 --root_path ./dataset/ --data_path weather.csv --model_id weather_336_192_P16S8 --model PatchTST --data custom --features M --seq_len 336 --pred_len 192 --enc_in 21 --e_layers 3 --patch_len 16 --stride 8 --des Exp_s2021 --itr 1 --batch_size 128 --learning_rate 0.0001 --n_heads 16 --d_model 128 --d_ff 256 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --train_epochs 1 --patience 20
+SEED=2021
+P24_ENV: P24_ALL_WINDOWS=1
+Args in experiment:
+Namespace(random_seed=2021, is_training=1, model_id='weather_336_192_P16S8', model='PatchTST', data='custom', root_path='./dataset/', data_path='weather.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=336, label_len=48, pred_len=192, fc_dropout=0.2, head_dropout=0.0, patch_len=16, stride=8, padding_patch='end', revin=1, affine=0, subtract_last=0, decomposition=0, kernel_size=25, individual=0, embed_type=0, enc_in=21, dec_in=7, c_out=7, d_model=128, n_heads=16, e_layers=3, d_layers=1, d_ff=256, moving_avg=25, factor=1, distil=True, dropout=0.2, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=1, batch_size=128, patience=20, learning_rate=0.0001, des='Exp_s2021', loss='mse', lradj='type3', pct_start=0.3, use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+Use CPU
+>>>>>>>start training : weather_336_192_P16S8_PatchTST_custom_ftM_sl336_ll48_pl192_dm128_nh16_el3_dl1_df256_fc1_ebtimeF_dtTrue_Exp_s2021_0>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 5773
+val 709
+test 1609
+
+=== PatchTST_weather_L336_H336_s2021 ===
+FAILED PatchTST_weather_L336_H336_s2021 (exit -9). Last lines of /home/claude/smoke/logs/PatchTST_weather_L336_H336_s2021_SMOKE.log:
+CMD: python run_longExp.py --random_seed 2021 --is_training 1 --root_path ./dataset/ --data_path weather.csv --model_id weather_336_336_P16S8 --model PatchTST --data custom --features M --seq_len 336 --pred_len 336 --enc_in 21 --e_layers 3 --patch_len 16 --stride 8 --des Exp_s2021 --itr 1 --batch_size 128 --learning_rate 0.0001 --n_heads 16 --d_model 128 --d_ff 256 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --train_epochs 1 --patience 20
+SEED=2021
+P24_ENV: P24_ALL_WINDOWS=1
+Args in experiment:
+Namespace(random_seed=2021, is_training=1, model_id='weather_336_336_P16S8', model='PatchTST', data='custom', root_path='./dataset/', data_path='weather.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=336, label_len=48, pred_len=336, fc_dropout=0.2, head_dropout=0.0, patch_len=16, stride=8, padding_patch='end', revin=1, affine=0, subtract_last=0, decomposition=0, kernel_size=25, individual=0, embed_type=0, enc_in=21, dec_in=7, c_out=7, d_model=128, n_heads=16, e_layers=3, d_layers=1, d_ff=256, moving_avg=25, factor=1, distil=True, dropout=0.2, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=1, batch_size=128, patience=20, learning_rate=0.0001, des='Exp_s2021', loss='mse', lradj='type3', pct_start=0.3, use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+Use CPU
+>>>>>>>start training : weather_336_336_P16S8_PatchTST_custom_ftM_sl336_ll48_pl336_dm128_nh16_el3_dl1_df256_fc1_ebtimeF_dtTrue_Exp_s2021_0>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 5629
+val 565
+test 1465
+
+=== PatchTST_weather_L336_H720_s2021 ===
+FAILED PatchTST_weather_L336_H720_s2021 (exit -9). Last lines of /home/claude/smoke/logs/PatchTST_weather_L336_H720_s2021_SMOKE.log:
+CMD: python run_longExp.py --random_seed 2021 --is_training 1 --root_path ./dataset/ --data_path weather.csv --model_id weather_336_720_P16S8 --model PatchTST --data custom --features M --seq_len 336 --pred_len 720 --enc_in 21 --e_layers 3 --patch_len 16 --stride 8 --des Exp_s2021 --itr 1 --batch_size 128 --learning_rate 0.0001 --n_heads 16 --d_model 128 --d_ff 256 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --train_epochs 1 --patience 20
+SEED=2021
+P24_ENV: P24_ALL_WINDOWS=1
+Args in experiment:
+Namespace(random_seed=2021, is_training=1, model_id='weather_336_720_P16S8', model='PatchTST', data='custom', root_path='./dataset/', data_path='weather.csv', features='M', target='OT', freq='h', checkpoints='./checkpoints/', seq_len=336, label_len=48, pred_len=720, fc_dropout=0.2, head_dropout=0.0, patch_len=16, stride=8, padding_patch='end', revin=1, affine=0, subtract_last=0, decomposition=0, kernel_size=25, individual=0, embed_type=0, enc_in=21, dec_in=7, c_out=7, d_model=128, n_heads=16, e_layers=3, d_layers=1, d_ff=256, moving_avg=25, factor=1, distil=True, dropout=0.2, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=10, itr=1, train_epochs=1, batch_size=128, patience=20, learning_rate=0.0001, des='Exp_s2021', loss='mse', lradj='type3', pct_start=0.3, use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', test_flop=False)
+Use CPU
+>>>>>>>start training : weather_336_720_P16S8_PatchTST_custom_ftM_sl336_ll48_pl720_dm128_nh16_el3_dl1_df256_fc1_ebtimeF_dtTrue_Exp_s2021_0>>>>>>>>>>>>>>>>>>>>>>>>>>
+train 5245
+val 181
+test 1081
+
+=== iTransformer_weather_L96_H96_s2021 ===
+done iTransformer_weather_L96_H96_s2021: mse=0.0214 mae=0.1168 (1.5 min, scored 1705/1705)
+
+=== iTransformer_weather_L96_H192_s2021 ===
+done iTransformer_weather_L96_H192_s2021: mse=0.0215 mae=0.1169 (1.4 min, scored 1609/1609)
+
+=== iTransformer_weather_L96_H336_s2021 ===
+done iTransformer_weather_L96_H336_s2021: mse=0.0213 mae=0.1163 (1.4 min, scored 1465/1465)
+
+=== iTransformer_weather_L96_H720_s2021 ===
+done iTransformer_weather_L96_H720_s2021: mse=0.0211 mae=0.1160 (1.2 min, scored 1081/1081)
+
+################ I1 weather_l336 (07:03:06)
+weather.csv sha256 verified (e2233da96c04...)
+Weather ready.
+Plan weather_l336 (I1): 4 runs, 4 trainings, seeds [2021]
+
+=== iTransformer_weather_L336_H96_s2021 ===
+done iTransformer_weather_L336_H96_s2021: mse=0.0204 mae=0.1139 (1.5 min, scored 1705/1705)
+
+=== iTransformer_weather_L336_H192_s2021 ===
+done iTransformer_weather_L336_H192_s2021: mse=0.0202 mae=0.1135 (1.5 min, scored 1609/1609)
+
+=== iTransformer_weather_L336_H336_s2021 ===
+done iTransformer_weather_L336_H336_s2021: mse=0.0202 mae=0.1135 (1.5 min, scored 1465/1465)
+
+=== iTransformer_weather_L336_H720_s2021 ===
+done iTransformer_weather_L336_H720_s2021: mse=0.0203 mae=0.1138 (1.2 min, scored 1081/1081)
+
+################ I2 onzonal_l336 (07:08:48)
+Plan onzonal_l336 (I2): 6 runs, 6 trainings, seeds [2021]
+
+=== iTransformer_ONZ_real_L336_H96_s2021 ===
+done iTransformer_ONZ_real_L336_H96_s2021: mse=0.0333 mae=0.1455 (0.6 min, scored 1705/1705)
+
+=== PatchTST_ONZ_real_L336_H96_s2021 ===
+done PatchTST_ONZ_real_L336_H96_s2021: mse=0.0513 mae=0.1809 (3.3 min, scored 1705/1705, official subset 1664: mse=0.0513)
+
+=== DLinear_ONZ_real_L336_H96_s2021 ===
+done DLinear_ONZ_real_L336_H96_s2021: mse=0.0365 mae=0.1525 (0.2 min, scored 1705/1705)
+
+=== iTransformer_ONZ_shift_L336_H96_s2021 ===
+done iTransformer_ONZ_shift_L336_H96_s2021: mse=0.0335 mae=0.1460 (0.6 min, scored 1705/1705)
+
+=== PatchTST_ONZ_shift_L336_H96_s2021 ===
+done PatchTST_ONZ_shift_L336_H96_s2021: mse=0.0515 mae=0.1811 (3.3 min, scored 1705/1705, official subset 1664: mse=0.0515)
+
+=== DLinear_ONZ_shift_L336_H96_s2021 ===
+done DLinear_ONZ_shift_L336_H96_s2021: mse=0.0367 mae=0.1528 (0.3 min, scored 1705/1705)
+
+################ I3 sameL_extra (DLinear) (07:17:10)
+Plan sameL_extra (I3): 4 runs, 4 trainings, seeds [2021]
+
+=== DLinear_ETTh1_L96_H96_s2021 ===
+done DLinear_ETTh1_L96_H96_s2021: mse=0.4090 mae=0.4168 (0.2 min, scored 2785/2785)
+
+=== DLinear_ETTh1_L96_H192_s2021 ===
+done DLinear_ETTh1_L96_H192_s2021: mse=0.4451 mae=0.4355 (0.2 min, scored 2689/2689)
+
+=== DLinear_ETTh1_L96_H336_s2021 ===
+done DLinear_ETTh1_L96_H336_s2021: mse=0.5072 mae=0.4782 (0.2 min, scored 2545/2545)
+
+=== DLinear_ETTh1_L96_H720_s2021 ===
+done DLinear_ETTh1_L96_H720_s2021: mse=0.5257 mae=0.5142 (0.2 min, scored 2161/2161)
+
+################ M9 timing: every planned config incl. Autoformer (forward passes, 1 warm-up, 2 reps, CPU) (07:17:58)
+PatchTST: timing 48 configuration(s)
+  PatchTST_ETTh1_L336_H96                       batch   1:     2.710 ms  params 81731
+  PatchTST_ETTh1_L336_H96                       batch  32:    28.505 ms  params 81731
+  PatchTST_ETTh1_L336_H192                      batch   1:     1.973 ms  params 146339
+  PatchTST_ETTh1_L336_H192                      batch  32:    27.094 ms  params 146339
+  PatchTST_ETTh1_L336_H336                      batch   1:     2.303 ms  params 243251
+  PatchTST_ETTh1_L336_H336                      batch  32:    27.823 ms  params 243251
+  PatchTST_ETTh1_L336_H720                      batch   1:     3.665 ms  params 501683
+  PatchTST_ETTh1_L336_H720                      batch  32:    29.484 ms  params 501683
+  PatchTST_ETTm1_L336_H96                       batch   1:     5.672 ms  params 921187
+  PatchTST_ETTm1_L336_H96                       batch  32:   115.833 ms  params 921187
+  PatchTST_ETTm1_L336_H192                      batch   1:     8.249 ms  params 1437379
+  PatchTST_ETTm1_L336_H192                      batch  32:   132.020 ms  params 1437379
+  PatchTST_ETTm1_L336_H336                      batch   1:     6.674 ms  params 2211667
+  PatchTST_ETTm1_L336_H336                      batch  32:   133.564 ms  params 2211667
+  PatchTST_ETTm1_L336_H720                      batch   1:     6.290 ms  params 4276435
+  PatchTST_ETTm1_L336_H720                      batch  32:   123.616 ms  params 4276435
+  PatchTST_ETTh1_L96_H96                        batch   1:     1.547 ms  params 35171
+  PatchTST_ETTh1_L96_H96                        batch  32:    10.618 ms  params 35171
+  PatchTST_ETTh1_L96_H192                       batch   1:     1.645 ms  params 53699
+  PatchTST_ETTh1_L96_H192                       batch  32:    13.398 ms  params 53699
+  PatchTST_ETTh1_L96_H336                       batch   1:     1.469 ms  params 81491
+  PatchTST_ETTh1_L96_H336                       batch  32:     9.992 ms  params 81491
+  PatchTST_ETTh1_L96_H720                       batch   1:     1.513 ms  params 155603
+  PatchTST_ETTh1_L96_H720                       batch  32:    11.202 ms  params 155603
+  PatchTST_ETTh1_L336_H96_P8S4                  batch   1:     4.457 ms  params 146787
+  PatchTST_ETTh1_L336_H96_P8S4                  batch  32:    64.517 ms  params 146787
+  PatchTST_ETTh1_L336_H96_P32S16                batch   1:     1.558 ms  params 49395
+  PatchTST_ETTh1_L336_H96_P32S16                batch  32:    10.691 ms  params 49395
+  PatchTST_ETTh1_L336_H96_P64S32                batch   1:     1.564 ms  params 32835
+  PatchTST_ETTh1_L336_H96_P64S32                batch  32:     8.706 ms  params 32835
+  PatchTST_ETTh1_L720_H96                       batch   1:     3.813 ms  params 156227
+  PatchTST_ETTh1_L720_H96                       batch  32:    74.546 ms  params 156227
+  PatchTST_ETTh1_L336_H720_P8S4                 batch   1:     3.829 ms  params 986067
+  PatchTST_ETTh1_L336_H720_P8S4                 batch  32:    71.385 ms  params 986067
+  PatchTST_ETTh1_L336_H720_P32S16               batch   1:     1.539 ms  params 259683
+  PatchTST_ETTh1_L336_H720_P32S16               batch  32:     9.569 ms  params 259683
+  PatchTST_ETTh1_L336_H720_P64S32               batch   1:     1.351 ms  params 133299
+  PatchTST_ETTh1_L336_H720_P64S32               batch  32:     8.380 ms  params 133299
+  PatchTST_ETTh1_L720_H720                      batch   1:     6.034 ms  params 1055411
+  PatchTST_ETTh1_L720_H720                      batch  32:    78.426 ms  params 1055411
+  PatchTST_ETTh1_L96_H336_P8S4                  batch   1:     1.918 ms  params 146067
+  PatchTST_ETTh1_L96_H336_P8S4                  batch  32:    11.318 ms  params 146067
+  PatchTST_ETTh1_L96_H336_P32S16                batch   1:     1.284 ms  params 49395
+  PatchTST_ETTh1_L96_H336_P32S16                batch  32:     5.929 ms  params 49395
+  PatchTST_ETTh1_L96_H336_P64S32                batch   1:     1.298 ms  params 33731
+  PatchTST_ETTh1_L96_H336_P64S32                batch  32:     5.168 ms  params 33731
+  PatchTST_ETTh1_L336_H336_P8S4                 batch   1:     3.662 ms  params 469587
+  PatchTST_ETTh1_L336_H336_P8S4                 batch  32:    70.501 ms  params 469587
+  PatchTST_ETTh1_L336_H336_P32S16               batch   1:     2.016 ms  params 130275
+  PatchTST_ETTh1_L336_H336_P32S16               batch  32:    10.502 ms  params 130275
+  PatchTST_ETTh1_L336_H336_P64S32               batch   1:     1.436 ms  params 71475
+  PatchTST_ETTh1_L336_H336_P64S32               batch  32:     9.172 ms  params 71475
+  PatchTST_ETTh1_L720_H336_P8S4                 batch   1:     8.384 ms  params 987219
+  PatchTST_ETTh1_L720_H336_P8S4                 batch  32:   456.531 ms  params 987219
+  PatchTST_ETTh1_L720_H336                      batch   1:     4.084 ms  params 502067
+  PatchTST_ETTh1_L720_H336                      batch  32:    90.614 ms  params 502067
+  PatchTST_ETTh1_L720_H336_P32S16               batch   1:     2.175 ms  params 259683
+  PatchTST_ETTh1_L720_H336_P32S16               batch  32:    29.651 ms  params 259683
+  PatchTST_ETTh1_L720_H336_P64S32               batch   1:     1.526 ms  params 136179
+  PatchTST_ETTh1_L720_H336_P64S32               batch  32:    14.001 ms  params 136179
+  PatchTST_ONZ_real_L96_H96                     batch   1:     4.390 ms  params 548707
+  PatchTST_ONZ_real_L96_H96                     batch  32:    57.907 ms  params 548707
+  PatchTST_ONZ_shift_L96_H96                    batch   1:     3.886 ms  params 548707
+  PatchTST_ONZ_shift_L96_H96                    batch  32:    64.803 ms  params 548707
+  PatchTST_ONZ_real_L96_H96_cal-hour-dow-hol    batch   1:     4.289 ms  params 552931
+  PatchTST_ONZ_real_L96_H96_cal-hour-dow-hol    batch  32:    58.453 ms  params 552931
+  PatchTST_ONZ_real_L96_H96_cal-dow-hol         batch   1:     4.138 ms  params 549859
+  PatchTST_ONZ_real_L96_H96_cal-dow-hol         batch  32:    58.510 ms  params 549859
+  PatchTST_ONZ_real_L96_H96_cal-hour-hol        batch   1:     3.748 ms  params 552035
+  PatchTST_ONZ_real_L96_H96_cal-hour-hol        batch  32:    57.188 ms  params 552035
+  PatchTST_ONZ_real_L96_H96_cal-hour-dow        batch   1:     3.876 ms  params 552675
+  PatchTST_ONZ_real_L96_H96_cal-hour-dow        batch  32:    59.064 ms  params 552675
+  PatchTST_ETTh1_L336_H96_cal-hour-dow          batch   1:     2.067 ms  params 82227
+  PatchTST_ETTh1_L336_H96_cal-hour-dow          batch  32:    19.850 ms  params 82227
+  PatchTST_ETTh1_L336_H192_cal-hour-dow         batch   1:     1.831 ms  params 146835
+  PatchTST_ETTh1_L336_H192_cal-hour-dow         batch  32:    23.428 ms  params 146835
+  PatchTST_ETTh1_L336_H336_cal-hour-dow         batch   1:     1.933 ms  params 243747
+  PatchTST_ETTh1_L336_H336_cal-hour-dow         batch  32:    27.687 ms  params 243747
+  PatchTST_ETTh1_L336_H720_cal-hour-dow         batch   1:     3.191 ms  params 502179
+  PatchTST_ETTh1_L336_H720_cal-hour-dow         batch  32:    23.277 ms  params 502179
+  PatchTST_ONZ_real_L96_H720                    batch   1:     5.343 ms  params 1507795
+  PatchTST_ONZ_real_L96_H720                    batch  32:    63.157 ms  params 1507795
+  PatchTST_ONZ_shift_L96_H720                   batch   1:     4.452 ms  params 1507795
+  PatchTST_ONZ_shift_L96_H720                   batch  32:    62.441 ms  params 1507795
+  PatchTST_ONZ_real_L336_H96                    batch   1:     6.464 ms  params 921187
+  PatchTST_ONZ_real_L336_H96                    batch  32:   203.557 ms  params 921187
+  PatchTST_ONZ_shift_L336_H96                   batch   1:     6.589 ms  params 921187
+  PatchTST_ONZ_shift_L336_H96                   batch  32:   173.479 ms  params 921187
+  PatchTST_weather_L336_H96                     batch   1:    11.323 ms  params 921187
+  PatchTST_weather_L336_H96                     batch  32:   535.362 ms  params 921187
+  PatchTST_weather_L336_H192                    batch   1:    15.145 ms  params 1437379
+  PatchTST_weather_L336_H192                    batch  32:   463.958 ms  params 1437379
+  PatchTST_weather_L336_H336                    batch   1:    11.775 ms  params 2211667
+  PatchTST_weather_L336_H336                    batch  32:   503.434 ms  params 2211667
+  PatchTST_weather_L336_H720                    batch   1:    16.829 ms  params 4276435
+  PatchTST_weather_L336_H720                    batch  32:   496.055 ms  params 4276435
+LTSF-Linear: timing 18 configuration(s)
+  DLinear_ETTh1_L336_H96                        batch   1:     0.190 ms  params 64704
+  DLinear_ETTh1_L336_H96                        batch  32:     1.946 ms  params 64704
+  DLinear_ETTh1_L336_H192                       batch   1:     0.205 ms  params 129408
+  DLinear_ETTh1_L336_H192                       batch  32:     1.851 ms  params 129408
+  DLinear_ETTh1_L336_H336                       batch   1:     0.188 ms  params 226464
+  DLinear_ETTh1_L336_H336                       batch  32:     2.355 ms  params 226464
+  DLinear_ETTh1_L336_H720                       batch   1:     0.329 ms  params 485280
+  DLinear_ETTh1_L336_H720                       batch  32:     2.814 ms  params 485280
+  DLinear_ETTm1_L336_H96                        batch   1:     0.175 ms  params 64704
+  DLinear_ETTm1_L336_H96                        batch  32:     1.607 ms  params 64704
+  DLinear_ETTm1_L336_H192                       batch   1:     0.151 ms  params 129408
+  DLinear_ETTm1_L336_H192                       batch  32:     1.933 ms  params 129408
+  DLinear_ETTm1_L336_H336                       batch   1:     0.220 ms  params 226464
+  DLinear_ETTm1_L336_H336                       batch  32:     2.185 ms  params 226464
+  DLinear_ETTm1_L336_H720                       batch   1:     0.257 ms  params 485280
+  DLinear_ETTm1_L336_H720                       batch  32:     3.120 ms  params 485280
+  DLinear_ETTh1_L96_H96                         batch   1:     0.175 ms  params 18624
+  DLinear_ETTh1_L96_H96                         batch  32:     0.593 ms  params 18624
+  DLinear_ETTh1_L96_H192                        batch   1:     0.197 ms  params 37248
+  DLinear_ETTh1_L96_H192                        batch  32:     0.467 ms  params 37248
+  DLinear_ETTh1_L96_H336                        batch   1:     0.100 ms  params 65184
+  DLinear_ETTh1_L96_H336                        batch  32:     0.522 ms  params 65184
+  DLinear_ETTh1_L96_H720                        batch   1:     0.124 ms  params 139680
+  DLinear_ETTh1_L96_H720                        batch  32:     0.850 ms  params 139680
+  DLinear_ONZ_real_L96_H96                      batch   1:     0.086 ms  params 18624
+  DLinear_ONZ_real_L96_H96                      batch  32:     0.516 ms  params 18624
+  DLinear_ONZ_shift_L96_H96                     batch   1:     0.089 ms  params 18624
+  DLinear_ONZ_shift_L96_H96                     batch  32:     0.532 ms  params 18624
+  DLinear_ONZ_real_L96_H720                     batch   1:     0.144 ms  params 139680
+  DLinear_ONZ_real_L96_H720                     batch  32:     1.331 ms  params 139680
+  DLinear_ONZ_shift_L96_H720                    batch   1:     0.139 ms  params 139680
+  DLinear_ONZ_shift_L96_H720                    batch  32:     1.542 ms  params 139680
+  DLinear_ONZ_real_L336_H96                     batch   1:     0.162 ms  params 64704
+  DLinear_ONZ_real_L336_H96                     batch  32:     1.593 ms  params 64704
+  DLinear_ONZ_shift_L336_H96                    batch   1:     0.308 ms  params 64704
+  DLinear_ONZ_shift_L336_H96                    batch  32:     1.678 ms  params 64704
+iTransformer: timing 30 configuration(s)
+  iTransformer_ETTh1_L96_H96                    batch   1:     1.853 ms  params 841568
+  iTransformer_ETTh1_L96_H96                    batch  32:     7.819 ms  params 841568
+  iTransformer_ETTh1_L96_H192                   batch   1:     1.375 ms  params 866240
+  iTransformer_ETTh1_L96_H192                   batch  32:     8.569 ms  params 866240
+  iTransformer_ETTh1_L96_H336                   batch   1:     3.273 ms  params 3379024
+  iTransformer_ETTh1_L96_H336                   batch  32:    18.689 ms  params 3379024
+  iTransformer_ETTh1_L96_H720                   batch   1:     2.970 ms  params 3576016
+  iTransformer_ETTh1_L96_H720                   batch  32:    18.994 ms  params 3576016
+  iTransformer_ETTm1_L96_H96                    batch   1:     1.333 ms  params 224224
+  iTransformer_ETTm1_L96_H96                    batch  32:     4.383 ms  params 224224
+  iTransformer_ETTm1_L96_H192                   batch   1:     1.097 ms  params 236608
+  iTransformer_ETTm1_L96_H192                   batch  32:     4.678 ms  params 236608
+  iTransformer_ETTm1_L96_H336                   batch   1:     1.224 ms  params 255184
+  iTransformer_ETTm1_L96_H336                   batch  32:     4.766 ms  params 255184
+  iTransformer_ETTm1_L96_H720                   batch   1:     1.148 ms  params 304720
+  iTransformer_ETTm1_L96_H720                   batch  32:     5.838 ms  params 304720
+  iTransformer_ETTh1_L336_H96                   batch   1:     1.472 ms  params 903008
+  iTransformer_ETTh1_L336_H96                   batch  32:     8.519 ms  params 903008
+  iTransformer_ETTh1_L336_H192                  batch   1:     2.011 ms  params 927680
+  iTransformer_ETTh1_L336_H192                  batch  32:     7.296 ms  params 927680
+  iTransformer_ETTh1_L336_H336                  batch   1:     3.497 ms  params 3501904
+  iTransformer_ETTh1_L336_H336                  batch  32:    23.631 ms  params 3501904
+  iTransformer_ETTh1_L336_H720                  batch   1:     3.416 ms  params 3698896
+  iTransformer_ETTh1_L336_H720                  batch  32:    26.345 ms  params 3698896
+  iTransformer_ONZ_real_L96_H96                 batch   1:     1.128 ms  params 224224
+  iTransformer_ONZ_real_L96_H96                 batch  32:     7.068 ms  params 224224
+  iTransformer_ONZ_shift_L96_H96                batch   1:     1.300 ms  params 224224
+  iTransformer_ONZ_shift_L96_H96                batch  32:     7.111 ms  params 224224
+  iTransformer_ONZ_real_L96_H96_nots            batch   1:     2.384 ms  params 224224
+  iTransformer_ONZ_real_L96_H96_nots            batch  32:     6.182 ms  params 224224
+  iTransformer_ONZ_shift_L96_H96_nots           batch   1:     1.750 ms  params 224224
+  iTransformer_ONZ_shift_L96_H96_nots           batch  32:     5.462 ms  params 224224
+  iTransformer_ONZ_real_L96_H96_ci              batch   1:     3.566 ms  params 224224
+  iTransformer_ONZ_real_L96_H96_ci              batch  32:    14.133 ms  params 224224
+  iTransformer_ONZ_shift_L96_H96_ci             batch   1:     3.147 ms  params 224224
+  iTransformer_ONZ_shift_L96_H96_ci             batch  32:    14.993 ms  params 224224
+  iTransformer_ONZ_real_L96_H720                batch   1:     1.839 ms  params 304720
+  iTransformer_ONZ_real_L96_H720                batch  32:     8.404 ms  params 304720
+  iTransformer_ONZ_shift_L96_H720               batch   1:     1.541 ms  params 304720
+  iTransformer_ONZ_shift_L96_H720               batch  32:     7.379 ms  params 304720
+  iTransformer_ONZ_real_L336_H96                batch   1:     1.147 ms  params 254944
+  iTransformer_ONZ_real_L336_H96                batch  32:     6.399 ms  params 254944
+  iTransformer_ONZ_shift_L336_H96               batch   1:     1.218 ms  params 254944
+  iTransformer_ONZ_shift_L336_H96               batch  32:     6.680 ms  params 254944
+  iTransformer_weather_L96_H96                  batch   1:     7.310 ms  params 4833888
+  iTransformer_weather_L96_H96                  batch  32:    60.793 ms  params 4833888
+  iTransformer_weather_L96_H192                 batch   1:     6.141 ms  params 4883136
+  iTransformer_weather_L96_H192                 batch  32:    60.485 ms  params 4883136
+  iTransformer_weather_L96_H336                 batch   1:     5.300 ms  params 4957008
+  iTransformer_weather_L96_H336                 batch  32:    48.520 ms  params 4957008
+  iTransformer_weather_L96_H720                 batch   1:     4.835 ms  params 5154000
+  iTransformer_weather_L96_H720                 batch  32:    48.673 ms  params 5154000
+  iTransformer_weather_L336_H96                 batch   1:     5.045 ms  params 4956768
+  iTransformer_weather_L336_H96                 batch  32:    50.529 ms  params 4956768
+  iTransformer_weather_L336_H192                batch   1:     5.119 ms  params 5006016
+  iTransformer_weather_L336_H192                batch  32:    53.438 ms  params 5006016
+  iTransformer_weather_L336_H336                batch   1:     5.532 ms  params 5079888
+  iTransformer_weather_L336_H336                batch  32:    48.730 ms  params 5079888
+  iTransformer_weather_L336_H720                batch   1:     5.306 ms  params 5276880
+  iTransformer_weather_L336_H720                batch  32:    58.403 ms  params 5276880
+Autoformer: timing 12 configuration(s)
+P24TIMING {"config_id": "Autoformer_ETTh1_L96_H96", "params": 10535943, "params_trainable": 10535943, "res": [{"batch": 1, "median_ms": 44.089425000493065, "p25_ms": 43.753348501013534, "p75_ms": 44.4255014999726}, {"batch": 32, "median_ms": 1050.3131915002086, "p25_ms": 1039.9924412499786, "p75_ms": 1060.6339417504387}], "device": "cpu", "torch": "2.15.0+cu132"}
+P24TIMING {"config_id": "Autoformer_ETTh1_L96_H192", "params": 10535943, "params_trainable": 10535943, "res": [{"batch": 1, "median_ms": 55.98670049948851, "p25_ms": 55.3117902500162, "p75_ms": 56.66161074896081}, {"batch": 32, "median_ms": 1344.3792199996096, "p25_ms": 1341.6180639997037, "p75_ms": 1347.1403759995155}], "device": "cpu", "torch": "2.15.0+cu132"}
+P24TIMING {"config_id": "Autoformer_ETTh1_L96_H336", "params": 10535943, "params_trainable": 10535943, "res": [{"batch": 1, "median_ms": 105.51280399977259, "p25_ms": 96.59152799986259, "p75_ms": 114.43407999968258}, {"batch": 32, "median_ms": 2003.824748499028, "p25_ms": 1984.0692067491545, "p75_ms": 2023.5802902489013}], "device": "cpu", "torch": "2.15.0+cu132"}
+P24TIMING {"config_id": "Autoformer_ETTh1_L96_H720", "params": 10535943, "params_trainable": 10535943, "res": [{"batch": 1, "median_ms": 116.71730350008147, "p25_ms": 116.02837925011045, "p75_ms": 117.4062277500525}, {"batch": 32, "median_ms": 4755.241365000074, "p25_ms": 4725.867249499515, "p75_ms": 4784.615480500634}], "device": "cpu", "torch": "2.15.0+cu132"}
+ Traceback (most recent call last):
+  File "pandas/_libs/tslibs/offsets.pyx", line 6238, in pandas._libs.tslibs.offsets._get_offset
+KeyError: 't'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "pandas/_libs/tslibs/offsets.pyx", line 6369, in pandas._libs.tslibs.offsets.to_offset
+  File "pandas/_libs/tslibs/offsets.pyx", line 6244, in pandas._libs.tslibs.offsets._get_offset
+  File "pandas/_libs/tslibs/offsets.pyx", line 6162, in pandas._libs.tslibs.offsets.raise_invalid_freq
+ValueError: Invalid frequency: t. Failed to parse with error message: KeyError('t').
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 27, in <module>
+    n_mark = len(time_features_from_frequency_str(args.freq)) + int(bool(getattr(args, "cal_holiday", False)))
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/claude/w/repos/Autoformer/utils/timefeatures.py", line 110, in time_features_from_frequency_str
+    offset = to_offset(freq_str)
+  File "pandas/_libs/tslibs/offsets.pyx", line 6254, in pandas._libs.tslibs.offsets.to_offset
+  File "pandas/_libs/tslibs/offsets.pyx", line 6377, in pandas._libs.tslibs.offsets.to_offset
+  File "pandas/_libs/tslibs/offsets.pyx", line 6162, in pandas._libs.tslibs.offsets.raise_invalid_freq
+ValueError: Invalid frequency: t. Failed to parse with error message: ValueError("Invalid frequency: t. Failed to parse with error message: KeyError('t').")
+
+Autoformer: worker failed after 4 of 12 configurations
+  Autoformer_ETTh1_L96_H96                      batch   1:    44.089 ms  params 10535943
+  Autoformer_ETTh1_L96_H96                      batch  32:  1050.313 ms  params 10535943
+  Autoformer_ETTh1_L96_H192                     batch   1:    55.987 ms  params 10535943
+  Autoformer_ETTh1_L96_H192                     batch  32:  1344.379 ms  params 10535943
+  Autoformer_ETTh1_L96_H336                     batch   1:   105.513 ms  params 10535943
+  Autoformer_ETTh1_L96_H336                     batch  32:  2003.825 ms  params 10535943
+  Autoformer_ETTh1_L96_H720                     batch   1:   116.717 ms  params 10535943
+  Autoformer_ETTh1_L96_H720                     batch  32:  4755.241 ms  params 10535943
+wrote /home/claude/smoke/results/timing_smoke.csv (200 rows)
+
+################ C8 budget on the smoke rows (07:18:56)
+no logged runs under ['/home/claude/smoke/results']
+
+################ done (07:18:56)

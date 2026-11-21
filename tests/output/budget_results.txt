@@ -1,0 +1,88 @@
+== GPU time used, per job ==
+job A        60 runs     3.97 GPU-h  ['Tesla T4']
+job B        24 runs     4.30 GPU-h  ['Tesla T4']
+job C        36 runs     4.49 GPU-h  ['Tesla T4']
+total       120 runs    12.77 GPU-h (a run logged by two jobs is counted twice: it ran twice)
+
+== GPU time used, per configuration (run_id without seed) ==
+iTransformer_ONZ_shift_L96_H96                           3 runs   1.29 GPU-h  seed 2021: 1621 s  ['Tesla T4']
+iTransformer_ONZ_real_L96_H96                            3 runs   1.28 GPU-h  seed 2021: 1619 s  ['Tesla T4']
+Autoformer_ETTh1_L96_H720                                3 runs   0.78 GPU-h  seed 2021: 872 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H720                                 6 runs   0.65 GPU-h  seed 2021: 390 s  ['Tesla T4']
+PatchTST_ETTh1_L720_H96                                  3 runs   0.62 GPU-h  seed 2021: 747 s  ['Tesla T4']
+PatchTST_ETTh1_L720_H720                                 3 runs   0.60 GPU-h  seed 2021: 713 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H96                                  6 runs   0.58 GPU-h  seed 2021: 352 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H720_P8S4                            3 runs   0.57 GPU-h  seed 2021: 686 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H96_P8S4                             3 runs   0.56 GPU-h  seed 2021: 647 s  ['Tesla T4']
+Autoformer_ETTh1_L96_H336                                3 runs   0.50 GPU-h  seed 2021: 639 s  ['Tesla T4']
+DLinear_ONZ_real_L96_H96                                 3 runs   0.37 GPU-h  seed 2021: 422 s  ['Tesla T4']
+DLinear_ONZ_shift_L96_H96                                3 runs   0.37 GPU-h  seed 2021: 472 s  ['Tesla T4']
+Autoformer_ETTh1_L96_H192                                3 runs   0.34 GPU-h  seed 2021: 465 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H336                                 3 runs   0.31 GPU-h  seed 2021: 369 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H192                                 3 runs   0.30 GPU-h  seed 2021: 354 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H720_P32S16                          3 runs   0.29 GPU-h  seed 2021: 337 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H720_P64S32                          3 runs   0.29 GPU-h  seed 2021: 339 s  ['Tesla T4']
+PatchTST_ETTh1_L96_H720                                  3 runs   0.27 GPU-h  seed 2021: 330 s  ['Tesla T4']
+Autoformer_ETTh1_L96_H96                                 3 runs   0.27 GPU-h  seed 2021: 281 s  ['Tesla T4']
+PatchTST_ONZ_shift_L96_H96                               3 runs   0.26 GPU-h  seed 2021: 300 s  ['Tesla T4']
+PatchTST_ONZ_real_L96_H96                                3 runs   0.26 GPU-h  seed 2021: 300 s  ['Tesla T4']
+PatchTST_ONZ_real_L96_H96_bs1                            3 runs   0.24 GPU-h  seed 2021: 305 s  ['Tesla T4']
+PatchTST_ONZ_shift_L96_H96_bs1                           3 runs   0.24 GPU-h  seed 2021: 302 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H96_P32S16                           3 runs   0.24 GPU-h  seed 2021: 288 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H96_P64S32                           3 runs   0.24 GPU-h  seed 2021: 288 s  ['Tesla T4']
+PatchTST_ETTh1_L96_H96                                   3 runs   0.22 GPU-h  seed 2021: 265 s  ['Tesla T4']
+iTransformer_ETTh1_L96_H96                               3 runs   0.19 GPU-h  seed 2021: 241 s  ['Tesla T4']
+iTransformer_ETTh1_L96_H192                              3 runs   0.18 GPU-h  seed 2021: 240 s  ['Tesla T4']
+iTransformer_ETTh1_L96_H336                              3 runs   0.10 GPU-h  seed 2021: 123 s  ['Tesla T4']
+iTransformer_ETTh1_L96_H720                              3 runs   0.10 GPU-h  seed 2021: 131 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H96_bs1                              3 runs   0.04 GPU-h  seed 2021: 45 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H192_bs1                             3 runs   0.04 GPU-h  seed 2021: 46 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H336_bs1                             3 runs   0.04 GPU-h  seed 2021: 44 s  ['Tesla T4']
+DLinear_ETTh1_L336_H96                                   3 runs   0.03 GPU-h  seed 2021: 31 s  ['Tesla T4']
+PatchTST_ETTh1_L336_H720_bs1                             3 runs   0.03 GPU-h  seed 2021: 38 s  ['Tesla T4']
+DLinear_ETTh1_L336_H720                                  3 runs   0.03 GPU-h  seed 2021: 31 s  ['Tesla T4']
+DLinear_ETTh1_L336_H336                                  3 runs   0.03 GPU-h  seed 2021: 40 s  ['Tesla T4']
+DLinear_ETTh1_L336_H192                                  3 runs   0.03 GPU-h  seed 2021: 28 s  ['Tesla T4']
+
+== Projection for runs not logged yet (logged seed-2021 time of the same config) ==
+onzonal_nots    M1         6 of   6 runs to do:   0.00 GPU-h for 0 measured + 6 not measured
+onzonal_seeds   M2        16 of  16 runs to do:   2.63 GPU-h for 12 measured + 4 not measured
+    iTransformer_ONZ_real_L96_H96                      x2: 1619 s each (seed 2021, Tesla T4)
+    PatchTST_ONZ_real_L96_H96                          x2: 300 s each (seed 2021, Tesla T4)
+    DLinear_ONZ_real_L96_H96                           x2: 422 s each (seed 2021, Tesla T4)
+    iTransformer_ONZ_shift_L96_H96                     x2: 1621 s each (seed 2021, Tesla T4)
+    PatchTST_ONZ_shift_L96_H96                         x2: 300 s each (seed 2021, Tesla T4)
+    DLinear_ONZ_shift_L96_H96                          x2: 472 s each (seed 2021, Tesla T4)
+sameL           M3        24 of  24 runs to do:   0.50 GPU-h for 6 measured + 18 not measured  (6 re-run(s) of logged run_ids)
+    PatchTST_ETTh1_L96_H96                             x3: 265 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L96_H720                            x3: 330 s each (seed 2021, Tesla T4)
+onzonal_cal     M4        12 of  12 runs to do:   0.00 GPU-h for 0 measured + 12 not measured
+etth1_cal       M5        12 of  12 runs to do:   0.00 GPU-h for 0 measured + 12 not measured
+ETTm1           M6        48 of  48 runs to do:   0.00 GPU-h for 0 measured + 48 not measured
+onzonal_export  M7         3 of   3 runs to do:   0.65 GPU-h for 3 measured  (3 re-run(s) of logged run_ids)
+    iTransformer_ONZ_real_L96_H96                      x1: 1619 s each (seed 2021, Tesla T4)
+    PatchTST_ONZ_real_L96_H96                          x1: 300 s each (seed 2021, Tesla T4)
+    DLinear_ONZ_real_L96_H96                           x1: 422 s each (seed 2021, Tesla T4)
+onzonal_ci      M8         6 of   6 runs to do:   0.00 GPU-h for 0 measured + 6 not measured
+grid336         S1        30 of  30 runs to do:   0.00 GPU-h for 0 measured + 30 not measured
+ablation_redo   S2        24 of  24 runs to do:   3.37 GPU-h for 24 measured  (24 re-run(s) of logged run_ids)
+    PatchTST_ETTh1_L336_H96_P8S4                       x3: 647 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L336_H96_P32S16                     x3: 288 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L336_H96_P64S32                     x3: 288 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L720_H96                            x3: 747 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L336_H720_P8S4                      x3: 686 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L336_H720_P32S16                    x3: 337 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L336_H720_P64S32                    x3: 339 s each (seed 2021, Tesla T4)
+    PatchTST_ETTh1_L720_H720                           x3: 713 s each (seed 2021, Tesla T4)
+onzonal_h720    S3        18 of  18 runs to do:   0.00 GPU-h for 0 measured + 18 not measured
+f3              S4        20 of  20 runs to do:   0.20 GPU-h for 4 measured + 16 not measured  (4 re-run(s) of logged run_ids)
+    iTransformer_ETTh1_L96_H96                         x1: 241 s each (seed 2021, Tesla T4)
+    iTransformer_ETTh1_L96_H192                        x1: 240 s each (seed 2021, Tesla T4)
+    iTransformer_ETTh1_L96_H336                        x1: 123 s each (seed 2021, Tesla T4)
+    iTransformer_ETTh1_L96_H720                        x1: 131 s each (seed 2021, Tesla T4)
+weather         S5 / I1   24 of  24 runs to do:   0.00 GPU-h for 0 measured + 24 not measured
+weather_l336    I1        12 of  12 runs to do:   0.00 GPU-h for 0 measured + 12 not measured
+onzonal_l336    I2        18 of  18 runs to do:   0.00 GPU-h for 0 measured + 18 not measured
+sameL_extra     I3        24 of  24 runs to do:   0.00 GPU-h for 0 measured + 24 not measured
+
+all listed plans: 7.35 GPU-h for the measured runs; 248 run(s) not measured

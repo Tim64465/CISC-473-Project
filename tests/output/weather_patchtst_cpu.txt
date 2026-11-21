@@ -1,0 +1,10 @@
+python run_longExp.py --random_seed 2021 --is_training 1 --root_path ./dataset/ --data_path weather.csv --model_id weather_336_96_P16S8 --model PatchTST --data custom --features M --seq_len 336 --pred_len 96 --enc_in 21 --e_layers 3 --patch_len 16 --stride 8 --des Exp_s2021 --itr 1 --batch_size 16 --learning_rate 0.0001 --n_heads 16 --d_model 128 --d_ff 256 --dropout 0.2 --fc_dropout 0.2 --head_dropout 0 --train_epochs 1 --patience 20 | {'P24_ALL_WINDOWS': '1'}
+train 5869
+val 805
+test 1705
+Epoch: 1, Steps: 366 | Train Loss: 0.3013798 Vali Loss: 0.0369611 Test Loss: 0.0370620
+test 1705
+P24_OFFICIAL_SUBSET n_scored_official=1696 n_test=1705 batch_size=16 mse_official=0.03706204146146774 mae_official=0.15358644723892212
+mse:0.037069935351610184, mae:0.15360350906848907, rse:0.19252105057239532
+OVERALL: PASS
+exit 0

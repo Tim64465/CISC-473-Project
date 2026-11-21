@@ -1,0 +1,7 @@
+[PASS] 1. runs end to end: the listed files only, aggregate columns only, example lines rasterized  -- extra files [], missing [], other columns []
+[PASS] 2. closed forms: iTransformer zone error, MW and MAPE, PatchTST step error, DLinear holiday error; counts  -- zone True, MW/MAPE True, step True, holiday True, peak counts True
+[PASS] 3. worst windows: distinct episodes; DLinear's with an error all touch a holiday  -- gaps True, DLinear error windows 2
+[PASS] 4. stops on shifted targets, a logged-score mismatch and a split mismatch  -- 'iTransformer: exported targets differ from the rebuilt data ' / 'iTransformer: arrays give mse 0.0010000 mae 0.0100000, runs_' / 'rebuilt test_start 2400 != committed 2401'
+[PASS] 5. two runs give byte-identical files  -- differ: []
+
+OVERALL: PASS (5/5 checks)

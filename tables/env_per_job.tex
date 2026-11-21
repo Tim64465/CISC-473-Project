@@ -1,0 +1,31 @@
+% Fits the report's text width (6.5 in) at \footnotesize. Suggested caption (written by final_tables.py):
+% Environment of each job, from \texttt{results/env\_<JOB>.txt} (\texttt{pip freeze}, \texttt{nvidia-smi}, kit commit). Platform:
+% Kaggle if \texttt{kaggle-environments} is installed, else Colab. GPUs as listed by \texttt{nvidia-smi}: Kaggle lists two T4s
+% (no run passes \texttt{--use\_multi\_gpu}); driver versions are in \texttt{results/report\_numbers.txt}. Job D ran in two sessions
+% (kit commits in order; session 1 from git history, \texttt{env\_D\_session1.txt}). GPU-h: wall-clock time of the logged runs.
+% Jobs A--C (October) predate environment logging; V and Vcolab: the validation gate on Kaggle and Colab; T: timing only.
+\begin{tabular}{@{}llrrlllll@{}}
+\toprule
+Job & Plan & Runs & GPU-h & Platform & GPU & torch & numpy & Kit commit \\
+\midrule
+A & A & 60 & 3.97 & -- & Tesla T4 & \multicolumn{3}{l}{not logged (October)} \\
+B & onzonal & 24 & 4.30 & -- & Tesla T4 & \multicolumn{3}{l}{not logged (October)} \\
+C & ablation & 36 & 4.49 & -- & Tesla T4 & \multicolumn{3}{l}{not logged (October)} \\
+D & ETTm1 & 36 & 15.99 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 2a50dc1, 92615f3 \\
+E & onzonal\_nots & 6 & 2.89 & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & 2a50dc1 \\
+F & onzonal\_seeds & 16 & 3.90 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 5b82843 \\
+G & sameL & 24 & 1.33 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 2a50dc1 \\
+H & onzonal\_cal & 12 & 1.07 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & a73ac64 \\
+J & etth1\_cal & 12 & 1.36 & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & a73ac64 \\
+K & onzonal\_export & 3 & 0.60 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 5b642cd \\
+L & onzonal\_ci & 6 & 3.05 & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & 5b82843 \\
+M & grid336 & 30 & 4.73 & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & 2a50dc1 \\
+N & ablation\_redo & 24 & 3.09 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 48af2f8 \\
+P & onzonal\_h720 & 18 & 4.95 & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & 48af2f8 \\
+Q & f3 & 20 & 1.15 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 2216bcd \\
+Q2 & f3 & 12 & 0.86 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & ffadbac \\
+T & timing & -- & -- & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & 2a50dc1 \\
+V & V & 3 & 0.27 & Kaggle & Tesla T4 $\times$2 & 2.11.0+cu130 & 2.1.3 & 8fd5713 \\
+Vcolab & V & 3 & 0.32 & Colab & Tesla T4 & 2.14.1+cu130 & 2.4.6 & 5b642cd \\
+\bottomrule
+\end{tabular}

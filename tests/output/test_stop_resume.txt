@@ -1,0 +1,19 @@
+## session 1: P24_STOP_AFTER_H=0.001 (3.6 s): the first run starts, no second one
+Plan V (V1-V3): 3 runs, 3 trainings, seeds [2021]
+=== PatchTST_ETTh1_L336_H96_s2021 ===
+done PatchTST_ETTh1_L336_H96_s2021: mse=0.8149 mae=0.6096 (1.7 min, scored 2785/2785, official subset 2688: mse=0.8136)
+STOP: this session has used its 0.001 h (P24_STOP_AFTER_H); 2 run(s) not started. Run this JOB again to continue: finished runs are skipped.
+
+## session 2: the same JOB again (no limit): the finished run is skipped, the rest run
+Plan V (V1-V3): 3 runs, 3 trainings, seeds [2021]
+skip PatchTST_ETTh1_L336_H96_s2021 (already logged)
+=== PatchTST_ETTh1_L336_H96_s2021_cal-none ===
+done PatchTST_ETTh1_L336_H96_s2021_cal-none: mse=0.8149 mae=0.6096 (0.8 min, scored 2785/2785, official subset 2688: mse=0.8136)
+=== PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen ===
+done PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen: mse=0.8149 mae=0.6096 (0.7 min, scored 2785/2785, official subset 2688: mse=0.8136)
+--- plan V checks (SMOKE: 1 epoch on CPU, V1a/V1b are expected to FAIL) ---
+V1a: FAIL  official subset (2688 windows): mse 0.813625 mae 0.609114 | runs_A.csv:2 mse 0.381600 mae 0.405070 (2688 windows)
+V1b: FAIL  every window (2785): mse 0.814879 | runs_A.csv:3 re-score mse 0.385104 | difference +4.30e-01 (tolerance 1e-05)
+V2: PASS  PatchTST_ETTh1_L336_H96_s2021_cal-none vs V1: metrics identical: True; predictions bitwise identical: True (max |diff| 0.0e+00)
+V3: PASS  PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen vs V1: metrics identical: True; predictions bitwise identical: True (max |diff| 0.0e+00)
+--- V overall: FAIL ---

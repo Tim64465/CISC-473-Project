@@ -1,0 +1,7 @@
+run_id,plan,mode,model,dataset,L,H,seed,patch_len,stride,test_batch_size,test_drop_last,n_test_windows,n_scored,epochs_run,early_stopped,mse,mae,seconds,device,repo_commit,timestamp_utc,mse_official,mae_official,n_scored_official,scoring,variant,vali_loss_best
+iTransformer_ONZ_real_L96_H96_s2021_nots,onzonal_nots,train,iTransformer,ONZ_real,96,96,2021,,,1,False,18889,18889,10,True,0.293257,0.395942,1733,Tesla T4,c2426e68ca,2026-11-14 23:52:08,,,,official,nots,0.2909774
+iTransformer_ONZ_shift_L96_H96_s2021_nots,onzonal_nots,train,iTransformer,ONZ_shift,96,96,2021,,,1,False,18889,18889,10,False,0.294439,0.394107,1803,Tesla T4,c2426e68ca,2026-11-15 00:22:10,,,,official,nots,0.2921959
+iTransformer_ONZ_real_L96_H96_s2022_nots,onzonal_nots,train,iTransformer,ONZ_real,96,96,2022,,,1,False,18889,18889,10,False,0.293793,0.396363,1736,Tesla T4,c2426e68ca,2026-11-15 00:51:06,,,,official,nots,0.2901136
+iTransformer_ONZ_shift_L96_H96_s2022_nots,onzonal_nots,train,iTransformer,ONZ_shift,96,96,2022,,,1,False,18889,18889,10,True,0.295085,0.394826,1697,Tesla T4,c2426e68ca,2026-11-15 01:19:23,,,,official,nots,0.2928965
+iTransformer_ONZ_real_L96_H96_s2023_nots,onzonal_nots,train,iTransformer,ONZ_real,96,96,2023,,,1,False,18889,18889,10,False,0.293767,0.396608,1709,Tesla T4,c2426e68ca,2026-11-15 01:47:52,,,,official,nots,0.2904580
+iTransformer_ONZ_shift_L96_H96_s2023_nots,onzonal_nots,train,iTransformer,ONZ_shift,96,96,2023,,,1,False,18889,18889,10,True,0.294726,0.394476,1735,Tesla T4,c2426e68ca,2026-11-15 02:16:47,,,,official,nots,0.2923943

@@ -1,0 +1,20 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% PatchTST on ETTh1 at $H{=}336$: test MSE for patch length $P$ (stride $S=P/2$) $\times$ look-back $L$, mean $\pm$ std
+% over the seeds shown; top: every test window (used for comparisons), bottom: official loader; bold: lowest in each block.
+\begin{tabular}{@{}llll@{}}
+\toprule
+ & $L{=}96$ & $L{=}336$ & $L{=}720$ \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{every test window, seeds 2021--2023}} \\
+$P{=}8$, $S{=}4$ & 0.4819$\pm$0.0032 & \textbf{0.4340}$\pm$0.0055 & 0.4450$\pm$0.0079 \\
+$P{=}16$, $S{=}8$ & 0.4872$\pm$0.0007 & 0.4382$\pm$0.0049 & 0.4422$\pm$0.0079 \\
+$P{=}32$, $S{=}16$ & 0.4992$\pm$0.0035 & 0.4402$\pm$0.0042 & 0.4461$\pm$0.0054 \\
+$P{=}64$, $S{=}32$ & 0.5286$\pm$0.0112 & 0.4529$\pm$0.0041 & 0.4536$\pm$0.0029 \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{official loader, seeds 2021--2023}} \\
+$P{=}8$, $S{=}4$ & 0.4781$\pm$0.0035 & \textbf{0.4264}$\pm$0.0065 & 0.4365$\pm$0.0080 \\
+$P{=}16$, $S{=}8$ & 0.4830$\pm$0.0007 & 0.4284$\pm$0.0046 & 0.4317$\pm$0.0073 \\
+$P{=}32$, $S{=}16$ & 0.4945$\pm$0.0034 & 0.4293$\pm$0.0041 & 0.4346$\pm$0.0049 \\
+$P{=}64$, $S{=}32$ & 0.5220$\pm$0.0104 & 0.4407$\pm$0.0040 & 0.4415$\pm$0.0028 \\
+\bottomrule
+\end{tabular}

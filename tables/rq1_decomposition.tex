@@ -1,0 +1,57 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% RQ1 on ETTh1: gap $G=\overline{\mathrm{MSE}}_{\mathrm{iTransformer}}-\overline{\mathrm{MSE}}_{\mathrm{PatchTST}}$ (test MSE) under each
+% protocol $\pi_k$, seeds 2021--2023 in every cell; published: iTransformer ($L{=}96$) $-$ PatchTST/42 ($L{=}336$).
+% $\pi_0$: each model's official loader and look-back (iTransformer $L{=}96$, PatchTST $L{=}336$), default LR $10^{-4}$.
+% F1: score every test window; F2: same look-back; F3: LR from $\{3\cdot10^{-5},10^{-4},3\cdot10^{-4}\}$ with the lowest
+% validation loss (seed 2021, \texttt{f3\_selection.json}), then 3 seeds. $G$: Welch 95\% t-interval; $C_1$, $C_2$, $C_2'$ and
+% the Shapley values: paired t-intervals over seeds (one model changes); $C_3$: Welch interval on the per-seed LR effects.
+% Shapley values on the 2$\times$2 of F1 and F2 sum to $G_0-G(\mathrm{F1,F2})$; shares are of $G_0$
+% ($^\dagger$: $G_0$'s interval includes 0, so shares are unstable). At common $L{=}336$ F1 does not
+% change iTransformer, so $\phi_{\mathrm{F1}}=C_1$ and $\phi_{\mathrm{F2}}=C_2'$.
+{\setlength{\tabcolsep}{4pt}%
+\begin{tabular}{@{}lllll@{}}
+\toprule
+ & $H{=}96$ & $H{=}192$ & $H{=}336$ & $H{=}720$ \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Gap $G$ [95\% CI, Welch]}} \\
+Published & +0.011 & +0.027 & +0.056 & +0.054 \\\addlinespace[1pt]
+$\pi_0$: reproduction & +0.0083 & +0.0294 & +0.0615 & +0.0613 \\
+ & {\scriptsize[$-$0.0003, +0.0170]} & {\scriptsize[+0.0223, +0.0366]} & {\scriptsize[+0.0509, +0.0720]} & {\scriptsize[+0.0510, +0.0715]} \\\addlinespace[1pt]
+$\pi_1=\pi_0$ + F1 & +0.0048 & +0.0294 & +0.0517 & +0.0543 \\
+ & {\scriptsize[$-$0.0038, +0.0133]} & {\scriptsize[+0.0222, +0.0366]} & {\scriptsize[+0.0405, +0.0628]} & {\scriptsize[+0.0442, +0.0643]} \\\addlinespace[1pt]
+$\pi_2=\pi_1$ + F2 ($L{=}96$) & $-$0.0089 & $-$0.0021 & +0.0027 & +0.0232 \\
+ & {\scriptsize[$-$0.0118, $-$0.0060]} & {\scriptsize[$-$0.0099, +0.0056]} & {\scriptsize[+0.0001, +0.0054]} & {\scriptsize[+0.0183, +0.0282]} \\\addlinespace[1pt]
+$\pi_3=\pi_2$ + F3 & +0.0011 & +0.0070 & +0.0105 & +0.0316 \\
+ & {\scriptsize[$-$0.0006, +0.0027]} & {\scriptsize[$-$0.0011, +0.0150]} & {\scriptsize[+0.0046, +0.0165]} & {\scriptsize[+0.0197, +0.0434]} \\\addlinespace[1pt]
+$\pi_1$ + F2 ($L{=}336$; alt.) & +0.0225 & +0.0385 & +0.0301 & +0.1055 \\
+ & {\scriptsize[+0.0149, +0.0300]} & {\scriptsize[+0.0305, +0.0466]} & {\scriptsize[+0.0191, +0.0411]} & {\scriptsize[+0.0216, +0.1893]} \\\addlinespace[1pt]
+\midrule
+\multicolumn{5}{@{}l}{\textit{$C_k=G(\pi_{k-1})-G(\pi_k)$ [95\% CI]}} \\
+$C_1$: F1 (paired) & +0.0036 & +0.0000 & +0.0098 & +0.0070 \\
+ & {\scriptsize[+0.0033, +0.0038]} & {\scriptsize[+0.0000, +0.0000]} & {\scriptsize[+0.0091, +0.0105]} & {\scriptsize[+0.0067, +0.0073]} \\\addlinespace[1pt]
+$C_2$: F2, $L{=}96$ (paired) & +0.0136 & +0.0315 & +0.0489 & +0.0310 \\
+ & {\scriptsize[+0.0073, +0.0200]} & {\scriptsize[+0.0291, +0.0340]} & {\scriptsize[+0.0366, +0.0613]} & {\scriptsize[+0.0214, +0.0407]} \\\addlinespace[1pt]
+$C_3$: F3 (Welch) & $-$0.0099 & $-$0.0091 & $-$0.0078 & $-$0.0084 \\
+ & {\scriptsize[$-$0.0128, $-$0.0071]} & {\scriptsize[$-$0.0112, $-$0.0070]} & {\scriptsize[$-$0.0139, $-$0.0017]} & {\scriptsize[$-$0.0177, +0.0010]} \\\addlinespace[1pt]
+$C_2'$: F2, $L{=}336$ (paired) & $-$0.0177 & $-$0.0091 & +0.0216 & $-$0.0512 \\
+ & {\scriptsize[$-$0.0232, $-$0.0122]} & {\scriptsize[$-$0.0202, +0.0019]} & {\scriptsize[+0.0122, +0.0310]} & {\scriptsize[$-$0.1351, +0.0326]} \\\addlinespace[1pt]
+\midrule
+\multicolumn{5}{@{}l}{\textit{Shapley, F1$\times$F2 (\% of $G_0$) [95\% CI]}} \\
+$\phi_{\mathrm{F1}}$, $L{=}96$ (paired) & +0.0029 (35\%$^\dagger$) & +0.0000 (0\%) & +0.0070 (11\%) & +0.0076 (12\%) \\
+ & {\scriptsize[+0.0028, +0.0031]} & {\scriptsize[+0.0000, +0.0000]} & {\scriptsize[+0.0066, +0.0074]} & {\scriptsize[+0.0074, +0.0078]} \\\addlinespace[1pt]
+$\phi_{\mathrm{F2}}$, $L{=}96$ (paired) & +0.0143 (171\%$^\dagger$) & +0.0316 (107\%) & +0.0517 (84\%) & +0.0304 (50\%) \\
+ & {\scriptsize[+0.0078, +0.0207]} & {\scriptsize[+0.0291, +0.0340]} & {\scriptsize[+0.0396, +0.0638]} & {\scriptsize[+0.0209, +0.0400]} \\\addlinespace[1pt]
+$G$(F1,F2), $L{=}96$ (Welch) & $-$0.0089 ($-$106\%$^\dagger$) & $-$0.0021 ($-$7\%) & +0.0027 (4\%) & +0.0232 (38\%) \\
+ & {\scriptsize[$-$0.0118, $-$0.0060]} & {\scriptsize[$-$0.0099, +0.0056]} & {\scriptsize[+0.0001, +0.0054]} & {\scriptsize[+0.0183, +0.0282]} \\\addlinespace[1pt]
+$\phi_{\mathrm{F1}}$, $L{=}336$ (paired) & +0.0036 (43\%$^\dagger$) & +0.0000 (0\%) & +0.0098 (16\%) & +0.0070 (11\%) \\
+ & {\scriptsize[+0.0033, +0.0038]} & {\scriptsize[+0.0000, +0.0000]} & {\scriptsize[+0.0091, +0.0105]} & {\scriptsize[+0.0067, +0.0073]} \\\addlinespace[1pt]
+$\phi_{\mathrm{F2}}$, $L{=}336$ (paired) & $-$0.0177 ($-$212\%$^\dagger$) & $-$0.0091 ($-$31\%) & +0.0216 (35\%) & $-$0.0512 ($-$84\%) \\
+ & {\scriptsize[$-$0.0232, $-$0.0122]} & {\scriptsize[$-$0.0202, +0.0019]} & {\scriptsize[+0.0122, +0.0310]} & {\scriptsize[$-$0.1351, +0.0326]} \\\addlinespace[1pt]
+$G$(F1,F2), $L{=}336$ (Welch) & +0.0225 (269\%$^\dagger$) & +0.0385 (131\%) & +0.0301 (49\%) & +0.1055 (172\%) \\
+ & {\scriptsize[+0.0149, +0.0300]} & {\scriptsize[+0.0305, +0.0466]} & {\scriptsize[+0.0191, +0.0411]} & {\scriptsize[+0.0216, +0.1893]} \\\addlinespace[1pt]
+\midrule
+F3 LR: PatchTST / iTrans. & 3e-4 / 1e-4 & 3e-4 / 1e-4 & 3e-4 / 3e-5 & 3e-4 / 3e-5 \\
+\multicolumn{5}{@{}l}{Seeds 2021--2023 in every cell ($n=3$).} \\
+\bottomrule
+\end{tabular}%
+}

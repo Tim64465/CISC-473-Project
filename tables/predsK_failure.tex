@@ -1,0 +1,32 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% Failure categories on ON-Zonal (real zones, $L{=}96$, $H{=}96$, every test window; job K: one run per model,
+% seed 2021, so these are descriptive). MSE on z-scored data and MAPE (\%) on demand in MW; bold: lowest at the
+% precision shown. $n$ counts windows, (window, step) pairs for target hours (each over the 10 zones), (window,
+% step, zone) cells for zone-hours and (window, zone) pairs for zone-windows. Holiday: an Ontario statutory holiday
+% (\texttt{holidays.Canada(subdiv="ON")}, as in PatchTST+Cal); peak: a zone's top 1\% of test-split demand.
+% From \texttt{results/preds\_analysis/} (\texttt{analyze\_preds.py}).
+{\setlength{\tabcolsep}{3pt}%
+\begin{tabular}{@{}llrrrrrrrr@{}}
+\toprule
+ & & \multicolumn{2}{c}{iTransformer} & \multicolumn{2}{c}{PatchTST} & \multicolumn{2}{c}{DLinear} & \multicolumn{2}{c}{Seasonal naive} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(l){9-10}
+Category & $n$ & MSE & MAPE & MSE & MAPE & MSE & MAPE & MSE & MAPE \\
+\midrule
+All test windows & 18{,}889 & \textbf{0.2857} & \textbf{7.31} & 0.2925 & 7.38 & 0.3075 & 7.57 & 0.5331 & 9.92 \\
+\midrule
+Step $h{=}1$ only & 18{,}889 & 0.0358 & 2.56 & 0.0247 & 2.05 & \textbf{0.0235} & \textbf{1.94} & 0.5327 & 9.92 \\
+Step $h{=}24$ only & 18{,}889 & \textbf{0.2084} & \textbf{6.27} & 0.2153 & 6.42 & 0.2292 & 6.58 & 0.5329 & 9.92 \\
+Step $h{=}96$ only & 18{,}889 & \textbf{0.3679} & \textbf{8.42} & 0.3750 & 8.43 & 0.3860 & 8.53 & 0.5332 & 9.92 \\
+\midrule
+Holiday target hours & 46{,}080 & 0.3834 & 9.16 & 0.3744 & 9.07 & \textbf{0.3363} & \textbf{8.66} & 0.8128 & 13.48 \\
+Other target hours & 1{,}767{,}264 & \textbf{0.2832} & \textbf{7.26} & 0.2903 & 7.34 & 0.3068 & 7.54 & 0.5258 & 9.83 \\
+Windows with a holiday & 2{,}095 & 0.3104 & 7.86 & 0.3077 & 7.86 & \textbf{0.3076} & \textbf{7.85} & 0.5912 & 11.04 \\
+Other windows & 16{,}794 & \textbf{0.2826} & \textbf{7.24} & 0.2906 & 7.32 & 0.3075 & 7.53 & 0.5258 & 9.78 \\
+\midrule
+Peak zone-hours & 183{,}187 & \textbf{1.5078} & \textbf{11.18} & 1.7201 & 12.37 & 2.0988 & 14.63 & 2.7683 & 16.61 \\
+Other zone-hours & 17{,}950{,}253 & \textbf{0.2732} & \textbf{7.27} & 0.2779 & 7.33 & 0.2892 & 7.50 & 0.5102 & 9.85 \\
+Zone-windows with a peak & 19{,}572 & \textbf{0.6057} & \textbf{8.66} & 0.6462 & 8.95 & 0.7417 & 9.69 & 1.1512 & 12.41 \\
+Other zone-windows & 169{,}318 & \textbf{0.2487} & \textbf{7.15} & 0.2516 & 7.20 & 0.2573 & 7.32 & 0.4616 & 9.63 \\
+\bottomrule
+\end{tabular}%
+}

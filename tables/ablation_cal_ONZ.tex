@@ -1,0 +1,25 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% PatchTST+Cal ablation on ON-Zonal (real zones, $L{=}96$, $H{=}96$, every test window), mean $\pm$ std over
+% seeds 2021--2023; bold: lowest. Calendar terms: hour of day, day of week (dow), Ontario statutory holiday; MAE
+% in \texttt{results/report\_numbers.txt}.
+% Last columns: MSE difference with its paired 95\% t-interval (second line), against plain PatchTST and against
+% the full PatchTST+Cal (the cost of removing a component).
+\begin{tabular}{@{}lccclll@{}}
+\toprule
+ & \multicolumn{3}{c}{Calendar terms} & & \multicolumn{2}{c}{$\Delta$MSE, paired} \\
+\cmidrule(lr){2-4}\cmidrule(l){6-7}
+PatchTST+Cal & hour & dow & holiday & MSE & $-$ PatchTST & $-$ full \\
+\midrule
+full & \cmark & \cmark & \cmark & \textbf{0.2859}$\pm$0.0002 & $-$0.0066 & -- \\
+ & & & & & {\scriptsize[$-$0.0075, $-$0.0056]} &  \\\addlinespace[1pt]
+$-$hour & \xmark & \cmark & \cmark & 0.2871$\pm$0.0002 & $-$0.0054 & +0.0012 \\
+ & & & & & {\scriptsize[$-$0.0062, $-$0.0045]} & {\scriptsize[+0.0009, +0.0015]} \\\addlinespace[1pt]
+$-$dow & \cmark & \xmark & \cmark & 0.2912$\pm$0.0005 & $-$0.0013 & +0.0053 \\
+ & & & & & {\scriptsize[$-$0.0019, $-$0.0007]} & {\scriptsize[+0.0044, +0.0062]} \\\addlinespace[1pt]
+$-$holiday & \cmark & \cmark & \xmark & 0.2866$\pm$0.0000 & $-$0.0059 & +0.0007 \\
+ & & & & & {\scriptsize[$-$0.0071, $-$0.0046]} & {\scriptsize[+0.0004, +0.0010]} \\\addlinespace[1pt]
+\midrule
+none (PatchTST) & \xmark & \xmark & \xmark & 0.2925$\pm$0.0005 & -- & +0.0066 \\
+ & & & & &  & {\scriptsize[+0.0056, +0.0075]} \\\addlinespace[1pt]
+\bottomrule
+\end{tabular}

@@ -1,0 +1,23 @@
+% Fits the report's text width (6.5 in) at \footnotesize. Suggested caption (written by final_tables.py):
+% F3 on ETTh1 ($L{=}96$, every test window): best validation loss of seed 2021 for each learning rate (bold: lowest,
+% selected; \texttt{results/f3\_selection.json}), and test MSE at the default LR $10^{-4}$ and at the selected LR,
+% mean $\pm$ std over seeds 2021--2023; $\Delta$: selected $-$ default, paired 95\% t-interval.
+{\setlength{\tabcolsep}{4pt}%
+\begin{tabular}{@{}llrrrlll@{}}
+\toprule
+ & & \multicolumn{3}{c}{Validation loss (seed 2021)} & \multicolumn{3}{c}{Test MSE (3 seeds)} \\
+\cmidrule(lr){3-5}\cmidrule(l){6-8}
+Model & $H$ & $3{\cdot}10^{-5}$ & $10^{-4}$ & $3{\cdot}10^{-4}$ & LR $10^{-4}$ & selected LR & $\Delta$ [95\% CI] \\
+\midrule
+\multirow{4}{*}{PatchTST} & 96 & 0.7727 & 0.7034 & \textbf{0.6890} & 0.3946$\pm$0.0014 & 0.3847$\pm$0.0003 & $-$0.0099 [$-$0.0128, $-$0.0071] \\
+ & 192 & 1.0756 & 1.0062 & \textbf{0.9937} & 0.4447$\pm$0.0007 & 0.4356$\pm$0.0003 & $-$0.0091 [$-$0.0112, $-$0.0070] \\
+ & 336 & 1.3476 & 1.2892 & \textbf{1.2765} & 0.4872$\pm$0.0007 & 0.4793$\pm$0.0029 & $-$0.0079 [$-$0.0140, $-$0.0017] \\
+ & 720 & 1.6086 & 1.5524 & \textbf{1.5512} & 0.4855$\pm$0.0022 & 0.4842$\pm$0.0049 & $-$0.0013 [$-$0.0121, +0.0096] \\
+\midrule
+\multirow{4}{*}{iTransformer} & 96 & 0.7071 & \textbf{0.6733} & 0.6909 & 0.3858$\pm$0.0008 & \multicolumn{2}{l}{= default} \\
+ & 192 & 1.0103 & \textbf{0.9880} & 0.9924 & 0.4426$\pm$0.0033 & \multicolumn{2}{l}{= default} \\
+ & 336 & \textbf{1.2751} & 1.2797 & 1.3064 & 0.4899$\pm$0.0013 & 0.4898$\pm$0.0016 & $-$0.0001 [$-$0.0072, +0.0071] \\
+ & 720 & \textbf{1.5564} & 1.5729 & 1.6211 & 0.5087$\pm$0.0022 & 0.5158$\pm$0.0055 & +0.0071 [$-$0.0023, +0.0165] \\
+\bottomrule
+\end{tabular}%
+}

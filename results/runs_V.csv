@@ -1,0 +1,4 @@
+run_id,plan,mode,model,dataset,L,H,seed,patch_len,stride,test_batch_size,test_drop_last,n_test_windows,n_scored,epochs_run,early_stopped,mse,mae,seconds,device,repo_commit,timestamp_utc,mse_official,mae_official,n_scored_official,scoring,variant,vali_loss_best
+PatchTST_ETTh1_L336_H96_s2021,V,train,PatchTST,ETTh1,336,96,2021,16,8,128,False,2785,2785,100,False,0.385104,0.405937,322,Tesla T4,204c21efe0,2026-11-11 19:20:19,0.381600,0.405070,2688,all+official,,0.6753925
+PatchTST_ETTh1_L336_H96_s2021_cal-none,V,train,PatchTST,ETTh1,336,96,2021,16,8,128,False,2785,2785,100,False,0.385104,0.405937,311,Tesla T4,204c21efe0,2026-11-11 19:25:30,0.381600,0.405070,2688,all+official,cal-none,0.6753925
+PatchTST_ETTh1_L336_H96_s2021_cal-hour-dow-frozen,V,train,PatchTST,ETTh1,336,96,2021,16,8,128,False,2785,2785,100,False,0.385104,0.405937,326,Tesla T4,204c21efe0,2026-11-11 19:30:56,0.381600,0.405070,2688,all+official,cal-hour-dow-frozen,0.6753925

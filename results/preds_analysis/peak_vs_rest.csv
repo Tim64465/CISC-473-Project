@@ -1,0 +1,177 @@
+model,zone,group,unit,n,n_cells,mse_z,mae_z,mae_MW,mape_pct,n_cells_without_mape
+iTransformer,Northwest,peak target hours,zone-hours,18037,18037,1.379200,1.000390,77.451259,10.592756,0
+iTransformer,Northwest,other target hours,zone-hours,1795307,1795307,0.320566,0.444385,34.404764,6.773489,0
+iTransformer,Northwest,windows containing a peak hour,zone-windows,2178,209088,0.421596,0.506752,39.233240,6.077063,0
+iTransformer,Northwest,other windows,zone-windows,16711,1604256,0.319301,0.442508,34.259434,6.907197,0
+iTransformer,Northeast,peak target hours,zone-hours,18062,18062,0.390844,0.532445,80.976493,4.905236,0
+iTransformer,Northeast,other target hours,zone-hours,1795282,1795282,0.190393,0.341835,51.987774,4.034339,0
+iTransformer,Northeast,windows containing a peak hour,zone-windows,2018,193728,0.214675,0.364707,55.466263,3.633863,0
+iTransformer,Northeast,other windows,zone-windows,16871,1619616,0.189724,0.341225,51.894982,4.091954,0
+iTransformer,Ottawa,peak target hours,zone-hours,18432,18432,1.978744,1.188652,240.473943,15.201226,0
+iTransformer,Ottawa,other target hours,zone-hours,1794912,1794912,0.207470,0.328734,66.505468,6.506294,0
+iTransformer,Ottawa,windows containing a peak hour,zone-windows,2115,203040,0.700073,0.633418,128.145663,10.764520,0
+iTransformer,Ottawa,other windows,zone-windows,16774,1610304,0.165633,0.300159,60.724672,6.068908,0
+iTransformer,East,peak target hours,zone-hours,17868,17868,0.684330,0.634055,140.329761,8.976185,0
+iTransformer,East,other target hours,zone-hours,1795476,1795476,0.334139,0.438121,96.965289,11.773746,0
+iTransformer,East,windows containing a peak hour,zone-windows,1985,190560,0.438254,0.515240,114.033466,9.882527,0
+iTransformer,East,other windows,zone-windows,16904,1622784,0.325769,0.431222,95.438483,11.965024,0
+iTransformer,Toronto,peak target hours,zone-hours,18240,18240,1.623769,0.990829,1007.146126,10.942990,0
+iTransformer,Toronto,other target hours,zone-hours,1795104,1795104,0.178105,0.292539,297.357091,5.014767,0
+iTransformer,Toronto,windows containing a peak hour,zone-windows,1355,130080,0.778759,0.670325,681.363963,9.412171,0
+iTransformer,Toronto,other windows,zone-windows,17534,1683264,0.147353,0.270912,275.372980,4.739181,0
+iTransformer,Essa,peak target hours,zone-hours,18271,18271,1.343036,0.922700,202.435818,12.006924,0
+iTransformer,Essa,other target hours,zone-hours,1795073,1795073,0.264200,0.379284,83.213090,8.224095,0
+iTransformer,Essa,windows containing a peak hour,zone-windows,2530,242880,0.588326,0.564467,123.841184,9.977290,0
+iTransformer,Essa,other windows,zone-windows,16359,1570464,0.226624,0.356967,78.316809,7.996965,0
+iTransformer,Bruce,peak target hours,zone-hours,19365,19365,4.027883,1.428096,45.899365,21.028884,0
+iTransformer,Bruce,other target hours,zone-hours,1793979,1793979,0.345093,0.398586,12.810642,11.831616,0
+iTransformer,Bruce,windows containing a peak hour,zone-windows,795,76320,1.794178,0.883715,28.402803,19.161813,0
+iTransformer,Bruce,other windows,zone-windows,18094,1737024,0.322481,0.388748,12.494452,11.612082,0
+iTransformer,Southwest,peak target hours,zone-hours,18240,18240,1.314974,0.885818,433.562418,9.271679,0
+iTransformer,Southwest,other target hours,zone-hours,1795104,1795104,0.232210,0.350128,171.369675,5.378017,0
+iTransformer,Southwest,windows containing a peak hour,zone-windows,1461,140256,0.768217,0.669315,327.594985,8.634429,0
+iTransformer,Southwest,other windows,zone-windows,17428,1673088,0.199080,0.329211,161.131635,5.147479,0
+iTransformer,Niagara,peak target hours,zone-hours,18240,18240,0.892622,0.789621,74.790110,9.162362,0
+iTransformer,Niagara,other target hours,zone-hours,1795104,1795104,0.242891,0.366044,34.670331,6.228395,0
+iTransformer,Niagara,windows containing a peak hour,zone-windows,2390,229440,0.548272,0.588829,55.771809,8.438171,0
+iTransformer,Niagara,other windows,zone-windows,16499,1583904,0.206137,0.338649,32.075641,5.942081,0
+iTransformer,West,peak target hours,zone-hours,18432,18432,1.256068,0.890841,231.106966,9.010211,0
+iTransformer,West,other target hours,zone-hours,1794912,1794912,0.417464,0.482780,125.245396,6.896266,0
+iTransformer,West,windows containing a peak hour,zone-windows,2745,263520,0.637705,0.602347,156.264287,7.455668,0
+iTransformer,West,other windows,zone-windows,16144,1549824,0.389989,0.467302,121.230193,6.826290,0
+iTransformer,all zones,peak target hours,zone-hours,183187,183187,1.507806,0.930558,252.689431,11.183935,0
+iTransformer,all zones,other target hours,zone-hours,17950253,17950253,0.273249,0.382243,97.457141,7.265882,0
+iTransformer,all zones,windows containing a peak hour,zone-windows,19572,1878912,0.605729,0.576317,153.012895,8.656773,0
+iTransformer,all zones,other windows,zone-windows,169318,16254528,0.248730,0.365989,92.784730,7.149261,0
+PatchTST,Northwest,peak target hours,zone-hours,18037,18037,1.299305,0.982013,76.028464,10.396935,0
+PatchTST,Northwest,other target hours,zone-hours,1795307,1795307,0.313219,0.439132,33.998032,6.719001,0
+PatchTST,Northwest,windows containing a peak hour,zone-windows,2178,209088,0.397829,0.494166,38.258862,5.936956,0
+PatchTST,Northwest,other windows,zone-windows,16711,1604256,0.313278,0.438063,33.915261,6.862279,0
+PatchTST,Northeast,peak target hours,zone-hours,18062,18062,0.377184,0.525501,79.920491,4.840790,0
+PatchTST,Northeast,other target hours,zone-hours,1795282,1795282,0.187498,0.339127,51.575951,4.002234,0
+PatchTST,Northeast,windows containing a peak hour,zone-windows,2018,193728,0.209169,0.360697,54.856316,3.597236,0
+PatchTST,Northeast,other windows,zone-windows,16871,1619616,0.187022,0.338626,51.499674,4.060029,0
+PatchTST,Ottawa,peak target hours,zone-hours,18432,18432,2.369493,1.350065,273.129144,17.268870,0
+PatchTST,Ottawa,other target hours,zone-hours,1794912,1794912,0.211303,0.335071,67.787559,6.618764,0
+PatchTST,Ottawa,windows containing a peak hour,zone-windows,2115,203040,0.776641,0.681934,137.960823,11.479760,0
+PatchTST,Ottawa,other windows,zone-windows,16774,1610304,0.164724,0.302953,61.289952,6.127755,0
+PatchTST,East,peak target hours,zone-hours,17868,17868,0.740473,0.677451,149.934064,9.592056,0
+PatchTST,East,other target hours,zone-hours,1795476,1795476,0.336350,0.441943,97.811342,11.810134,0
+PatchTST,East,windows containing a peak hour,zone-windows,1985,190560,0.439834,0.519905,115.065967,9.956874,0
+PatchTST,East,other windows,zone-windows,16904,1622784,0.328647,0.435382,96.359077,12.003335,0
+PatchTST,Toronto,peak target hours,zone-hours,18240,18240,2.227016,1.261069,1281.836308,13.929951,0
+PatchTST,Toronto,other target hours,zone-hours,1795104,1795104,0.187925,0.300702,305.653972,5.147368,0
+PatchTST,Toronto,windows containing a peak hour,zone-windows,1355,130080,0.938994,0.752967,765.367412,10.429885,0
+PatchTST,Toronto,other windows,zone-windows,17534,1683264,0.151980,0.276158,280.706039,4.834312,0
+PatchTST,Essa,peak target hours,zone-hours,18271,18271,1.538236,1.021699,224.155540,13.264618,0
+PatchTST,Essa,other target hours,zone-hours,1795073,1795073,0.268162,0.383380,84.111633,8.315732,0
+PatchTST,Essa,windows containing a peak hour,zone-windows,2530,242880,0.609427,0.573219,125.761426,10.092249,0
+PatchTST,Essa,other windows,zone-windows,16359,1570464,0.230160,0.361447,79.299578,8.098560,0
+PatchTST,Bruce,peak target hours,zone-hours,19365,19365,3.988779,1.401880,45.056747,20.616061,0
+PatchTST,Bruce,other target hours,zone-hours,1793979,1793979,0.327510,0.386940,12.436332,11.487509,0
+PatchTST,Bruce,windows containing a peak hour,zone-windows,795,76320,1.768681,0.874766,28.115203,18.921229,0
+PatchTST,Bruce,other windows,zone-windows,18094,1737024,0.305006,0.376821,12.111111,11.262661,0
+PatchTST,Southwest,peak target hours,zone-hours,18240,18240,1.789583,1.111601,544.071170,11.632245,0
+PatchTST,Southwest,other target hours,zone-hours,1795104,1795104,0.251389,0.365352,178.820948,5.620002,0
+PatchTST,Southwest,windows containing a peak hour,zone-windows,1461,140256,0.900760,0.742164,363.250985,9.482146,0
+PatchTST,Southwest,other windows,zone-windows,17428,1673088,0.213722,0.341899,167.342020,5.361782,0
+PatchTST,Niagara,peak target hours,zone-hours,18240,18240,1.128243,0.933385,88.406926,10.833816,0
+PatchTST,Niagara,other target hours,zone-hours,1795104,1795104,0.255359,0.378198,35.821571,6.448714,0
+PatchTST,Niagara,windows containing a peak hour,zone-windows,2390,229440,0.596061,0.618078,58.542168,8.820412,0
+PatchTST,Niagara,other windows,zone-windows,16499,1583904,0.216058,0.349843,33.135892,6.155655,0
+PatchTST,West,peak target hours,zone-hours,18432,18432,1.559882,1.054741,273.626869,10.662415,0
+PatchTST,West,other target hours,zone-hours,1794912,1794912,0.440223,0.500055,129.727130,7.122109,0
+PatchTST,West,windows containing a peak hour,zone-windows,2745,263520,0.685878,0.630203,163.490707,7.762865,0
+PatchTST,West,other windows,zone-windows,16144,1549824,0.411770,0.484523,125.697629,7.055264,0
+PatchTST,all zones,peak target hours,zone-hours,183187,183187,1.720073,1.035835,302.733505,12.373341,0
+PatchTST,all zones,other target hours,zone-hours,17950253,17950253,0.277890,0.386991,99.778707,7.328957,0
+PatchTST,all zones,windows containing a peak hour,zone-windows,19572,1878912,0.646222,0.599625,164.072615,8.950824,0
+PatchTST,all zones,other windows,zone-windows,169318,16254528,0.251567,0.369724,94.634053,7.198330,0
+DLinear,Northwest,peak target hours,zone-hours,18037,18037,1.842045,1.228755,95.131490,13.040042,0
+DLinear,Northwest,other target hours,zone-hours,1795307,1795307,0.312018,0.439161,34.000266,6.683828,0
+DLinear,Northwest,windows containing a peak hour,zone-windows,2178,209088,0.516184,0.565504,43.781906,6.672354,0
+DLinear,Northwest,other windows,zone-windows,16711,1604256,0.302611,0.431571,33.412705,6.756788,0
+DLinear,Northeast,peak target hours,zone-hours,18062,18062,0.866701,0.863883,131.383010,7.964290,0
+DLinear,Northeast,other target hours,zone-hours,1795282,1795282,0.200376,0.349825,53.202959,4.074124,0
+DLinear,Northeast,windows containing a peak hour,zone-windows,2018,193728,0.363452,0.486642,74.010660,4.779553,0
+DLinear,Northeast,other windows,zone-windows,16871,1619616,0.188301,0.339193,51.585942,4.033128,0
+DLinear,Ottawa,peak target hours,zone-hours,18432,18432,2.691143,1.454302,294.217058,18.590404,0
+DLinear,Ottawa,other target hours,zone-hours,1794912,1794912,0.220469,0.347759,70.354492,6.834470,0
+DLinear,Ottawa,windows containing a peak hour,zone-windows,2115,203040,0.822849,0.711560,143.954456,11.855569,0
+DLinear,Ottawa,other windows,zone-windows,16774,1610304,0.172796,0.314554,63.636816,6.335931,0
+DLinear,East,peak target hours,zone-hours,17868,17868,1.025255,0.860995,190.556265,12.203463,0
+DLinear,East,other target hours,zone-hours,1795476,1795476,0.342575,0.447802,99.108066,11.958737,0
+DLinear,East,windows containing a peak hour,zone-windows,1985,190560,0.508972,0.569080,125.949378,10.598749,0
+DLinear,East,other windows,zone-windows,16904,1622784,0.330552,0.438111,96.963059,12.121132,0
+DLinear,Toronto,peak target hours,zone-hours,18240,18240,2.356567,1.325954,1347.790156,14.641481,0
+DLinear,Toronto,other target hours,zone-hours,1795104,1795104,0.216027,0.334559,340.068742,5.760614,0
+DLinear,Toronto,windows containing a peak hour,zone-windows,1355,130080,0.967926,0.764333,776.919990,10.540291,0
+DLinear,Toronto,other windows,zone-windows,17534,1683264,0.181116,0.312090,317.229323,5.487482,0
+DLinear,Essa,peak target hours,zone-hours,18271,18271,1.844174,1.178930,258.651219,15.333257,0
+DLinear,Essa,other target hours,zone-hours,1795073,1795073,0.276864,0.394394,86.527968,8.441152,0
+DLinear,Essa,windows containing a peak hour,zone-windows,2530,242880,0.710258,0.654613,143.618895,11.237465,0
+DLinear,Essa,other windows,zone-windows,16359,1570464,0.228072,0.363277,79.701080,8.088872,0
+DLinear,Bruce,peak target hours,zone-hours,19365,19365,4.739506,1.753277,56.350730,26.103364,0
+DLinear,Bruce,other target hours,zone-hours,1793979,1793979,0.321773,0.388804,12.496255,11.294878,0
+DLinear,Bruce,windows containing a peak hour,zone-windows,795,76320,1.915592,0.989201,31.793142,20.334067,0
+DLinear,Bruce,other windows,zone-windows,18094,1737024,0.300996,0.377636,12.137309,11.062811,0
+DLinear,Southwest,peak target hours,zone-hours,18240,18240,1.963728,1.192016,583.430203,12.478540,0
+DLinear,Southwest,other target hours,zone-hours,1795104,1795104,0.284316,0.399443,195.506654,6.166364,0
+DLinear,Southwest,windows containing a peak hour,zone-windows,1461,140256,0.951342,0.768189,375.988847,9.750290,0
+DLinear,Southwest,other windows,zone-windows,17428,1673088,0.246708,0.377171,184.605862,5.934737,0
+DLinear,Niagara,peak target hours,zone-hours,18240,18240,1.372635,1.058662,100.272711,12.283931,0
+DLinear,Niagara,other target hours,zone-hours,1795104,1795104,0.264466,0.389333,36.876194,6.524474,0
+DLinear,Niagara,windows containing a peak hour,zone-windows,2390,229440,0.679292,0.671275,63.580794,9.417833,0
+DLinear,Niagara,other windows,zone-windows,16499,1583904,0.217137,0.356199,33.737904,6.171675,0
+DLinear,West,peak target hours,zone-hours,18432,18432,2.080889,1.269363,329.305164,12.824772,0
+DLinear,West,other target hours,zone-hours,1794912,1794912,0.453547,0.513338,133.173110,7.215063,0
+DLinear,West,windows containing a peak hour,zone-windows,2745,263520,0.824753,0.710708,184.375759,8.630656,0
+DLinear,West,other windows,zone-windows,16144,1549824,0.409784,0.488771,126.799602,7.041083,0
+DLinear,all zones,peak target hours,zone-hours,183187,183187,2.098791,1.223250,337.676961,14.632719,0
+DLinear,all zones,other target hours,zone-hours,17950253,17950253,0.289241,0.400443,106.135980,7.495190,0
+DLinear,all zones,windows containing a peak hour,zone-windows,19572,1878912,0.741727,0.664424,176.166508,9.688023,0
+DLinear,all zones,other windows,zone-windows,169318,16254528,0.257330,0.379201,100.650376,7.322153,0
+Seasonal naive,Northwest,peak target hours,zone-hours,18037,18037,1.162120,0.944186,73.099850,10.022266,0
+Seasonal naive,Northwest,other target hours,zone-hours,1795307,1795307,0.515285,0.561251,43.452629,8.635579,0
+Seasonal naive,Northwest,windows containing a peak hour,zone-windows,2178,209088,0.538303,0.586729,45.425165,7.048473,0
+Seasonal naive,Northwest,other windows,zone-windows,16711,1604256,0.519558,0.562236,43.528872,8.858023,0
+Seasonal naive,Northeast,peak target hours,zone-hours,18062,18062,0.450337,0.564262,85.815469,5.202642,0
+Seasonal naive,Northeast,other target hours,zone-hours,1795282,1795282,0.319674,0.446677,67.932526,5.259303,0
+Seasonal naive,Northeast,windows containing a peak hour,zone-windows,2018,193728,0.335373,0.467806,71.145921,4.672007,0
+Seasonal naive,Northeast,other windows,zone-windows,16871,1619616,0.319253,0.445461,67.747591,5.328920,0
+Seasonal naive,Ottawa,peak target hours,zone-hours,18432,18432,4.229030,1.915858,387.593750,24.505737,0
+Seasonal naive,Ottawa,other target hours,zone-hours,1794912,1794912,0.422830,0.468066,94.693521,9.196811,0
+Seasonal naive,Ottawa,windows containing a peak hour,zone-windows,2115,203040,1.348975,0.938210,189.807491,15.599270,0
+Seasonal naive,Ottawa,other windows,zone-windows,16774,1610304,0.349621,0.425358,86.053412,8.564768,0
+Seasonal naive,East,peak target hours,zone-hours,17868,17868,1.227806,0.940171,208.079640,13.318360,0
+Seasonal naive,East,other target hours,zone-hours,1795476,1795476,0.593885,0.587205,129.960888,15.226562,0
+Seasonal naive,East,windows containing a peak hour,zone-windows,1985,190560,0.862380,0.762149,168.679497,14.463524,0
+Seasonal naive,East,other windows,zone-windows,16904,1622784,0.569336,0.570549,126.274389,15.295154,0
+Seasonal naive,Toronto,peak target hours,zone-hours,18240,18240,3.587373,1.732449,1760.978947,19.157062,0
+Seasonal naive,Toronto,other target hours,zone-hours,1795104,1795104,0.372309,0.410823,417.588482,6.958415,0
+Seasonal naive,Toronto,windows containing a peak hour,zone-windows,1355,130080,1.621601,1.053774,1071.128083,14.563773,0
+Seasonal naive,Toronto,other windows,zone-windows,17534,1683264,0.310605,0.375458,381.641067,6.502870,0
+Seasonal naive,Essa,peak target hours,zone-hours,18271,18271,2.880728,1.491844,327.302994,19.385638,0
+Seasonal naive,Essa,other target hours,zone-hours,1795073,1795073,0.518070,0.536594,117.726077,11.450516,0
+Seasonal naive,Essa,windows containing a peak hour,zone-windows,2530,242880,1.185454,0.858431,188.335429,14.935149,0
+Seasonal naive,Essa,other windows,zone-windows,16359,1570464,0.442343,0.497934,109.244241,11.003918,0
+Seasonal naive,Bruce,peak target hours,zone-hours,19365,19365,5.993239,1.989808,63.952905,29.571303,0
+Seasonal naive,Bruce,other target hours,zone-hours,1793979,1793979,0.673633,0.559828,17.993014,16.615912,0
+Seasonal naive,Bruce,windows containing a peak hour,zone-windows,795,76320,2.505564,1.170438,37.618147,23.128689,0
+Seasonal naive,Bruce,other windows,zone-windows,18094,1737024,0.652448,0.548942,17.643118,16.474190,0
+Seasonal naive,Southwest,peak target hours,zone-hours,18240,18240,3.036013,1.517928,742.947368,15.905316,0
+Seasonal naive,Southwest,other target hours,zone-hours,1795104,1795104,0.468628,0.492421,241.014793,7.493482,0
+Seasonal naive,Southwest,windows containing a peak hour,zone-windows,1461,140256,1.732164,1.102841,539.783617,14.153561,0
+Seasonal naive,Southwest,other windows,zone-windows,17428,1673088,0.390695,0.452429,221.440885,7.026869,0
+Seasonal naive,Niagara,peak target hours,zone-hours,18240,18240,1.729002,1.074232,101.747368,12.473610,0
+Seasonal naive,Niagara,other target hours,zone-hours,1795104,1795104,0.459082,0.501591,47.508902,8.504159,0
+Seasonal naive,Niagara,windows containing a peak hour,zone-windows,2390,229440,1.129654,0.864121,81.846409,12.387956,0
+Seasonal naive,Niagara,other windows,zone-windows,16499,1583904,0.376569,0.455670,43.159467,7.987275,0
+Seasonal naive,West,peak target hours,zone-hours,18432,18432,3.097513,1.531449,397.296875,15.461327,0
+Seasonal naive,West,other target hours,zone-hours,1794912,1794912,0.759192,0.643950,167.057014,9.199852,0
+Seasonal naive,West,windows containing a peak hour,zone-windows,2745,263520,1.347474,0.898104,232.991226,11.010992,0
+Seasonal naive,West,other windows,zone-windows,16144,1549824,0.686974,0.611290,158.584308,8.966368,0
+Seasonal naive,all zones,peak target hours,zone-hours,183187,183187,2.768301,1.376914,413.782970,16.613006,0
+Seasonal naive,all zones,other target hours,zone-hours,17950253,17950253,0.510247,0.520838,134.498409,9.853699,0
+Seasonal naive,all zones,windows containing a peak hour,zone-windows,19572,1878912,1.151230,0.837477,233.003854,12.410593,0
+Seasonal naive,all zones,other windows,zone-windows,169318,16254528,0.461602,0.493885,126.259365,9.634316,0

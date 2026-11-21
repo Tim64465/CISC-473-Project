@@ -1,0 +1,27 @@
+% Fits the report's text width (6.5 in) at \small. Suggested caption (written by final_tables.py):
+% ETTh1, official test loader (as published), mean $\pm$ std over 3 seeds (2021--2023); bold: lowest at the precision shown.
+% Published: PatchTST/42 and DLinear from Nie et al. (2023, Table 3), iTransformer (iTrans.) from Liu et al. (2024, Table 10).
+% Ours: the official code at pinned commits; PatchTST+Cal adds hour-of-day and day-of-week embeddings (Sec. 3).
+% Last column: PatchTST+Cal $-$ our PatchTST, mean of the per-seed differences with a paired 95\% t-interval.
+{\setlength{\tabcolsep}{3.5pt}%
+\begin{tabular}{@{}llrrrlll@{}}
+\toprule
+ & & \multicolumn{3}{c}{Published} & \multicolumn{2}{c}{Ours (3 seeds)} & Ours $-$ PatchTST \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}\cmidrule(l){8-8}
+$H$ & & PatchTST/42 & DLinear & iTrans. & PatchTST & PatchTST+Cal & $\Delta$ [95\% CI] \\
+ & & $L{=}336$ & $L{=}336$ & $L{=}96$ & $L{=}336$ & (proposed) & \\
+\midrule
+\multirow{2}{*}{96} & MSE & \textbf{0.375} & \textbf{0.375} & 0.386 & 0.377$\pm$0.004 & 0.377$\pm$0.004 & $-$0.0001 [$-$0.0004, +0.0002] \\
+ & MAE & \textbf{0.399} & \textbf{0.399} & 0.405 & 0.402$\pm$0.003 & 0.402$\pm$0.003 & +0.0001 [$-$0.0003, +0.0005] \\
+\midrule
+\multirow{2}{*}{192} & MSE & 0.414 & \textbf{0.405} & 0.441 & 0.413$\pm$0.001 & 0.413$\pm$0.001 & $-$0.0001 [$-$0.0003, +0.0001] \\
+ & MAE & 0.421 & \textbf{0.416} & 0.436 & 0.421$\pm$0.001 & 0.421$\pm$0.001 & +0.0001 [$-$0.0001, +0.0003] \\
+\midrule
+\multirow{2}{*}{336} & MSE & 0.431 & 0.439 & 0.487 & \textbf{0.428}$\pm$0.005 & \textbf{0.428}$\pm$0.004 & $-$0.0002 [$-$0.0007, +0.0003] \\
+ & MAE & 0.436 & 0.443 & 0.458 & \textbf{0.434}$\pm$0.004 & \textbf{0.434}$\pm$0.004 & $-$0.0001 [$-$0.0008, +0.0006] \\
+\midrule
+\multirow{2}{*}{720} & MSE & 0.449 & 0.472 & 0.503 & \textbf{0.447}$\pm$0.005 & \textbf{0.447}$\pm$0.005 & $-$0.0006 [$-$0.0009, $-$0.0002] \\
+ & MAE & 0.466 & 0.490 & 0.491 & 0.465$\pm$0.004 & \textbf{0.464}$\pm$0.003 & $-$0.0004 [$-$0.0006, $-$0.0003] \\
+\bottomrule
+\end{tabular}%
+}

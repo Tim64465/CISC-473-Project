@@ -1,0 +1,31 @@
+{
+ "rows": 94920,
+ "num_train": 66444,
+ "test_start": 75936,
+ "n_windows": 18889,
+ "test_period": [
+  "2023-11-02 00:00:00",
+  "2025-12-31 23:00:00"
+ ],
+ "matches_committed_onzonal_stats": true,
+ "iTransformer.max_abs_true_minus_rebuilt_z": 2.3373042612462314e-07,
+ "iTransformer.mse_from_arrays": 0.28572040154484385,
+ "iTransformer.mae_from_arrays": 0.3877826461734642,
+ "iTransformer.mse_logged": 0.285721,
+ "iTransformer.mae_logged": 0.387782,
+ "PatchTST.max_abs_true_minus_rebuilt_z": 2.3373042612462314e-07,
+ "PatchTST.mse_from_arrays": 0.29245962762524264,
+ "PatchTST.mae_from_arrays": 0.39354534897417226,
+ "PatchTST.mse_logged": 0.292459,
+ "PatchTST.mae_logged": 0.393546,
+ "DLinear.max_abs_true_minus_rebuilt_z": 2.3373042612462314e-07,
+ "DLinear.mse_from_arrays": 0.30752094482426406,
+ "DLinear.mae_from_arrays": 0.4087549452280835,
+ "DLinear.mse_logged": 0.307521,
+ "DLinear.mae_logged": 0.408755,
+ "max_abs_true_between_models_z": 0.0,
+ "holidays_version": "0.107",
+ "holiday_dates_in_test_targets": 20,
+ "rebuilt_seasonal_naive_equals_committed": true,
+ "seasonal_naive_mse_from_csv": 0.5330580271549423
+}
