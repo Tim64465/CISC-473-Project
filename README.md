@@ -25,7 +25,8 @@ final report's figures) and `budget.py results`, and then checks that `git statu
 `tables/`, `figures/` and `results/report_numbers.txt`: the committed files are exactly what the
 committed results give. The figure PDFs are byte-identical only with the versions in
 `requirements-tables.txt` (the script warns if others are installed); the tables do not depend on
-them. PNG copies of the figures (for slides) are written next to the PDFs and are not committed. Since job F,
+them. The PDFs are written uncompressed, so they do not depend on the zlib inside the Python build
+either (checked on Python 3.11, 3.13 and 3.14). PNG copies of the figures (for slides) are written next to the PDFs and are not committed. Since job F,
 `tables/onzonal_rq2.tex` uses seeds 2021–25; the midterm's version used seeds 2021–23 (git history).
 Since job N, `tables/ablation_ETTh1_all.tex` is the PatchTST ablation scored on every test window.
 
@@ -35,7 +36,7 @@ Checks after a fresh clone (CPU, a few minutes; outputs of the committed run in 
 python tests/test_report_tables.py                # midterm tables + report_numbers.txt byte-identical, merge rules
 python tests/test_final_tables.py                 # final tables, second computation, job K files, LaTeX width
 python tests/verify_report_numbers.py             # every report number and table number, computed independently
-python tests/test_figures.py                      # figures: byte-identical rebuilds with the pinned versions
+python tests/test_figures.py                      # figures: byte-identical to git HEAD with the pinned versions
 python tests/test_analyze_preds.py                # job K analysis on synthetic data
 ```
 
@@ -102,7 +103,7 @@ cross-platform check rather than a job of its own; its rows repeat logged run_id
 | `onzonal.py` | Downloads IESO Hourly Zonal Demand 2015–2025, validates it, builds `ONZ_real.csv` and the shifted control `ONZ_shift.csv`, and computes the similarity statistics and the seasonal-naive baseline. |
 | `report_tables.py`, `plot_ablation.py` | Build the midterm report's tables and Figure 1 from `results/`; `report_tables.py` then calls `final_tables.py`. |
 | `final_tables.py` | The final report's tables (`main_ETTh1`, `main_ONZ`, `repro_ETTm1`, `rq1_decomposition`, `f3_selection`, `rq2_final`, `ablation_cal_ONZ`, `grid_PxL_H336`, `env_per_job`, `timing_main`, and job K's `predsK_failure`, `predsK_zones`, `predsK_worst` from `results/preds_analysis/`) and `results/report_numbers.txt`. Each table file starts with a suggested caption naming its scoring, seeds and tests. |
-| `plot_final.py`, `p24_plotstyle.py` | The final report's figures (`fig_pxl_heatmap`, `fig_rq2_forest`, `fig_cal_ablation`, `fig_mse_vs_latency`) and the shared figure style; PDFs carry no creation date, so rebuilds are byte-identical. |
+| `plot_final.py`, `p24_plotstyle.py` | The final report's figures (`fig_pxl_heatmap`, `fig_rq2_forest`, `fig_cal_ablation`, `fig_mse_vs_latency`) and the shared figure style; PDFs carry no creation date and are uncompressed, so rebuilds are byte-identical. |
 | `requirements-tables.txt` | Versions for the table and figure build (Python 3.11–3.14, CPU). |
 | `analyze_preds.py` | Job K's prediction analysis (Colab only: it needs `preds_K.zip` and the IESO download); writes `preds_analysis.zip` (aggregates and figures). Its output is in `results/preds_analysis/`. |
 | `timing.py` | Forward-pass latency (batch 1 and 32) and parameter count per model config → `results/timing.csv`. |

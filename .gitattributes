@@ -1,0 +1,4 @@
+# PDFs and PNGs are binary even when they look like text (figures/*.pdf are uncompressed since patch 10):
+# no line-ending conversion, no text diff, no whitespace fixes (a PDF's xref table needs its trailing spaces).
+*.pdf binary
+*.png binary

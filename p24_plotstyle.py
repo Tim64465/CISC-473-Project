@@ -6,8 +6,11 @@ series also carries its own marker so the figures read in greyscale). Sequential
 hue (blue), light to dark.
 
 Reproducible files: PDFs are written without a creation date (matplotlib otherwise stores the
-build time), so rebuilding from the same results with the same matplotlib version gives the same
-bytes. PNG copies (for slides) are written next to the PDFs and are git-ignored.
+build time) and without stream compression, so rebuilding from the same results with the same
+matplotlib version gives the same bytes. Compressed streams would also depend on the zlib inside
+the Python build: Python 3.14.6 ships zlib 1.3.2 and wrote different (equally valid) bytes for the
+same drawing than Python 3.11 and 3.13 with zlib 1.3. PNG copies (for slides) are written next to
+the PDFs and are git-ignored.
 """
 import os
 from pathlib import Path
@@ -30,7 +33,7 @@ FULL_W = 7.2  # inches, as fig_ablation
 def setup():
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8.5, "axes.edgecolor": INK2,
                          "axes.labelcolor": INK, "xtick.color": INK2, "ytick.color": INK2, "axes.linewidth": 0.8,
-                         "pdf.compression": 6, "svg.hashsalt": "p24"})
+                         "svg.hashsalt": "p24"})
 
 
 def tidy(ax, grid_axis="y"):
@@ -42,10 +45,11 @@ def tidy(ax, grid_axis="y"):
 
 
 def save(fig, name, out=None):
-    """figures/<name>.pdf (no creation date) and a git-ignored PNG copy."""
+    """figures/<name>.pdf (no creation date, uncompressed: see the module docstring) and a git-ignored PNG copy."""
     out = Path(out) if out else FIG_DIR
     out.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out / f"{name}.pdf", metadata={"CreationDate": None})
+    with plt.rc_context({"pdf.compression": 0}):
+        fig.savefig(out / f"{name}.pdf", metadata={"CreationDate": None})
     fig.savefig(out / f"{name}.png", dpi=200, metadata={"Software": None})
     plt.close(fig)
     print(f"wrote {out / (name + '.pdf')}")
