@@ -1,6 +1,7 @@
 # Table and figure build only (./reproduce.sh tables; CPU, no GPU), Python 3.11-3.14.
 # figures/*.pdf were rendered with exactly these versions: another matplotlib version draws the same
 # numbers but writes different bytes, and the clean-tree check in ./reproduce.sh tables then fails.
+# The PDFs are uncompressed, so the zlib inside Python does not matter (3.14.6 ships 1.3.2, 3.13 uses 1.3).
 # The tables (text) do not depend on these versions. GPU runs use requirements.txt instead.
 numpy==2.3.5
 pandas==2.3.3

@@ -214,3 +214,21 @@ and URLs, values quoted from the plan, and test thresholds stated as such.
   results file it failed once jobs V, G and Q had logged their own runs. New checks: every run of plans V, sameL,
   f3 (seed 2021), ablation_redo and onzonal_export is logged (21/21 PASS, `tests/output/test_plans_unchanged.txt`).
 - Closes "Not done / open": the Weather items are moot (Weather was not run); I4 and I5 were not implemented.
+
+## Patch 10 (2026-11-22, task P3: figures independent of the Python build)
+- Found by the fresh-clone check on `main` in a Codespace with Python 3.14: `./reproduce.sh tables` rebuilt every table
+  and `results/report_numbers.txt` byte-identical but reported NOT CLEAN for the five figure PDFs. Same pinned packages
+  and the same transitive versions as the committed build; the cause is the zlib inside Python (3.14.6 ships zlib 1.3.2,
+  the 3.11 and 3.13 builds used zlib 1.3), which compresses the same drawing to different bytes. Checked two ways: the
+  decompressed content streams of the 3.14 PDFs equal those of the committed PDFs, and `pdftoppm` renders them to
+  identical pixels. No figure changed.
+- `p24_plotstyle.save` writes the PDFs uncompressed (`pdf.compression` 0), so the bytes no longer depend on zlib. The
+  five PDFs are re-rendered (same content streams, same pixels; 50-95 KB each instead of 22-35 KB) and are now
+  byte-identical on Python 3.11.18, 3.13.18 and 3.14.6.
+- `tests/test_figures.py`: check 2 compared the rebuild with `figures/` in the working tree, which
+  `./reproduce.sh tables` had just overwritten, so it passed on 3.14 while the clean check failed. It now compares with
+  `git show HEAD:figures/...`. New check 5: no PDF stream is compressed.
+- `.gitattributes` (new): `*.pdf` and `*.png` are binary. An uncompressed PDF has no NUL byte, so git would otherwise
+  treat it as text: line-ending conversion (`core.autocrlf` on Windows) or `--whitespace=fix` would corrupt it (the xref
+  table needs its trailing spaces). Check 5 also tests this.
+- README, `requirements-tables.txt` and `reproduce.sh` comments say why the PDFs are uncompressed.

@@ -1,6 +1,7 @@
 [PASS] 1. two builds byte-identical, no creation date in any PDF  -- identical: 5/5; dated: []
-[PASS] 2. rebuilt figures equal the committed figures/*.pdf (pinned versions)
+[PASS] 2. rebuilt figures equal the committed figures/*.pdf (pinned versions)  -- compared with git HEAD
 [PASS] 3. plotted values = report_numbers.txt (heatmap, forest, calendar ablation, Pareto sets)  -- 12 cells, forest, ablation, 2 Pareto sets
 [PASS] 4. vector PDFs (no embedded raster image)
+[PASS] 5. uncompressed PDFs (no /Filter), so the bytes do not depend on Python's zlib build; git treats them as binary  -- git attributes: text and diff unset
 
-OVERALL: PASS (4/4 checks)
+OVERALL: PASS (5/5 checks)

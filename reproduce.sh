@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # ./reproduce.sh tables   rebuild every table, figure and results/report_numbers.txt from results/ (no GPU),
 #                         then check that git status is clean for tables/, figures/ and report_numbers.txt.
-#                         Needs requirements-tables.txt (the figures are byte-identical only with those versions).
+#                         Needs requirements-tables.txt (the figures are byte-identical only with those versions;
+#                         they are uncompressed, so the zlib build inside Python does not matter).
 # ./reproduce.sh all      setup + ON-Zonal + every plan the report uses (default seeds) + timing + tables +
 #                         figures. Needs a Tesla T4 GPU and days of compute; new rows go to results/runs.csv,
 #                         and re-runs of logged run_ids must reproduce them within DUP_TOL (report_tables.py).
